@@ -34,6 +34,21 @@ variable "range_key" {
   }
 }
 
+variable "global_indexes" {
+  type = list(
+    object({
+      name = string
+      hash_key = string
+      range_key = string
+      write_capacity = number
+      read_capacity = number
+      projection_type = string
+      non_key_attributes = list(string)
+    })
+  )
+  default = []
+}
+
 variable "additional_keys" {
   type = list(object({
     name = string
