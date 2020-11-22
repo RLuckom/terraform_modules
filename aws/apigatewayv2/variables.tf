@@ -4,10 +4,12 @@ variable "name_stem" {
 
 variable "protocol" {
   type = string
+  default = "HTTP"
 }
 
 variable "route_selection_expression" {
   type = string
+  default = "$request.method $request.path"
 }
 
 variable "cors_configuration" {

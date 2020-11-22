@@ -1,11 +1,5 @@
 output "api" {
-  value = {
-    name = aws_apigatewayv2_api.api.name
-    id = aws_apigatewayv2_api.api.id
-    arn = aws_apigatewayv2_api.api.arn
-    api_endpoint = aws_apigatewayv2_api.api.api_endpoint
-    execution_arn = aws_apigatewayv2_api.api.execution_arn
-  }
+  value = aws_apigatewayv2_api.api
 }
 
 output "api_deployment" {
