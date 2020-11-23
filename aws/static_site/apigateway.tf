@@ -1,6 +1,6 @@
 module "lambda_api_gateway" {
   count = length(local.apigateway_configs)
-  source = "github.com/RLuckom/terraform_modules//aws/apigatewayv2?ref=split-cloudfront"
+  source = "github.com/RLuckom/terraform_modules//aws/apigatewayv2"
   name_stem = local.apigateway_configs[count.index][0].gateway_name_stem
   protocol = "HTTP"
   route_selection_expression = "$request.method $request.path"
