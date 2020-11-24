@@ -72,7 +72,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   dynamic "ordered_cache_behavior" {
     for_each = var.no_cache_s3_path_patterns
     content {
-      path_pattern = ordered_cache_behavior.value.path
+      path_pattern = ordered_cache_behavior.value
       target_origin_id = local.s3_origin_id
       allowed_methods  = ["GET", "HEAD", "OPTIONS"]
       cached_methods   = ["GET", "HEAD"]
