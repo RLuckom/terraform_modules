@@ -23,6 +23,11 @@ variable "compress" {
   default = true
 }
 
+variable "no_cache_s3_path_patterns" {
+  type = list(string)
+  default = []
+}
+
 variable "default_cloudfront_ttls" {
   type = object({
     min = number
