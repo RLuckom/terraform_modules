@@ -81,12 +81,11 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       min_ttl = 0
       max_ttl = 0
       forwarded_values {
-        query_string = ordered_cache_behavior.value.forwarded_values.query_string
-        query_string_cache_keys = ordered_cache_behavior.value.forwarded_values.query_string_cache_keys
-        headers = ordered_cache_behavior.value.forwarded_values.headers
+        query_string = false
+        headers = ["Access-Control-Request-Headers", "Access-Control-Request-Method", "Origin"]
 
         cookies {
-          forward = "all"
+          forward = "none"
         }
       }
       viewer_protocol_policy = "redirect-to-https"
