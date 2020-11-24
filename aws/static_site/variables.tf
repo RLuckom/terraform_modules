@@ -19,6 +19,10 @@ variable "allowed_origins" {
   default = []
 }
 
+variable "compress" {
+  default = true
+}
+
 variable "default_cloudfront_ttls" {
   type = object({
     min = number
