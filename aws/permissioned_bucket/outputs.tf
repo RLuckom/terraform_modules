@@ -57,6 +57,12 @@ output "permission_sets" {
           resources = ["${aws_s3_bucket.bucket.arn}/*"]
         }
       ]
+    delete_object = [
+        {
+          actions   = ["s3:DeleteObject"]
+          resources = ["${aws_s3_bucket.bucket.arn}/*"]
+        }
+      ]
     put_object_tagging = [
         {
           actions   = ["s3:PutObjectTagging"]
