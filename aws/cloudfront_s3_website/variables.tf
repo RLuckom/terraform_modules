@@ -41,6 +41,17 @@ variable "default_cloudfront_ttls" {
   }
 }
 
+variable "website_bucket_lambda_notifications" {
+  type = list(object({
+    lambda_arn = string
+    lambda_name = string
+    events = list(string)
+    filter_prefix = string
+    filter_suffix = string
+  }))
+  default = []
+}
+
 variable "lambda_origins" {
   type = list(object({
     id = string

@@ -23,6 +23,7 @@ module "website_bucket" {
       identifiers = ["*"]
     }]
   }]
+  lambda_notifications = var.website_bucket_lambda_notifications
 }
 
 module "logging_bucket" {
