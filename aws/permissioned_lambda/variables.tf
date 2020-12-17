@@ -12,7 +12,7 @@ variable "lambda_details" {
 
 locals {
   deployment_package_local_path = "${path.root}/functions/zip/${local.scoped_lambda_name}/lambda.zip"
-  deployment_package_key = "${var.lambda_details.action_name}/lambda.zip"
+  deployment_package_key = "${local.scoped_lambda_name}/lambda.zip"
   scoped_lambda_name = "${var.lambda_details.action_name}${var.lambda_details.scope_name == "" ? "" : "-"}${var.lambda_details.scope_name}"
 }
 
