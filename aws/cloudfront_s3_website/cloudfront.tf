@@ -8,12 +8,15 @@ resource "aws_cloudfront_origin_access_identity" "cloudfront_logging_access_id" 
 
 resource "aws_cloudfront_distribution" "website_distribution" {
 
-  origin {
-    domain_name = module.website_bucket.bucket.bucket_regional_domain_name
-    origin_id   = local.s3_origin_id
+  dynamic "origin" {
+    for_each = var.website_buckets
+    content {
+      domain_name = origin.value.regional_domain_name
+      origin_id   = origin.value.origin_id
 
-    s3_origin_config {
-      origin_access_identity = "origin-access-identity/cloudfront/${aws_cloudfront_origin_access_identity.cloudfront_logging_access_id.id}"
+      s3_origin_config {
+        origin_access_identity = "origin-access-identity/cloudfront/${aws_cloudfront_origin_access_identity.cloudfront_logging_access_id.id}"
+      }
     }
   }
 
@@ -38,8 +41,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   default_root_object = "index.html"
 
   logging_config {
-    include_cookies = false
-    bucket          = "${module.logging_bucket.bucket.id}.s3.amazonaws.com"
+    include_cookies = var.logging_config.include_cookies
+    bucket          = "${var.logging_config.bucket_id}.s3.amazonaws.com"
     prefix          = var.domain_name_prefix
   }
 

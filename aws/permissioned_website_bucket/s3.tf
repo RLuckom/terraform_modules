@@ -1,6 +1,6 @@
-module "website_bucket" {
+module "bucket" {
   source = "../permissioned_bucket"
-  bucket = var.domain_name
+  bucket = var.bucket_name
   acl    = "public-read"
 
   website_configs = [{
@@ -11,7 +11,7 @@ module "website_bucket" {
   cors_rules =[{
     allowed_headers = ["*"]
     allowed_methods = ["GET", "HEAD"]
-    allowed_origins = var.allowed_origins == [] ? ["https://${var.domain_name}"] : var.allowed_origins
+    allowed_origins = var.allowed_origins == [] ? ["https://${var.bucket_name}"] : var.allowed_origins
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }]
@@ -23,11 +23,5 @@ module "website_bucket" {
       identifiers = ["*"]
     }]
   }]
-  lambda_notifications = var.website_bucket_lambda_notifications
-}
-
-module "logging_bucket" {
-  source = "../permissioned_bucket"
-  bucket = "logs.${var.domain_name}"
-  acl    = "log-delivery-write"
+  lambda_notifications = var.lambda_notifications
 }

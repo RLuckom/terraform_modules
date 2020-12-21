@@ -41,17 +41,6 @@ variable "default_cloudfront_ttls" {
   }
 }
 
-variable "website_bucket_lambda_notifications" {
-  type = list(object({
-    lambda_arn = string
-    lambda_name = string
-    events = list(string)
-    filter_prefix = string
-    filter_suffix = string
-  }))
-  default = []
-}
-
 variable "lambda_origins" {
   type = list(object({
     id = string
@@ -78,6 +67,20 @@ variable "lambda_origins" {
     })
   }))
   default = []
+}
+
+variable website_buckets {
+  type = list(object({
+    regional_domain_name = string
+    origin_id = string
+  }))
+}
+
+variable logging_config {
+  type = object({
+    include_cookies = bool
+    bucket_id = string
+  })
 }
 
 locals {
