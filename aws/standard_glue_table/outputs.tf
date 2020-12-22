@@ -1,9 +1,5 @@
 data "aws_caller_identity" "current" {}
 
-output "metadata_bucket" {
-  value = length(module.data_storage_bucket) == 1 ? module.data_storage_bucket : []
-}
-
 output "table" {
   value = aws_glue_catalog_table.table
 }

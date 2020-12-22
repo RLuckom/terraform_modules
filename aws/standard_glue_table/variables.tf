@@ -4,12 +4,6 @@ variable "table_name" {
 
 variable "external_storage_bucket_id" {
   type = string
-  default = ""
-}
-
-variable "external_storage_bucket_arn" {
-  type = string
-  default = ""
 }
 
 variable "db" {
@@ -17,16 +11,6 @@ variable "db" {
     name = string
     arn = string
   })
-}
-
-variable "metadata_bucket_name" {
-  type = string
-  default = ""
-}
-
-variable "metadata_bucket_arn" {
-  type = string
-  default = ""
 }
 
 variable "stored_as_sub_directories" {
