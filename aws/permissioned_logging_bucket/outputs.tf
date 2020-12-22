@@ -1,5 +1,5 @@
 output "bucket" {
-  value = module.bucket.bucket
+  value = module.bucket
 }
 
 output "cloudfront_logging" {
