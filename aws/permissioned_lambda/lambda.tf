@@ -65,13 +65,13 @@ resource "aws_lambda_function_event_invoke_config" "function_notifications" {
       dynamic "on_failure" {
         for_each = destination_config.value.on_failure
         content {
-          destination = on_failure.value.function_arm
+          destination = on_failure.value.function_arn
         }
       }
       dynamic "on_success" {
-        for_each = destination_config.value.on_failure
+        for_each = destination_config.value.on_success
         content {
-          destination = on_failure.value.function_arm
+          destination = on_success.value.function_arn
         }
       }
     }
