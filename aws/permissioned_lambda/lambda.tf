@@ -1,7 +1,7 @@
 module "lambda_role" {
   source = "../permissioned_role"
   role_name = "${local.scoped_lambda_name}-lambda"
-  role_policy = concat(var.self_invoke.allowed ? local.lambda_invoke : [], var.deny_cloudwatch ? [] : var.log_writer_policy, var.lambda_details.policy_statements)
+  role_policy = concat(length(local.lambda_invoke) > 0 ? local.lambda_invoke : [], var.deny_cloudwatch ? [] : var.log_writer_policy, var.lambda_details.policy_statements)
   principals = [{
     type = "Service"
     identifiers = ["lambda.amazonaws.com"]
@@ -13,14 +13,30 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-  lambda_invoke = [{
+  lambda_invoke = concat([{
     actions   =  [
       "lambda:InvokeFunction"
     ]
     resources = [
       "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.scoped_lambda_name}"
     ]
-  }]
+  }],  
+  length(var.lambda_event_configs) > 0 ? (length(var.lambda_event_configs[0].on_success) > 0 ? [{
+    actions   =  [
+      "lambda:InvokeFunction"
+    ]
+    resources = [
+       var.lambda_event_configs[0].on_success[0].function_arn
+    ]
+  }] : []) : [],
+  length(var.lambda_event_configs) > 0 ? (length(var.lambda_event_configs[0].on_failure) > 0 ? [{
+    actions   =  [
+      "lambda:InvokeFunction"
+    ]
+    resources = [
+       var.lambda_event_configs[0].on_failure[0].function_arn
+    ]
+  }] : []) : [])
 }
 
 data "archive_file" "deployment_package" {
@@ -33,6 +49,31 @@ data "archive_file" "deployment_package" {
     content {
       content  = source.value.file_contents
       filename = source.value.file_name
+    }
+  }
+}
+
+resource "aws_lambda_function_event_invoke_config" "function_notifications" {
+  count = length(var.lambda_event_configs) == 0 ? 0 : 1
+  function_name    = aws_lambda_function.lambda.arn
+  maximum_event_age_in_seconds = var.lambda_event_configs[0].maximum_event_age_in_seconds
+  maximum_retry_attempts = var.lambda_event_configs[0].maximum_retry_attempts
+
+  dynamic "destination_config" {
+    for_each = var.lambda_event_configs
+    content {
+      dynamic "on_failure" {
+        for_each = destination_config.value.on_failure
+        content {
+          destination = on_failure.value.function_arm
+        }
+      }
+      dynamic "on_success" {
+        for_each = destination_config.value.on_failure
+        content {
+          destination = on_failure.value.function_arm
+        }
+      }
     }
   }
 }
