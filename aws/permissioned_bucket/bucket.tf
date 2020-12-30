@@ -10,6 +10,13 @@ resource "aws_s3_bucket" "bucket" {
     }
   }
 
+  dynamic "versioning" {
+    for_each = var.versioning
+    content {
+      enabled = versioning.value.enabled
+    }
+  }
+
   dynamic "cors_rule" {
     for_each = var.cors_rules
     content {

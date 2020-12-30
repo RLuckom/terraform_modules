@@ -1,0 +1,15 @@
+{
+  "name": "photo_deps",
+  "version": "0.0.0",
+  "description": "layer for lambda functions that do stuff with images",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Raphael Luckom",
+  "license": "MIT",
+  "dependencies": {
+    "exifreader": "^3.12.3",
+    "sharp": "^0.26.2"
+  }
+}

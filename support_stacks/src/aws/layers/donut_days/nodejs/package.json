@@ -1,0 +1,21 @@
+{
+  "name": "base_layer",
+  "version": "0.0.0",
+  "description": "base layer for lambda functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Raphael Luckom",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.817.0",
+    "donut-days": "github:RLuckom/donut-days",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.1",
+    "needle": "^2.5.2",
+    "parse-link-header": "^1.0.1",
+    "qs": "^6.9.4",
+    "url-template": "^2.0.8"
+  }
+}

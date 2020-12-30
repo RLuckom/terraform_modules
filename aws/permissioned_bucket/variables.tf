@@ -2,6 +2,13 @@ variable "bucket" {
   type = string
 }
 
+variable versioning {
+  type = list(object({
+    enabled = bool
+  }))
+  default = []
+}
+
 variable "website_configs" {
   type = list(object({
     index_document = string
