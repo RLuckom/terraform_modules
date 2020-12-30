@@ -1,6 +1,7 @@
 resource "aws_s3_bucket" "bucket" {
   bucket = var.bucket
   acl = var.acl
+  request_payer = var.request_payer
   dynamic "website" {
     for_each = var.website_configs
     content {

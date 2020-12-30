@@ -15,6 +15,10 @@ variable "acl" {
   default = "private"
 }
 
+variable request_payer {
+  default = "BucketOwner"
+}
+
 variable cors_rules {
   type = list(object({
     allowed_headers = list(string)
