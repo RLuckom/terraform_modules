@@ -36,6 +36,16 @@ locals {
   }]
 }
 
+resource "random_id" "layer_suffix" {
+  byte_length = 8
+}
+
+module donut_days_layer {
+  count = var.donut_days_layer_arn == "" ? 1 : 0
+  source = "github.com/RLuckom/terraform_modules//aws/layers/donut_days"
+  layer_name = "donut_days_${random_id.layer_suffix.b64_url}"
+}
+
 module "function" {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   timeout_secs = var.timeout_secs
@@ -68,6 +78,6 @@ module "function" {
     )
   }
   layers = concat([
-    var.donut_days_layer_arn,
+    var.donut_days_layer_arn == "" ? module.donut_days_layer[0].layer.arn : var.donut_days_layer_arn,
   ], var.additional_layers)
 }

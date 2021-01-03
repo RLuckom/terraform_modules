@@ -1,5 +1,6 @@
 variable donut_days_layer_arn {
   type = string
+  default = ""
 }
 
 variable config_contents {
