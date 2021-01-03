@@ -1,12 +1,3 @@
-variable donut_days_layer_arn {
-  type = string
-  default = ""
-}
-
-variable config_contents {
-  type = string
-}
-
 variable source_bucket {
   type = string
 }
@@ -18,6 +9,15 @@ variable action_name {
 variable scope_name {
   type = string
   default = ""
+}
+variable donut_days_layer_arn {
+  type = string
+  default = ""
+}
+
+variable config_contents {
+  type = string
+  default = "module.exports = {}"
 }
 
 variable log_bucket {

@@ -21,15 +21,26 @@ function loadHelpers(s) {
   return helpers
 }
 
+function createDatedS3Key(prefix, suffix, date) {
+  date = _.isString(date) ? Date.parse(date) : (date instanceof Date ? date : new Date())
+  const year = date.getUTCFullYear()
+  const month = date.getUTCMonth() + 1
+  const day = date.getUTCDate()
+  const hour = date.getUTCHours()
+  return `${_.trimEnd(prefix, '/')}${prefix ? '/' : ''}year=${year}/month=${month}/day=${day}/hour=${hour}/${suffix || 'undefined'}.log`
+}
+
 function buildLogger(event, context, callback) {
   const logBucket = process.env.LOG_BUCKET
   if (!logBucket) {
     return {callback}
   }
-  const logKey = `${_.trimEnd(process.env.LOG_PREFIX, '/') || ''}${process.env.LOG_PREFIX ? '/' : ''}${_.get(context, 'awsRequestId') || 'undefined'}.log`
+  const logKey = createDatedS3Key(process.env.LOG_PREFIX, _.get(context, 'awsRequestId'))
   const logs = []
   function log(level, message) {
-    logs.push(`${new Date()} ${level} ${message} `)
+    if (process.env.DONUT_DAYS_DEBUG === "true" || level === 'ERROR' || level === "WARN") {
+      logs.push(`${new Date()} ${level} ${message} `)
+    }
   }
   function newCallback(taskErr, taskRes) {
     new AWS.S3().putObject({
