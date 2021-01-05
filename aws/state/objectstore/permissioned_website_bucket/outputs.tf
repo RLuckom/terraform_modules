@@ -1,5 +1,9 @@
 output "bucket" {
-  value = module.bucket
+  value = module.bucket.bucket
+}
+
+output permission_sets {
+  value = module.bucket.permission_sets
 }
 
 output "cloudfront_origin" {

@@ -1,5 +1,5 @@
 module "layer_bucket" {
-  source = "github.com/RLuckom/terraform_modules//aws/permissioned_bucket"
+  source = "github.com/RLuckom/terraform_modules//aws/state/objectstore/permissioned_bucket"
   request_payer = "Requester"
   acl = "public-read"
   versioning = [{
