@@ -5,3 +5,13 @@ variable "bucket_name" {
 variable "include_cookies" {
   default = false
 }
+
+variable partitioned_data_sink {
+  type = list(object({
+    filter_prefix = string
+    filter_suffix = string
+    lambda_arn = string
+    lambda_name = string
+  }))
+  default = []
+}
