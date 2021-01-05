@@ -33,6 +33,15 @@ locals {
         "${aws_s3_bucket.bucket.arn}/*"
       ]
     }]
+    read_and_tag_known = [{
+      actions   =  [
+        "s3:GetObject",
+        "s3:PutObjectTagging",
+      ]
+      resources = [
+        "${aws_s3_bucket.bucket.arn}/*"
+      ]
+    }]
     move_objects_out = [{
       actions   =  [
         "s3:GetObject",
