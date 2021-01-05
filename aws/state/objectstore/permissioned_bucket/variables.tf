@@ -52,9 +52,11 @@ variable "lambda_notifications" {
   type = list(object({
     lambda_arn = string
     lambda_name = string
+    lambda_role_arn = string
     events = list(string)
     filter_prefix = string
     filter_suffix = string
+    permission_type = string
   }))
   default = []
 }
@@ -82,5 +84,5 @@ variable "bucket_policy_statements" {
 }
 
 locals {
-  need_policy = length(concat(var.bucket_policy_statements, var.object_policy_statements)) > 0
+  need_policy = length(concat(var.bucket_policy_statements, var.object_policy_statements, var.lambda_notifications)) > 0
 }

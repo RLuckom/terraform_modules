@@ -3,7 +3,11 @@ output "bucket" {
 }
 
 output "permission_sets" {
-  value = {
+  value = local.permission_sets
+}
+
+locals {
+  permission_sets = {
     athena_query_execution = [{
       actions   =  [
         "s3:GetObject",
@@ -37,6 +41,15 @@ output "permission_sets" {
       ]
       resources = [
         aws_s3_bucket.bucket.arn,
+        "${aws_s3_bucket.bucket.arn}/*"
+      ]
+    }]
+    move_known_object_out = [{
+      actions   =  [
+        "s3:GetObject",
+        "s3:DeleteObject",
+      ]
+      resources = [
         "${aws_s3_bucket.bucket.arn}/*"
       ]
     }]

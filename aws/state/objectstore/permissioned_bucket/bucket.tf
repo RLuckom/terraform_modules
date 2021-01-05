@@ -96,6 +96,20 @@ data "aws_iam_policy_document" "bucket_policy_document" {
       }
     }
   }
+
+  dynamic "statement" {
+    for_each = var.lambda_notifications
+    content {
+      actions   = local.permission_sets[statement.value.permission_type][0].actions
+      resources = [
+        "${aws_s3_bucket.bucket.arn}/${statement.value.filter_prefix}*"
+      ]
+      principals {
+        type = "AWS"
+        identifiers = [statement.value.lambda_role_arn]
+      }
+    }
+  }
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
