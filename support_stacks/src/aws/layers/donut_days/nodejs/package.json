@@ -9,7 +9,7 @@
   "author": "Raphael Luckom",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.817.0",
+    "aws-sdk": "^2.822.0",
     "donut-days": "github:RLuckom/donut-days",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
