@@ -12,7 +12,7 @@ variable scope_name {
 }
 variable donut_days_layer_arn {
   type = string
-  default = ""
+  default = null
 }
 
 variable config_contents {

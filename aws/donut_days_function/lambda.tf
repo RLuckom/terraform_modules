@@ -37,12 +37,12 @@ locals {
 }
 
 resource "random_id" "layer_suffix" {
-  count = var.donut_days_layer_arn == "" ? 1 : 0
+  count = var.donut_days_layer_arn == null ? 1 : 0
   byte_length = 8
 }
 
 module donut_days_layer {
-  count = var.donut_days_layer_arn == "" ? 1 : 0
+  count = var.donut_days_layer_arn == null ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/layers/donut_days"
   layer_name = "donut_days_${random_id.layer_suffix[0].b64_url}"
 }
@@ -79,6 +79,6 @@ module "function" {
     )
   }
   layers = concat([
-    var.donut_days_layer_arn == "" ? module.donut_days_layer[0].layer.arn : var.donut_days_layer_arn,
+    var.donut_days_layer_arn == null ? module.donut_days_layer[0].layer.arn : var.donut_days_layer_arn,
   ], var.additional_layers)
 }

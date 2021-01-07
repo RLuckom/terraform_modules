@@ -37,9 +37,9 @@ function buildLogger(event, context, callback) {
   }
   const logKey = createDatedS3Key(process.env.LOG_PREFIX, _.get(context, 'awsRequestId'))
   const logs = []
-  function log(level, message) {
-    if (process.env.DONUT_DAYS_DEBUG === "true" || level === 'ERROR' || level === "WARN") {
-      logs.push(`${new Date()} ${level} ${message} `)
+  function log(arg) {
+    if (process.env.DONUT_DAYS_DEBUG === "true" || arg.level === 'ERROR' || arg.level === "WARN") {
+      logs.push(JSON.stringify(arg))
     }
   }
   function newCallback(taskErr, taskRes) {
