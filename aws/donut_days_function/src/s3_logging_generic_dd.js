@@ -4,6 +4,7 @@ const config = fs.existsSync('./config.js') ? require('./config') : {}
 const recordCollectors = fs.existsSync('./recordCollectors.js') ? require('./recordCollectors') : {}
 const _ = require('lodash');
 const AWS = require('aws-sdk')
+const zlib = require('zlib')
 
 function loadHelpers(s) {
   const sourcePath = `${__dirname}/${s}`
@@ -21,13 +22,13 @@ function loadHelpers(s) {
   return helpers
 }
 
-function createDatedS3Key(prefix, suffix, date) {
+function createDatedS3Key(prefix, scope, action, requestId, date) {
   date = _.isString(date) ? Date.parse(date) : (date instanceof Date ? date : new Date())
   const year = date.getUTCFullYear()
   const month = date.getUTCMonth() + 1
   const day = date.getUTCDate()
   const hour = date.getUTCHours()
-  return `${_.trimEnd(prefix, '/')}${prefix ? '/' : ''}year=${year}/month=${month}/day=${day}/hour=${hour}/${suffix || 'undefined'}.log`
+  return `${_.trimEnd(prefix, '/')}${prefix !== "" ? "/" : ""}year=${year}/month=${month}/day=${day}/hour=${hour}/scope=${scope}/action=${action}/${requestId || 'undefined'}.gz`
 }
 
 function buildLogger(event, context, callback) {
@@ -35,7 +36,7 @@ function buildLogger(event, context, callback) {
   if (!logBucket) {
     return {callback}
   }
-  const logKey = createDatedS3Key(process.env.LOG_PREFIX, _.get(context, 'awsRequestId'))
+  const logKey = createDatedS3Key(process.env.LOG_PREFIX, process.env.SCOPE, process.env.ACTION, _.get(context, 'awsRequestId'))
   const logs = []
   function log(arg) {
     if (process.env.DONUT_DAYS_DEBUG === "true" || arg.level === 'ERROR' || arg.level === "WARN") {
@@ -44,7 +45,7 @@ function buildLogger(event, context, callback) {
   }
   function newCallback(taskErr, taskRes) {
     new AWS.S3().putObject({
-      Body: logs.join("\n"),
+      Body: zlib.gzipSync(logs.join("\n")),
       Bucket: logBucket,
       Key: logKey,
     }, (e, r) => {

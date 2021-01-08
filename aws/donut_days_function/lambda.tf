@@ -31,7 +31,7 @@ locals {
       "s3:PutObject"
     ]
     resources = [
-      "arn:aws:s3:::${var.log_bucket}/${var.log_prefix == "" ? "${var.action_name}${var.scope_name == "" ? "" : "/"}${var.scope_name}" : var.log_prefix}/*"
+      "arn:aws:s3:::${var.log_bucket}/${var.log_prefix == "" ? "" : "${var.log_prefix}/"}*"
     ]
   }]
 }
@@ -54,7 +54,9 @@ module "function" {
   environment_var_map = merge({
     DONUT_DAYS_DEBUG = var.debug
     LOG_BUCKET = var.log_bucket
-    LOG_PREFIX = var.log_prefix == "" ? "${var.action_name}${var.scope_name == "" ? "" : "/"}${var.scope_name}" : var.log_prefix
+    LOG_PREFIX = var.log_prefix
+    ACTION = var.action_name
+    SCOPE = var.scope_name
   }, var.environment_var_map)
   invoking_principals = var.invoking_principals
   self_invoke = var.self_invoke
