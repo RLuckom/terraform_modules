@@ -1,14 +1,18 @@
 variable "bucket_name" {
   type = string
+  default = ""
 }
 
-variable "origin_id" {
-  type = string
-}
-
-variable "allowed_origins" {
+variable additional_allowed_origins {
   type = list(string)
   default = []
+}
+
+variable domain_parts {
+  type = object({
+    top_level_domain = string
+    controlled_domain_part = string
+  })
 }
 
 variable "lambda_notifications" {

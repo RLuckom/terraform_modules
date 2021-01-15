@@ -1,6 +1,13 @@
+locals {
+  domain_name = "${trimsuffix(var.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.domain_parts.top_level_domain, ".")}"
+  bucket_name = var.bucket_name == "" ? local.domain_name : var.bucket_name
+  top_level_domain = trimprefix(var.domain_parts.top_level_domain, ".")
+  controlled_domain_part = trimsuffix(var.domain_parts.controlled_domain_part, ".")
+}
+
 module "bucket" {
   source = "../permissioned_bucket"
-  bucket = var.bucket_name
+  bucket = var.bucket_name == "" ? local.domain_name : var.bucket_name
   acl    = "public-read"
 
   website_configs = [{
@@ -11,7 +18,7 @@ module "bucket" {
   cors_rules =[{
     allowed_headers = ["*"]
     allowed_methods = ["GET", "HEAD"]
-    allowed_origins = var.allowed_origins == [] ? ["https://${var.bucket_name}"] : var.allowed_origins
+    allowed_origins = concat(["https://${local.domain_name}"], var.additional_allowed_origins)
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
   }]
