@@ -23,7 +23,7 @@ module "site_render" {
   timeout_secs = 40
   mem_mb = 256
   debug = var.debug
-  config_contents = templatefile("${path.root}/functions/configs/render_markdown_to_html/config.js",
+  config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
     {
       website_bucket = var.site_bucket
       domain_name = local.domain_name
@@ -33,11 +33,11 @@ module "site_render" {
   additional_helpers = [
     {
       helper_name = "render.js"
-      file_contents = file("${path.root}/functions/libraries/src/helpers/render.js")
+      file_contents = file("${path.module}/src/helpers/render.js")
     },
     {
       helper_name = "idUtils.js"
-      file_contents = file("${path.root}/functions/libraries/src/helpers/idUtils.js")
+      file_contents = file("${path.module}/src/helpers/idUtils.js")
     },
   ]
   lambda_event_configs = var.lambda_event_configs
@@ -59,7 +59,7 @@ module "deletion_cleanup" {
   mem_mb = 128
   debug = var.debug
   log_bucket = var.lambda_logging_bucket
-  config_contents = templatefile("${path.root}/functions/configs/deletion_cleanup/config.js",
+  config_contents = templatefile("${path.module}/src/configs/deletion_cleanup.js",
   {
     website_bucket = var.site_bucket
     domain_name = local.domain_name
@@ -69,7 +69,7 @@ module "deletion_cleanup" {
   additional_helpers = [
     {
       helper_name = "idUtils.js"
-      file_contents = file("${path.root}/functions/libraries/src/helpers/idUtils.js")
+      file_contents = file("${path.module}/src/helpers/idUtils.js")
     },
   ]
   lambda_event_configs = var.lambda_event_configs
@@ -91,7 +91,7 @@ module "trails_updater" {
   mem_mb = 192
   debug = var.debug
   log_bucket = var.lambda_logging_bucket
-  config_contents = templatefile("${path.root}/functions/configs/update_trails/config.js",
+  config_contents = templatefile("${path.module}/src/configs/update_trails.js",
     {
       table = var.trails_table.name,
       reverse_association_index = "reverseDependencyIndex"
@@ -103,11 +103,11 @@ module "trails_updater" {
   additional_helpers = [
     {
       helper_name = "idUtils.js"
-      file_contents = file("${path.root}/functions/libraries/src/helpers/idUtils.js")
+      file_contents = file("${path.module}/src/helpers/idUtils.js")
     },
     {
       helper_name = "trails.js"
-      file_contents = file("${path.root}/functions/libraries/src/trails.js")
+      file_contents = file("${path.module}/src/helpers/trails.js")
     },
   ]
   lambda_event_configs = var.lambda_event_configs
@@ -182,7 +182,7 @@ module "trails_resolver" {
   mem_mb = 128
   debug = var.debug
   log_bucket = var.lambda_logging_bucket
-  config_contents = templatefile("${path.root}/functions/configs/two_way_resolver/config.js",
+  config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
   {
     table = var.trails_table.name
     forward_key_type = "trailName"
