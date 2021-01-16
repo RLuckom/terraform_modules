@@ -25,15 +25,6 @@ locals {
     file_name = "dependencyHelpers/${trimsuffix(helper.helper_name, ".js")}.js"
     file_contents = helper.file_contents
   }]
-
-  log_bucket_put_permission = [{
-    actions   =  [
-      "s3:PutObject"
-    ]
-    resources = [
-      "arn:aws:s3:::${var.log_bucket}/${var.log_prefix == "" ? "" : "${var.log_prefix}/"}*"
-    ]
-  }]
 }
 
 resource "random_id" "layer_suffix" {
@@ -47,14 +38,14 @@ module donut_days_layer {
   layer_name = "donut_days_${random_id.layer_suffix[0].b64_url}"
 }
 
-module "function" {
+module function {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   timeout_secs = var.timeout_secs
   mem_mb = var.mem_mb
   environment_var_map = merge({
-    DONUT_DAYS_DEBUG = var.debug
-    LOG_BUCKET = var.log_bucket
-    LOG_PREFIX = var.log_prefix
+    DONUT_DAYS_DEBUG = var.logging_config.debug
+    LOG_BUCKET = var.logging_config.bucket
+    LOG_PREFIX = var.logging_config.prefix
     ACTION = var.action_name
     SCOPE = var.scope_name
   }, var.environment_var_map)
@@ -69,16 +60,13 @@ module "function" {
   bucket_notifications = var.bucket_notifications
   cron_notifications = var.cron_notifications
   queue_event_sources = var.queue_event_sources
-  deny_cloudwatch = var.log_bucket == "" ? false : false
+  deny_cloudwatch = var.logging_config.bucket == "" ? false : false
   reserved_concurrent_executions = var.reserved_concurrent_executions
   lambda_details = {
     action_name = var.action_name
     scope_name = var.scope_name
     bucket = var.source_bucket
-    policy_statements = concat(
-      var.policy_statements,
-      var.log_bucket == "" ? [] : local.log_bucket_put_permission,
-    )
+    policy_statements = var.policy_statements
   }
   layers = concat([
     var.donut_days_layer_arn == null ? module.donut_days_layer[0].layer.arn : var.donut_days_layer_arn,

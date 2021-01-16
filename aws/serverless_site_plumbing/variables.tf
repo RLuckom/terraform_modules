@@ -11,9 +11,6 @@ variable domain_parts {
 }
 
 // state & permission vars
-variable lambda_logging_bucket {
-  type = string
-}
 
 variable site_logging_bucket {
   type = string
@@ -44,12 +41,65 @@ variable trails_table {
 }
 
 // configuration vars
-variable include_cookies_in_logging {
-  default = false
+variable default_lambda_logging_config {
+  type = object({
+    bucket = string
+    prefix = string
+    debug = bool
+  })
+  default = {
+    bucket = ""
+    prefix = ""
+    debug = false
+  }
 }
 
-variable debug {
-  default = true
+variable render_function_logging_config {
+  type = list(object({
+    bucket = string
+    prefix = string
+    debug = bool
+  }))
+  default = []
+}
+
+variable deletion_cleanup_function_logging_config {
+  type = list(object({
+    bucket = string
+    prefix = string
+    debug = bool
+  }))
+  default = []
+}
+
+variable trails_resolver_function_logging_config {
+  type = list(object({
+    bucket = string
+    prefix = string
+    debug = bool
+  }))
+  default = []
+}
+
+variable trails_updater_function_logging_config {
+  type = list(object({
+    bucket = string
+    prefix = string
+    debug = bool
+  }))
+  default = []
+}
+
+locals {
+  default_lambda_logging_config = var.default_lambda_logging_config
+  render_function_logging_config = length(var.render_function_logging_config) == 1 ? var.render_function_logging_config[0] : local.default_lambda_logging_config
+  trails_updater_function_logging_config = length(var.trails_updater_function_logging_config) == 1 ? var.trails_updater_function_logging_config[0] : local.default_lambda_logging_config
+  trails_resolver_function_logging_config = length(var.trails_resolver_function_logging_config) == 1 ? var.trails_resolver_function_logging_config[0] : local.default_lambda_logging_config
+  deletion_cleanup_function_logging_config = length(var.deletion_cleanup_function_logging_config) == 1 ? var.deletion_cleanup_function_logging_config[0] : local.default_lambda_logging_config
+}
+
+variable include_cookies_in_logging {
+  default = false
 }
 
 variable subject_alternative_names {

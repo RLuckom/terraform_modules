@@ -20,19 +20,17 @@ variable config_contents {
   default = "module.exports = {}"
 }
 
-variable log_bucket {
-  type = string
-  default = ""
-}
-
-variable log_prefix {
-  type = string
-  default = ""
-}
-
-variable debug {
-  type = bool
-  default = false
+variable logging_config {
+  type = object({
+    bucket = string
+    prefix = string
+    debug = bool
+  })
+  default = {
+    bucket = ""
+    prefix = ""
+    debug = false
+  }
 }
 
 variable additional_layers {

@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "bucket_policy_document" {
     for_each = var.object_policy_statements
     content {
       actions   = statement.value.actions
-      resources   = ["${aws_s3_bucket.bucket.arn}/*"]
+      resources   = ["${aws_s3_bucket.bucket.arn}/${statement.value.prefix == "" ? "" : "${statement.value.prefix}/"}*"]
       dynamic "principals" {
         for_each = statement.value.principals
         content {

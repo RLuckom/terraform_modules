@@ -18,11 +18,11 @@ locals {
   }]
 }
 
-module "site_render" {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+module site_render {
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
   timeout_secs = 40
   mem_mb = 256
-  debug = var.debug
+  logging_config = local.render_function_logging_config
   config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
     {
       website_bucket = var.site_bucket
@@ -53,12 +53,11 @@ module "site_render" {
   ]
 }
 
-module "deletion_cleanup" {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+module deletion_cleanup {
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
   timeout_secs = 40
   mem_mb = 128
-  debug = var.debug
-  log_bucket = var.lambda_logging_bucket
+  logging_config = local.deletion_cleanup_function_logging_config
   config_contents = templatefile("${path.module}/src/configs/deletion_cleanup.js",
   {
     website_bucket = var.site_bucket
@@ -85,12 +84,11 @@ module "deletion_cleanup" {
   ]
 }
 
-module "trails_updater" {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+module trails_updater {
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
   timeout_secs = 40
   mem_mb = 192
-  debug = var.debug
-  log_bucket = var.lambda_logging_bucket
+  logging_config = local.trails_updater_function_logging_config
   config_contents = templatefile("${path.module}/src/configs/update_trails.js",
     {
       table = var.trails_table.name,
@@ -176,12 +174,11 @@ resource "aws_s3_bucket_object" "site_description" {
   etag = md5(var.site_description_content)
 }
 
-module "trails_resolver" {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+module trails_resolver {
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
   timeout_secs = 40
   mem_mb = 128
-  debug = var.debug
-  log_bucket = var.lambda_logging_bucket
+  logging_config = local.trails_resolver_function_logging_config
   config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
   {
     table = var.trails_table.name
