@@ -23,12 +23,17 @@ module "bucket" {
     max_age_seconds = 3000
   }]
 
-  object_policy_statements = [{
-    actions = ["s3:GetObject", "s3:GetObjectVersion"]
-    principals = [{
-      type = "*"
-      identifiers = ["*"]
+  object_policy_statements = concat(
+    var.object_policy_statements, 
+    [{
+      actions = ["s3:GetObject", "s3:GetObjectVersion"]
+      prefix = ""
+      principals = [{
+        type = "*"
+        identifiers = ["*"]
+      }]
     }]
-  }]
+  )
   lambda_notifications = var.lambda_notifications
+  bucket_policy_statements = var.bucket_policy_statements
 }

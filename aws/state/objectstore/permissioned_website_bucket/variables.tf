@@ -27,3 +27,26 @@ variable "lambda_notifications" {
   }))
   default = []
 }
+
+variable "object_policy_statements" {
+  type = list(object({
+    actions = list(string)
+    prefix = string
+    principals = list(object({
+      type = string
+      identifiers = list(string)
+    }))
+  }))
+  default = []
+}
+
+variable "bucket_policy_statements" {
+  type = list(object({
+    actions = list(string)
+    principals = list(object({
+      type = string
+      identifiers = list(string)
+    }))
+  }))
+  default = []
+}
