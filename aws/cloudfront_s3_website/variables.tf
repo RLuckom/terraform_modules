@@ -6,7 +6,7 @@ variable "domain_name" {
   type = string
 }
 
-variable "domain_name_prefix" {
+variable "controlled_domain_part" {
   type = string
 }
 
@@ -79,7 +79,8 @@ variable website_buckets {
 variable logging_config {
   type = object({
     include_cookies = bool
-    bucket_id = string
+    bucket = string
+    prefix = string
   })
 }
 

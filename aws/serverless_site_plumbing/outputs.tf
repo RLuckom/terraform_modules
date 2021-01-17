@@ -29,3 +29,7 @@ output trails_updater_function {
     role_arn = module.trails_updater.role.arn
   }
 }
+
+output cloudfront_log_delivery_identity {
+  value = module.site.origin_access_identity
+}

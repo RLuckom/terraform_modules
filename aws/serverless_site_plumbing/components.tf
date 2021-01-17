@@ -125,15 +125,12 @@ module trails_updater {
 }
 
 module "site" {
-  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=hoist-bucket-permissions"
   website_buckets = [{
     origin_id = local.controlled_domain_part
     regional_domain_name = "${var.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
   }]
-  logging_config = {
-    bucket_id = var.site_logging_bucket
-    include_cookies = var.include_cookies_in_logging
-  }
+  logging_config = var.site_logging_config 
   lambda_origins = [{
     id = "trails"
     path = "/meta/relations/trails"
@@ -161,7 +158,7 @@ module "site" {
   route53_zone_name = var.route53_zone_name
   domain_name = local.domain_name
   no_cache_s3_path_patterns = [ "/site_description.json" ]
-  domain_name_prefix = local.controlled_domain_part
+  controlled_domain_part = local.controlled_domain_part
   subject_alternative_names = var.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }

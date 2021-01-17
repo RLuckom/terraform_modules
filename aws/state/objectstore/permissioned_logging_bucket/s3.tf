@@ -1,7 +1,7 @@
 module "bucket" {
   source = "github.com/RLuckom/terraform_modules//aws/state/objectstore/permissioned_bucket?ref=hoist-bucket-permissions"
   bucket = var.bucket_name
-  acl    = "log-delivery-write"
+  acl    = "private"
   lambda_notifications = [for sink in var.partitioned_data_sink : {
     lambda_arn = sink.lambda_arn
     lambda_name = sink.lambda_name

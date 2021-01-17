@@ -1,9 +1,9 @@
 locals {
-  s3_origin_id = var.domain_name_prefix
+  s3_origin_id = var.controlled_domain_part
 }
 
 resource "aws_cloudfront_origin_access_identity" "cloudfront_logging_access_id" {
-  comment = "access identity for cloudfront to ${var.domain_name_prefix} bucket"
+  comment = "access identity for cloudfront to ${var.controlled_domain_part} bucket"
 }
 
 resource "aws_cloudfront_distribution" "website_distribution" {
@@ -42,8 +42,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
 
   logging_config {
     include_cookies = var.logging_config.include_cookies
-    bucket          = "${var.logging_config.bucket_id}.s3.amazonaws.com"
-    prefix          = var.domain_name_prefix
+    bucket          = "${var.logging_config.bucket}.s3.amazonaws.com"
+    prefix          = var.logging_config.prefix
   }
 
   aliases = concat([var.domain_name], var.subject_alternative_names)

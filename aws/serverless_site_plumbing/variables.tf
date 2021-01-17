@@ -12,8 +12,12 @@ variable domain_parts {
 
 // state & permission vars
 
-variable site_logging_bucket {
-  type = string
+variable site_logging_config {
+  type = object({
+    include_cookies = bool
+    bucket = string
+    prefix = string
+  })
 }
 
 variable site_bucket {
@@ -96,10 +100,6 @@ locals {
   trails_updater_function_logging_config = length(var.trails_updater_function_logging_config) == 1 ? var.trails_updater_function_logging_config[0] : local.default_lambda_logging_config
   trails_resolver_function_logging_config = length(var.trails_resolver_function_logging_config) == 1 ? var.trails_resolver_function_logging_config[0] : local.default_lambda_logging_config
   deletion_cleanup_function_logging_config = length(var.deletion_cleanup_function_logging_config) == 1 ? var.deletion_cleanup_function_logging_config[0] : local.default_lambda_logging_config
-}
-
-variable include_cookies_in_logging {
-  default = false
 }
 
 variable subject_alternative_names {
