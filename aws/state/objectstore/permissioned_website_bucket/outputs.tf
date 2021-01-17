@@ -2,10 +2,6 @@ output "bucket" {
   value = module.bucket.bucket
 }
 
-output permission_sets {
-  value = module.bucket.permission_sets
-}
-
 output "cloudfront_origin" {
   value = {
     origin_id = local.bucket_name
