@@ -6,6 +6,17 @@ output render_function {
   }
 }
 
+output functions {
+  values = zipmap(
+    [for name in ["render", "trails_updater", "trails_resolver", "deletion_cleanup"] : "${var.purpose_descriptor}-${name}"],
+    [for name in ["render", "trails_updater", "trails_resolver", "deletion_cleanup"] : {
+      scope = var.purpose_descriptor
+      action = name
+      region = local.passthroughs[name].region
+    }]
+  )
+}
+
 output deletion_cleanup_function {
   value = {
     arn = module.deletion_cleanup.lambda.arn

@@ -14,7 +14,6 @@ variable domain_parts {
 
 variable site_logging_config {
   type = object({
-    include_cookies = bool
     bucket = string
     prefix = string
   })
@@ -49,12 +48,10 @@ variable default_lambda_logging_config {
   type = object({
     bucket = string
     prefix = string
-    debug = bool
   })
   default = {
     bucket = ""
     prefix = ""
-    debug = false
   }
 }
 
@@ -62,7 +59,6 @@ variable render_function_logging_config {
   type = list(object({
     bucket = string
     prefix = string
-    debug = bool
   }))
   default = []
 }
@@ -71,7 +67,6 @@ variable deletion_cleanup_function_logging_config {
   type = list(object({
     bucket = string
     prefix = string
-    debug = bool
   }))
   default = []
 }
@@ -80,7 +75,6 @@ variable trails_resolver_function_logging_config {
   type = list(object({
     bucket = string
     prefix = string
-    debug = bool
   }))
   default = []
 }
@@ -89,9 +83,18 @@ variable trails_updater_function_logging_config {
   type = list(object({
     bucket = string
     prefix = string
-    debug = bool
   }))
   default = []
+}
+
+variable default_log_level {
+  type =  bool
+  default = false
+}
+
+variable individual_log_levels {
+  type = map(bool)
+  default = {}
 }
 
 locals {
@@ -100,6 +103,20 @@ locals {
   trails_updater_function_logging_config = length(var.trails_updater_function_logging_config) == 1 ? var.trails_updater_function_logging_config[0] : local.default_lambda_logging_config
   trails_resolver_function_logging_config = length(var.trails_resolver_function_logging_config) == 1 ? var.trails_resolver_function_logging_config[0] : local.default_lambda_logging_config
   deletion_cleanup_function_logging_config = length(var.deletion_cleanup_function_logging_config) == 1 ? var.deletion_cleanup_function_logging_config[0] : local.default_lambda_logging_config
+  passthroughs = {
+    render = {
+      region = local.render_function_region
+    }
+    trails_updater = {
+      region = local.trails_updater_function_region
+    }
+    trails_resolver = {
+      region = local.trails_updater_function_region
+    }
+    deletion_cleanup = {
+      region = local.deletion_cleanup_function_region
+    }
+  }
 }
 
 variable subject_alternative_names {
