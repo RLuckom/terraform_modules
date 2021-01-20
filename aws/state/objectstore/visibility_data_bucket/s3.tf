@@ -10,6 +10,7 @@ locals {
     ]
   }]
 }
+
 module "bucket" {
   source = "github.com/RLuckom/terraform_modules//aws/state/objectstore/permissioned_bucket"
   bucket = var.bucket_name

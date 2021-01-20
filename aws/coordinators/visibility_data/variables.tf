@@ -77,8 +77,8 @@ locals {
   cloudfront_log_archive_routes = [ for k, v in var.cloudfront_distributions : {
     delivery_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
     archive_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
-    log_delivery_bucket = local.cloudfront_delivery_bucket
-    log_partition_bucket = local.visibility_data_bucket
+    delivery_bucket = local.cloudfront_delivery_bucket
+    archive_bucket = local.visibility_data_bucket
   }]
   athena_table_spaces = zipmap(
     [ for scope in var.scopes : scope ],

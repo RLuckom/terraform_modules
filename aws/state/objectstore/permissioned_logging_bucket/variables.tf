@@ -1,3 +1,11 @@
+variable move_objects_out_permissions {
+  type = list(object({
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable bucket_name {
   type = string
 }

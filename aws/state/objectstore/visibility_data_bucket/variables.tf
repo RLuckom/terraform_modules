@@ -1,3 +1,11 @@
+variable prefix_put_permissions {
+  type = list(object({
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable bucket_name {
   type = string
 }
@@ -42,14 +50,6 @@ variable bucket_policy_statements {
       type = string
       identifiers = list(string)
     }))
-  }))
-  default = []
-}
-
-variable prefix_put_permissions {
-  type = list(object({
-    prefix = string
-    arns = list(string)
   }))
   default = []
 }
