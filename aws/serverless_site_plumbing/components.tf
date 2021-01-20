@@ -2,31 +2,29 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 locals {
-  domain_name = "${trimsuffix(var.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.domain_parts.top_level_domain, ".")}"
-  controlled_domain_part = trimsuffix(var.domain_parts.controlled_domain_part, ".")
-  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${var.purpose_descriptor}"
-  render_name = "site_render-${var.purpose_descriptor}"
-  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${var.purpose_descriptor}"
-  deletion_cleanup_name = "deletion_cleanup-${var.purpose_descriptor}"
+  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${var.coordinator_data.scope}"
+  render_name = "site_render-${var.coordinator_data.scope}"
+  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${var.coordinator_data.scope}"
+  deletion_cleanup_name = "deletion_cleanup-${var.coordinator_data.scope}"
   render_invoke_permission = [{
     actions   =  [
       "lambda:InvokeFunction"
     ]
     resources = [
-      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${var.purpose_descriptor}",
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${var.coordinator_data.scope}",
     ]
   }]
 }
 
 module site_render {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 256
-  logging_config = local.render_function_logging_config
+  logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
     {
       website_bucket = var.site_bucket
-      domain_name = local.domain_name
+      domain_name = var.coordinator_data.domain
       site_description_path = "site_description.json"
       dependency_update_function = module.trails_updater.lambda.arn
     })
@@ -42,7 +40,7 @@ module site_render {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "site_render"
-  scope_name = var.purpose_descriptor
+  scope_name = var.coordinator_data.scope
   source_bucket = var.lambda_bucket
   policy_statements =  concat(
     module.trails_updater.permission_sets.invoke
@@ -54,14 +52,14 @@ module site_render {
 }
 
 module deletion_cleanup {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 128
-  logging_config = local.deletion_cleanup_function_logging_config
+  logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/deletion_cleanup.js",
   {
     website_bucket = var.site_bucket
-    domain_name = local.domain_name
+    domain_name = var.coordinator_data.domain
     site_description_path = "site_description.json"
     dependency_update_function = module.trails_updater.lambda.arn
   }) 
@@ -73,7 +71,7 @@ module deletion_cleanup {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "deletion_cleanup"
-  scope_name = var.purpose_descriptor
+  scope_name = var.coordinator_data.scope
   source_bucket = var.lambda_bucket
   policy_statements =  concat(
     module.trails_updater.permission_sets.invoke
@@ -85,15 +83,15 @@ module deletion_cleanup {
 }
 
 module trails_updater {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 192
-  logging_config = local.trails_updater_function_logging_config
+  logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/update_trails.js",
     {
       table = var.trails_table.name,
       reverse_association_index = "reverseDependencyIndex"
-      domain_name = local.domain_name
+      domain_name = var.coordinator_data.domain
       site_description_path = "site_description.json"
       render_function = local.render_arn
       self_type = "relations.meta.trail"
@@ -110,7 +108,7 @@ module trails_updater {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_updater"
-  scope_name = var.purpose_descriptor
+  scope_name = var.coordinator_data.scope
   source_bucket = var.lambda_bucket
   policy_statements = concat(
     local.render_invoke_permission,
@@ -125,12 +123,12 @@ module trails_updater {
 }
 
 module "site" {
-  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=hoist-bucket-permissions"
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=tape-deck-storage"
   website_buckets = [{
-    origin_id = local.controlled_domain_part
+    origin_id = var.coordinator_data.domain_parts.controlled_domain_part
     regional_domain_name = "${var.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
   }]
-  logging_config = var.site_logging_config 
+  logging_config = local.cloudfront_logging_config
   lambda_origins = [{
     id = "trails"
     path = "/meta/relations/trails"
@@ -156,9 +154,9 @@ module "site" {
     }
   }]
   route53_zone_name = var.route53_zone_name
-  domain_name = local.domain_name
+  domain_name = var.coordinator_data.domain
   no_cache_s3_path_patterns = [ "/site_description.json" ]
-  controlled_domain_part = local.controlled_domain_part
+  controlled_domain_part = var.coordinator_data.domain_parts.controlled_domain_part
   subject_alternative_names = var.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }
@@ -175,7 +173,7 @@ module trails_resolver {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
   timeout_secs = 40
   mem_mb = 128
-  logging_config = local.trails_resolver_function_logging_config
+  logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
   {
     table = var.trails_table.name
@@ -185,7 +183,7 @@ module trails_resolver {
   })
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_resolver"
-  scope_name = var.purpose_descriptor
+  scope_name = var.coordinator_data.scope
   policy_statements = concat(
     var.trails_table.permission_sets.read,
   )

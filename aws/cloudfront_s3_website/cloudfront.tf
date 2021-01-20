@@ -41,7 +41,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   default_root_object = "index.html"
 
   logging_config {
-    include_cookies = var.logging_config.include_cookies
+    include_cookies = var.log_cookies
     bucket          = "${var.logging_config.bucket}.s3.amazonaws.com"
     prefix          = var.logging_config.prefix
   }

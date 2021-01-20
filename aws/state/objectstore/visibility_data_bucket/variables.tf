@@ -46,26 +46,10 @@ variable bucket_policy_statements {
   default = []
 }
 
-variable cloudfront_distributions {
+variable prefix_put_permissions {
   type = list(object({
     prefix = string
-    role_arn = string
-  }))
-  default = []
-}
-
-variable athena_table_spaces {
-  type = list(object({
-    prefix = string
-    role_arn = string
-  }))
-  default = []
-}
-
-variable lambdas {
-  type = list(object({
-    prefix = string
-    role_arn = string
+    arns = list(string)
   }))
   default = []
 }

@@ -1,3 +1,12 @@
+output logging_lambda_role_arns {
+  value = [
+    module.site_render.role.arn,
+    module.deletion_cleanup.role.arn,
+    module.trails_resolver.role.arn,
+    module.trails_updater.role.arn,
+  ]
+}
+
 output render_function {
   value = {
     arn = module.site_render.lambda.arn
@@ -7,12 +16,11 @@ output render_function {
 }
 
 output functions {
-  values = zipmap(
-    [for name in ["render", "trails_updater", "trails_resolver", "deletion_cleanup"] : "${var.purpose_descriptor}-${name}"],
+  value = zipmap(
+    [for name in ["render", "trails_updater", "trails_resolver", "deletion_cleanup"] : "${var.coordinator_data.scope}-${name}"],
     [for name in ["render", "trails_updater", "trails_resolver", "deletion_cleanup"] : {
-      scope = var.purpose_descriptor
+      scope = var.coordinator_data.scope
       action = name
-      region = local.passthroughs[name].region
     }]
   )
 }

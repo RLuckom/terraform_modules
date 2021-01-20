@@ -1,22 +1,29 @@
-// Identifying vars
-variable purpose_descriptor {
-  type = string
-}
-
-variable domain_parts {
+variable coordinator_data {
   type = object({
-    top_level_domain = string
-    controlled_domain_part = string
+    domain = string
+    lambda_source_bucket = string
+    lambda_log_prefix = string
+    cloudfront_log_prefix = string
+    log_delivery_bucket = string
+    log_partition_bucket = string
+    scope = string
+    domain_parts = object({
+      top_level_domain = string
+      controlled_domain_part = string
+    })
   })
 }
 
-// state & permission vars
-
-variable site_logging_config {
-  type = object({
-    bucket = string
-    prefix = string
-  })
+locals {
+  lambda_logging_config = {
+    debug = var.default_log_level
+    bucket = var.coordinator_data.log_partition_bucket
+    prefix = var.coordinator_data.lambda_log_prefix
+  }
+  cloudfront_logging_config = {
+    bucket = var.coordinator_data.log_delivery_bucket
+    prefix = var.coordinator_data.cloudfront_log_prefix
+  }
 }
 
 variable site_bucket {
@@ -44,39 +51,8 @@ variable trails_table {
 }
 
 // configuration vars
-variable default_lambda_logging_config {
-  type = object({
-    bucket = string
-    prefix = string
-  })
-  default = {
-    bucket = ""
-    prefix = ""
-  }
-}
-
-variable render_function_logging_config {
-  type = list(object({
-    bucket = string
-    prefix = string
-  }))
-  default = []
-}
-
-variable deletion_cleanup_function_logging_config {
-  type = list(object({
-    bucket = string
-    prefix = string
-  }))
-  default = []
-}
-
-variable trails_resolver_function_logging_config {
-  type = list(object({
-    bucket = string
-    prefix = string
-  }))
-  default = []
+variable log_level {
+  default = false
 }
 
 variable trails_updater_function_logging_config {
@@ -95,28 +71,6 @@ variable default_log_level {
 variable individual_log_levels {
   type = map(bool)
   default = {}
-}
-
-locals {
-  default_lambda_logging_config = var.default_lambda_logging_config
-  render_function_logging_config = length(var.render_function_logging_config) == 1 ? var.render_function_logging_config[0] : local.default_lambda_logging_config
-  trails_updater_function_logging_config = length(var.trails_updater_function_logging_config) == 1 ? var.trails_updater_function_logging_config[0] : local.default_lambda_logging_config
-  trails_resolver_function_logging_config = length(var.trails_resolver_function_logging_config) == 1 ? var.trails_resolver_function_logging_config[0] : local.default_lambda_logging_config
-  deletion_cleanup_function_logging_config = length(var.deletion_cleanup_function_logging_config) == 1 ? var.deletion_cleanup_function_logging_config[0] : local.default_lambda_logging_config
-  passthroughs = {
-    render = {
-      region = local.render_function_region
-    }
-    trails_updater = {
-      region = local.trails_updater_function_region
-    }
-    trails_resolver = {
-      region = local.trails_updater_function_region
-    }
-    deletion_cleanup = {
-      region = local.deletion_cleanup_function_region
-    }
-  }
 }
 
 variable subject_alternative_names {

@@ -78,10 +78,14 @@ variable website_buckets {
 
 variable logging_config {
   type = object({
-    include_cookies = bool
     bucket = string
     prefix = string
   })
+}
+
+variable log_cookies {
+  type = bool
+  default = false
 }
 
 locals {
