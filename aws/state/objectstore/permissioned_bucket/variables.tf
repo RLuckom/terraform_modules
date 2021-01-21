@@ -48,7 +48,7 @@ variable lifecycle_rules {
   default = []
 }
 
-variable "lambda_notifications" {
+variable lambda_notifications {
   type = list(object({
     lambda_arn = string
     lambda_name = string

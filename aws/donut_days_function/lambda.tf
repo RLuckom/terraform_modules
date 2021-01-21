@@ -43,7 +43,7 @@ module function {
   timeout_secs = var.timeout_secs
   mem_mb = var.mem_mb
   environment_var_map = merge({
-    DONUT_DAYS_DEBUG = var.logging_config.debug
+    DONUT_DAYS_DEBUG = var.log_level
     LOG_BUCKET = var.logging_config.bucket
     LOG_PREFIX = var.logging_config.prefix
     ACTION = var.action_name

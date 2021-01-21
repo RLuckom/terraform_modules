@@ -23,7 +23,7 @@ variable scopes {
   default = []
 }
 
-variable cloudfront_distributions {
+variable serverless_site_configs {
   type = map(object({
     top_level_domain = string
     controlled_domain_part = string
@@ -42,6 +42,11 @@ variable athena_prefix {
   default = "athena"
 }
 
+variable athena_region {
+  type = string
+  default = "us-east-1"
+}
+
 variable cloudfront_prefix {
   type = string
   default = "cloudfront-logs"
@@ -54,39 +59,81 @@ variable lambda_prefix {
 
 data aws_caller_identity current {}
 
-locals {
-  cloudfront_prefix = trim(var.cloudfront_prefix, "/")
-  athena_prefix = trim(var.cloudfront_prefix, "/")
-  lambda_prefix = trim(var.cloudfront_prefix, "/")
+module column_schemas {
+  source = "github.com/RLuckom/terraform_modules//aws/common_log_schemas"
 }
 
 locals {
-  cloudfront_distributions = zipmap(
-    [ for k in keys(var.cloudfront_distributions) : k ],
-    [ for k, v in var.cloudfront_distributions : {
+  cloudfront_prefix = trim(var.cloudfront_prefix, "/")
+  athena_prefix = trim(var.athena_prefix, "/")
+  lambda_prefix = trim(var.lambda_prefix, "/")
+}
+
+locals {
+  serverless_site_configs = zipmap(
+    [ for k in keys(var.serverless_site_configs) : k ],
+    [ for k, v in var.serverless_site_configs : {
       domain = "${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}"
-      cloudfront_log_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+      cloudfront_log_delivery_prefix = "${local.cloudfront_prefix}/${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+      cloudfront_log_storage_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+      cloudfront_result_prefix = "${local.athena_prefix}/${local.cloudfront_prefix}/"
+      cloudfront_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.cloudfront_prefix}/"
       lambda_log_prefix = "${local.lambda_prefix}/scope=${k}/"
+      lambda_result_prefix = "${local.athena_prefix}/${local.lambda_prefix}/"
+      lambda_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.lambda_prefix}/"
       lambda_source_bucket = var.lambda_source_bucket
       log_delivery_bucket = local.cloudfront_delivery_bucket
       log_partition_bucket = local.visibility_data_bucket
+      athena_result_bucket = local.visibility_data_bucket
+      athena_region = var.athena_region
+      glue_table_name = replace("${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}", ".", "_")
+      glue_database_name = replace("${k}-${local.visibility_data_bucket}", "-", "_")
       domain_parts = v
       scope = k
     }]
   )
-  cloudfront_log_archive_routes = [ for k, v in var.cloudfront_distributions : {
-    delivery_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
-    archive_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
-    delivery_bucket = local.cloudfront_delivery_bucket
-    archive_bucket = local.visibility_data_bucket
-  }]
-  athena_table_spaces = zipmap(
-    [ for scope in var.scopes : scope ],
-    [ for scope in var.scopes : {
-      cloudfront_result_prefix = "${local.athena_prefix}/${local.cloudfront_prefix}/"
-      lambda_result_prefix = "${local.athena_prefix}/${local.lambda_prefix}/"
-      scope = scope
-      athena_results_bucket = local.athena_results_bucket
+  data_warehouse_configs = zipmap(
+    [ for k in keys(var.serverless_site_configs) : k ],
+    [ for k, v in var.serverless_site_configs : {
+      cloudfront_log_delivery_prefix = "${local.cloudfront_prefix}/${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+      cloudfront_log_storage_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+      lambda_log_prefix = "${local.lambda_prefix}/scope=${k}/"
+      log_delivery_bucket = local.cloudfront_delivery_bucket
+      data_bucket = local.visibility_data_bucket
+      glue_database_name = replace("${k}-${local.visibility_data_bucket}", "-", "_")
+      athena_region = var.athena_region
+      scope = k
+      glue_table_configs = zipmap(
+        ["${k}_lambda_logs",  replace("${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}", ".", "_")],
+        [{
+          bucket_prefix = "${local.lambda_prefix}/scope=${k}"
+          skip_header_line_count = 0
+          ser_de_info = {
+            name                  = "json-ser-de"
+            serialization_library = "org.openx.data.jsonserde.JsonSerDe"
+            parameters = {
+              "explicit.null"="true"
+              "ignore.malformed.json"="true"
+            }
+          }
+          columns = module.column_schemas.lambda_log_columns
+          partition_keys = module.column_schemas.year_month_day_hour_partition_keys
+        },
+        {
+          bucket_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}"
+          skip_header_line_count = 2
+          ser_de_info = {
+            name                  = "cf_logs"
+            serialization_library = "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe"
+            parameters = {
+              "field.delim"="\t"
+              "serialization.format"="\t"
+            }
+          }
+          columns = module.column_schemas.cloudfront_access_log_columns
+          partition_keys = module.column_schemas.year_month_day_hour_partition_keys
+        }]
+      )
     }]
   )
   lambda_log_configs = zipmap(
@@ -112,12 +159,12 @@ output cloudfront_delivery_bucket {
   value = local.cloudfront_delivery_bucket
 }
 
-output cloudfront_distributions {
-  value = local.cloudfront_distributions
+output data_warehouse_configs {
+  value = local.data_warehouse_configs
 }
 
-output athena_table_spaces {
-  value = local.athena_table_spaces
+output serverless_site_configs {
+  value = local.serverless_site_configs
 }
 
 output lambda_source_bucket {

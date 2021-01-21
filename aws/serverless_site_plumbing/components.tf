@@ -16,10 +16,40 @@ locals {
   }]
 }
 
+module archive_function {
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
+  timeout_secs = 15
+  mem_mb = 128
+  logging_config = local.lambda_logging_config
+  log_level =var.log_level
+  config_contents = templatefile("${path.root}/functions/configs/s3_to_athena.js",
+  {
+    athena_region = var.coordinator_data.athena_region
+    athena_db = var.coordinator_data.glue_database_name
+    athena_table = var.coordinator_data.glue_table_name
+    athena_catalog = "AwsDataCatalog"
+    athena_result_location = var.coordinator_data.cloudfront_athena_result_location
+    partition_prefix = var.coordinator_data.cloudfront_log_storage_prefix
+    partition_bucket = var.coordinator_data.log_partition_bucket
+  })
+  lambda_event_configs = var.lambda_event_configs
+  additional_helpers = [
+    {
+      helper_name = "athenaHelpers.js",
+      file_contents = file("${path.root}/functions/libraries/src/helpers/athenaHelpers.js")
+    }
+  ]
+  action_name = "cloudfront_log_collector"
+  scope_name = var.coordinator_data.scope
+  source_bucket = var.coordinator_data.lambda_source_bucket
+  donut_days_layer_arn = var.layer_arns.donut_days
+}
+
 module site_render {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
   timeout_secs = 40
   mem_mb = 256
+  log_level =var.log_level
   logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
     {
@@ -41,7 +71,7 @@ module site_render {
   lambda_event_configs = var.lambda_event_configs
   action_name = "site_render"
   scope_name = var.coordinator_data.scope
-  source_bucket = var.lambda_bucket
+  source_bucket = var.coordinator_data.lambda_source_bucket
   policy_statements =  concat(
     module.trails_updater.permission_sets.invoke
   )
@@ -52,10 +82,11 @@ module site_render {
 }
 
 module deletion_cleanup {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
+  log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/deletion_cleanup.js",
   {
     website_bucket = var.site_bucket
@@ -83,10 +114,11 @@ module deletion_cleanup {
 }
 
 module trails_updater {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
   timeout_secs = 40
   mem_mb = 192
   logging_config = local.lambda_logging_config
+  log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/update_trails.js",
     {
       table = var.trails_table.name,
@@ -122,7 +154,7 @@ module trails_updater {
   ]
 }
 
-module "site" {
+module site {
   source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=tape-deck-storage"
   website_buckets = [{
     origin_id = var.coordinator_data.domain_parts.controlled_domain_part
@@ -170,10 +202,11 @@ resource "aws_s3_bucket_object" "site_description" {
 }
 
 module trails_resolver {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=hoist-bucket-permissions"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
+  log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
   {
     table = var.trails_table.name

@@ -1,10 +1,38 @@
 output logging_lambda_role_arns {
   value = [
     module.site_render.role.arn,
+    module.archive_function.role.arn,
     module.deletion_cleanup.role.arn,
     module.trails_resolver.role.arn,
     module.trails_updater.role.arn,
   ]
+}
+
+output archive_function {
+  value = {
+    arn = module.archive_function.lambda.arn
+    name = module.archive_function.lambda.function_name
+    role_arn = module.archive_function.role.arn
+  }
+}
+
+output archive_function_notification_config {
+  value = {
+    lambda_arn = module.archive_function.lambda.arn
+    lambda_name = module.archive_function.lambda.function_name
+    lambda_role_arn = module.archive_function.role.arn
+    permission_type = "move_objects_out"
+    events = ["s3:ObjectCreated:*"]
+    filter_prefix = var.coordinator_data.cloudfront_log_delivery_prefix
+    filter_suffix = ""
+  }
+}
+
+output glue_table_permission_names {
+  value = zipmap([var.coordinator_data.glue_table_name],
+  [{
+  add_partition_permission_names = [module.archive_function.role.name]
+}])
 }
 
 output render_function {

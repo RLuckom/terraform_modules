@@ -1,4 +1,4 @@
-variable role_arns {
+variable role_names {
   type = list(string)
 }
 
@@ -18,9 +18,9 @@ data aws_iam_policy_document policy_doc {
     for_each = var.policy_statements
     content {
 
-      actions = each.value.actions
+      actions = statement.value.actions
 
-      resources = each.value.resources
+      resources = statement.value.resources
     }
   }
 }
@@ -31,7 +31,7 @@ resource aws_iam_policy policy {
 }
 
 resource aws_iam_role_policy_attachment attachments {
-  count = length(var.role_arns)
-  role       = var.role_arns[count.index]
+  count = length(var.role_names)
+  role       = var.role_names[count.index]
   policy_arn = aws_iam_policy.policy.arn
 }

@@ -71,7 +71,7 @@ data "aws_iam_policy_document" "bucket_policy_document" {
     for_each = var.object_policy_statements
     content {
       actions   = statement.value.actions
-      resources   = ["${aws_s3_bucket.bucket.arn}/${statement.value.prefix == "" ? "" : "${statement.value.prefix}/"}*"]
+      resources   = ["${aws_s3_bucket.bucket.arn}/${statement.value.prefix == "" ? "" : "${trimsuffix(statement.value.prefix, "/")}/"}*"]
       dynamic "principals" {
         for_each = statement.value.principals
         content {
@@ -158,7 +158,6 @@ locals {
       actions   =  [
         "s3:GetObject",
         "s3:DeleteObject",
-        "s3:ListBucket"
       ]
       resources = [
         aws_s3_bucket.bucket.arn,

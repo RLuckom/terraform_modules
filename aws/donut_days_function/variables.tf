@@ -20,16 +20,19 @@ variable config_contents {
   default = "module.exports = {}"
 }
 
+variable log_level {
+  type = bool
+  default = false
+}
+
 variable logging_config {
   type = object({
     bucket = string
     prefix = string
-    debug = bool
   })
   default = {
     bucket = ""
     prefix = ""
-    debug = false
   }
 }
 

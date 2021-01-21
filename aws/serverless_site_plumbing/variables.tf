@@ -1,11 +1,20 @@
 variable coordinator_data {
   type = object({
     domain = string
+    athena_region = string
     lambda_source_bucket = string
     lambda_log_prefix = string
-    cloudfront_log_prefix = string
+    cloudfront_log_delivery_prefix = string
+    cloudfront_log_storage_prefix = string
+    cloudfront_result_prefix = string
+    cloudfront_athena_result_location = string
     log_delivery_bucket = string
     log_partition_bucket = string
+    athena_result_bucket = string
+    lambda_result_prefix = string
+    lambda_athena_result_location = string
+    glue_table_name = string
+    glue_database_name = string
     scope = string
     domain_parts = object({
       top_level_domain = string
@@ -22,7 +31,7 @@ locals {
   }
   cloudfront_logging_config = {
     bucket = var.coordinator_data.log_delivery_bucket
-    prefix = var.coordinator_data.cloudfront_log_prefix
+    prefix = var.coordinator_data.cloudfront_log_delivery_prefix
   }
 }
 

@@ -10,16 +10,6 @@ variable bucket_name {
   type = string
 }
 
-variable partitioned_data_sink {
-  type = list(object({
-    filter_prefix = string
-    filter_suffix = string
-    lambda_arn = string
-    lambda_name = string
-  }))
-  default = []
-}
-
 variable lifecycle_rules {
   type = list(object({
     id = string
@@ -50,6 +40,19 @@ variable bucket_policy_statements {
       type = string
       identifiers = list(string)
     }))
+  }))
+  default = []
+}
+
+variable lambda_notifications {
+  type = list(object({
+    lambda_arn = string
+    lambda_name = string
+    lambda_role_arn = string
+    events = list(string)
+    filter_prefix = string
+    filter_suffix = string
+    permission_type = string
   }))
   default = []
 }

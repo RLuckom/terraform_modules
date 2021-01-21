@@ -6,6 +6,19 @@ variable prefix_put_permissions {
   default = []
 }
 
+variable prefix_athena_query_permissions {
+  type = list(object({
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
+variable list_bucket_permission_arns {
+  type = list(string)
+  default = []
+}
+
 variable bucket_name {
   type = string
 }
