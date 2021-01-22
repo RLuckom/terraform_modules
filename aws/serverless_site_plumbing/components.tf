@@ -16,13 +16,21 @@ locals {
   }]
 }
 
+resource "aws_s3_bucket_object" "site_description" {
+  bucket = var.site_bucket
+  key    = "site_description.json"
+  content_type = "application/json"
+  content = var.site_description_content
+  etag = md5(var.site_description_content)
+}
+
 module archive_function {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
   timeout_secs = 15
   mem_mb = 128
   logging_config = local.lambda_logging_config
   log_level =var.log_level
-  config_contents = templatefile("${path.root}/functions/configs/s3_to_athena.js",
+  config_contents = templatefile("${path.module}/src/configs/s3_to_athena.js",
   {
     athena_region = var.coordinator_data.athena_region
     athena_db = var.coordinator_data.glue_database_name
@@ -36,7 +44,7 @@ module archive_function {
   additional_helpers = [
     {
       helper_name = "athenaHelpers.js",
-      file_contents = file("${path.root}/functions/libraries/src/helpers/athenaHelpers.js")
+      file_contents = file("${path.module}/src/helpers/athenaHelpers.js")
     }
   ]
   action_name = "cloudfront_log_collector"
@@ -154,6 +162,29 @@ module trails_updater {
   ]
 }
 
+module trails_resolver {
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
+  timeout_secs = 40
+  mem_mb = 128
+  logging_config = local.lambda_logging_config
+  log_level =var.log_level
+  config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
+  {
+    table = var.trails_table.name
+    forward_key_type = "trailName"
+    reverse_key_type = "memberKey"
+    reverse_association_index = "reverseDependencyIndex"
+  })
+  lambda_event_configs = var.lambda_event_configs
+  action_name = "trails_resolver"
+  scope_name = var.coordinator_data.scope
+  policy_statements = concat(
+    var.trails_table.permission_sets.read,
+  )
+  source_bucket = var.lambda_bucket
+  donut_days_layer_arn = var.layer_arns.donut_days
+}
+
 module site {
   source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=tape-deck-storage"
   website_buckets = [{
@@ -191,35 +222,4 @@ module site {
   controlled_domain_part = var.coordinator_data.domain_parts.controlled_domain_part
   subject_alternative_names = var.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
-}
-
-resource "aws_s3_bucket_object" "site_description" {
-  bucket = var.site_bucket
-  key    = "site_description.json"
-  content_type = "application/json"
-  content = var.site_description_content
-  etag = md5(var.site_description_content)
-}
-
-module trails_resolver {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
-  timeout_secs = 40
-  mem_mb = 128
-  logging_config = local.lambda_logging_config
-  log_level =var.log_level
-  config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
-  {
-    table = var.trails_table.name
-    forward_key_type = "trailName"
-    reverse_key_type = "memberKey"
-    reverse_association_index = "reverseDependencyIndex"
-  })
-  lambda_event_configs = var.lambda_event_configs
-  action_name = "trails_resolver"
-  scope_name = var.coordinator_data.scope
-  policy_statements = concat(
-    var.trails_table.permission_sets.read,
-  )
-  source_bucket = var.lambda_bucket
-  donut_days_layer_arn = var.layer_arns.donut_days
 }
