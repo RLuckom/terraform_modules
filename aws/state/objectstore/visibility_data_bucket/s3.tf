@@ -43,7 +43,7 @@ locals {
 }
 
 module "bucket" {
-  source = "github.com/RLuckom/terraform_modules//aws/state/objectstore/permissioned_bucket?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/state/objectstore/permissioned_bucket"
   bucket = var.bucket_name
   acl    = "log-delivery-write"
   lambda_notifications = [for sink in var.partitioned_data_sink : {

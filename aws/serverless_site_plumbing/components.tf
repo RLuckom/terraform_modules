@@ -25,7 +25,7 @@ resource "aws_s3_bucket_object" "site_description" {
 }
 
 module archive_function {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 15
   mem_mb = 128
   logging_config = local.lambda_logging_config
@@ -54,7 +54,7 @@ module archive_function {
 }
 
 module site_render {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 256
   log_level =var.log_level
@@ -90,7 +90,7 @@ module site_render {
 }
 
 module deletion_cleanup {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
@@ -122,7 +122,7 @@ module deletion_cleanup {
 }
 
 module trails_updater {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 192
   logging_config = local.lambda_logging_config
@@ -160,7 +160,7 @@ module trails_updater {
 }
 
 module trails_resolver {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
@@ -180,7 +180,7 @@ module trails_resolver {
 }
 
 module site {
-  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
   website_buckets = [{
     origin_id = var.coordinator_data.domain_parts.controlled_domain_part
     regional_domain_name = "${var.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"

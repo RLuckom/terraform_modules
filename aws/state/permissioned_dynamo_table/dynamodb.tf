@@ -58,7 +58,7 @@ locals {
 }
 
 module dynamo_table_delete_item_permissions {
-  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
   policy_name = "${aws_dynamodb_table.standard_table.name}-delete"
   role_names = var.delete_item_permission_role_names
   policy_statements = [
@@ -70,7 +70,7 @@ module dynamo_table_delete_item_permissions {
 }
 
 module dynamo_table_read_permissions {
-  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
   policy_name = "${aws_dynamodb_table.standard_table.name}-read"
   role_names = var.read_permission_role_names
   policy_statements = [
@@ -82,7 +82,7 @@ module dynamo_table_read_permissions {
 }
 
 module dynamo_table_write_permissions {
-  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
   policy_name = "${aws_dynamodb_table.standard_table.name}-write"
   role_names = var.write_permission_role_names
   policy_statements = [
@@ -94,7 +94,7 @@ module dynamo_table_write_permissions {
 }
 
 module dynamo_table_put_item_permissions {
-  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
   policy_name = "${aws_dynamodb_table.standard_table.name}-put"
   role_names = var.put_item_permission_role_names
   policy_statements = [

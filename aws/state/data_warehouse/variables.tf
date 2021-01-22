@@ -65,7 +65,7 @@ locals {
 }
 
 module glue_table_add_partition_permissions {
-  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
   for_each = var.table_configs
   policy_name = "${each.key}-addpart"
   role_names = lookup(var.table_permission_names, each.key, {add_partition_permission_names = [] }).add_partition_permission_names
