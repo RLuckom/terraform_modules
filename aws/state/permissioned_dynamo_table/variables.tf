@@ -2,6 +2,26 @@ variable "table_name" {
   type = string
 }
 
+variable delete_item_permission_role_names {
+  type = list(string)
+  default = []
+}
+
+variable read_permission_role_names {
+  type = list(string)
+  default = []
+}
+
+variable write_permission_role_names {
+  type = list(string)
+  default = []
+}
+
+variable put_item_permission_role_names {
+  type = list(string)
+  default = []
+}
+
 // stream items table vars
 
 variable "ttl" {

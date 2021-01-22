@@ -52,3 +52,55 @@ resource "aws_dynamodb_table" "standard_table" {
     }
   }
 }
+
+locals {
+  table_and_index_arns = concat([aws_dynamodb_table.standard_table.arn], [ for v in var.global_indexes : "${aws_dynamodb_table.standard_table.arn}/index/${v.name}"])
+}
+
+module dynamo_table_delete_item_permissions {
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  policy_name = "${aws_dynamodb_table.standard_table.name}-delete"
+  role_names = var.delete_item_permission_role_names
+  policy_statements = [
+    {
+      actions   = ["dynamodb:DeleteItem"]
+      resources = local.table_and_index_arns
+    }
+  ]
+}
+
+module dynamo_table_read_permissions {
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  policy_name = "${aws_dynamodb_table.standard_table.name}-read"
+  role_names = var.read_permission_role_names
+  policy_statements = [
+    {
+      actions   = ["dynamodb:GetItem", "dynamodb:Query", "dynamodb:Scan", "dynamodb:BatchGetItem"]
+      resources = local.table_and_index_arns
+    }
+  ]
+}
+
+module dynamo_table_write_permissions {
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  policy_name = "${aws_dynamodb_table.standard_table.name}-write"
+  role_names = var.write_permission_role_names
+  policy_statements = [
+    {
+      actions   = ["dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:BatchWriteItem"]
+      resources = local.table_and_index_arns
+    }
+  ]
+}
+
+module dynamo_table_put_item_permissions {
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles?ref=tape-deck-storage"
+  policy_name = "${aws_dynamodb_table.standard_table.name}-put"
+  role_names = var.put_item_permission_role_names
+  policy_statements = [
+    {
+      actions   = ["dynamodb:PutItem"]
+      resources = local.table_and_index_arns
+    }
+  ]
+}

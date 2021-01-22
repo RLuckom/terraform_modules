@@ -13,6 +13,7 @@ output archive_function {
     arn = module.archive_function.lambda.arn
     name = module.archive_function.lambda.function_name
     role_arn = module.archive_function.role.arn
+    role_name = module.archive_function.role.name
   }
 }
 
@@ -40,6 +41,7 @@ output render_function {
     arn = module.site_render.lambda.arn
     name = module.site_render.lambda.function_name
     role_arn = module.site_render.role.arn
+    role_name = module.site_render.role.name
   }
 }
 
@@ -58,6 +60,7 @@ output deletion_cleanup_function {
     arn = module.deletion_cleanup.lambda.arn
     name = module.deletion_cleanup.lambda.function_name
     role_arn = module.deletion_cleanup.role.arn
+    role_name = module.deletion_cleanup.role.name
   }
 }
 
@@ -66,6 +69,7 @@ output trails_resolver_function {
     arn = module.trails_resolver.lambda.arn
     name = module.trails_resolver.lambda.function_name
     role_arn = module.trails_resolver.role.arn
+    role_name = module.trails_resolver.role.name
   }
 }
 
@@ -74,6 +78,7 @@ output trails_updater_function {
     arn = module.trails_updater.lambda.arn
     name = module.trails_updater.lambda.function_name
     role_arn = module.trails_updater.role.arn
+    role_name = module.trails_updater.role.name
   }
 }
 

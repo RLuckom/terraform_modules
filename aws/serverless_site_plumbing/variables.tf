@@ -39,24 +39,8 @@ variable site_bucket {
   type = string
 }
 
-variable trails_table {
-  type = object({
-    name = string
-    permission_sets = object({
-      read = list(object({
-        actions = list(string)
-        resources = list(string)
-      }))
-      write = list(object({
-        actions = list(string)
-        resources = list(string)
-      }))
-      delete_item = list(object({
-        actions = list(string)
-        resources = list(string)
-      }))
-    })
-  })
+variable trails_table_name {
+  type = string
 }
 
 // configuration vars

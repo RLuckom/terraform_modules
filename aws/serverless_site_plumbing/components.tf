@@ -129,7 +129,7 @@ module trails_updater {
   log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/update_trails.js",
     {
-      table = var.trails_table.name,
+      table = var.trails_table_name,
       reverse_association_index = "reverseDependencyIndex"
       domain_name = var.coordinator_data.domain
       site_description_path = "site_description.json"
@@ -152,9 +152,6 @@ module trails_updater {
   source_bucket = var.lambda_bucket
   policy_statements = concat(
     local.render_invoke_permission,
-    var.trails_table.permission_sets.read,
-    var.trails_table.permission_sets.write,
-    var.trails_table.permission_sets.delete_item,
   )
   donut_days_layer_arn = var.layer_arns.donut_days
   additional_layers = [
@@ -170,7 +167,7 @@ module trails_resolver {
   log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
   {
-    table = var.trails_table.name
+    table = var.trails_table_name
     forward_key_type = "trailName"
     reverse_key_type = "memberKey"
     reverse_association_index = "reverseDependencyIndex"
@@ -178,9 +175,6 @@ module trails_resolver {
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_resolver"
   scope_name = var.coordinator_data.scope
-  policy_statements = concat(
-    var.trails_table.permission_sets.read,
-  )
   source_bucket = var.lambda_bucket
   donut_days_layer_arn = var.layer_arns.donut_days
 }
