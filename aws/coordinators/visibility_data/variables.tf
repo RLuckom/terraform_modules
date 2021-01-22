@@ -76,11 +76,11 @@ locals {
       domain = "${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}"
       cloudfront_log_delivery_prefix = "${local.cloudfront_prefix}/${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
       cloudfront_log_storage_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
-      cloudfront_result_prefix = "${local.athena_prefix}/${local.cloudfront_prefix}/"
-      cloudfront_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.cloudfront_prefix}/"
+      cloudfront_result_prefix = "${local.athena_prefix}/${local.cloudfront_prefix}/scope=${k}/"
+      cloudfront_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.cloudfront_prefix}/scope=${k}/"
       lambda_log_prefix = "${local.lambda_prefix}/scope=${k}/"
-      lambda_result_prefix = "${local.athena_prefix}/${local.lambda_prefix}/"
-      lambda_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.lambda_prefix}/"
+      lambda_result_prefix = "${local.athena_prefix}/${local.lambda_prefix}/scope=${k}/"
+      lambda_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.lambda_prefix}/scope=${k}"
       lambda_source_bucket = var.lambda_source_bucket
       log_delivery_bucket = local.cloudfront_delivery_bucket
       log_partition_bucket = local.visibility_data_bucket
