@@ -2,7 +2,7 @@ locals {
   s3_origin_id = var.controlled_domain_part
 }
 
-resource "aws_cloudfront_origin_access_identity" "cloudfront_logging_access_id" {
+resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
   comment = "access identity for cloudfront to ${var.controlled_domain_part} bucket"
 }
 
@@ -15,7 +15,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       origin_id   = origin.value.origin_id
 
       s3_origin_config {
-        origin_access_identity = "origin-access-identity/cloudfront/${aws_cloudfront_origin_access_identity.cloudfront_logging_access_id.id}"
+        origin_access_identity = "origin-access-identity/cloudfront/${aws_cloudfront_origin_access_identity.cloudfront_access_id.id}"
       }
     }
   }

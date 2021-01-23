@@ -3,9 +3,9 @@ output "cert_arn" {
 }
 
 output origin_access_identity {
-  value = aws_cloudfront_origin_access_identity.cloudfront_logging_access_id
+  value = aws_cloudfront_origin_access_identity.cloudfront_access_id
 }
 
 output cloudfront_log_delivery_identity {
-  value = aws_cloudfront_origin_access_identity.cloudfront_logging_access_id
+  value = aws_cloudfront_origin_access_identity.cloudfront_access_id
 }

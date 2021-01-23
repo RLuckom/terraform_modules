@@ -82,6 +82,6 @@ output trails_updater_function {
   }
 }
 
-output cloudfront_log_delivery_identity {
+output cloudfront_origin_access_identity {
   value = module.site.origin_access_identity
 }
