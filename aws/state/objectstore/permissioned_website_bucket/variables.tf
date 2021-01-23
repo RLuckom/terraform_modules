@@ -1,21 +1,19 @@
-variable "bucket_name" {
+variable name {
   type = string
-  default = ""
 }
 
-variable additional_allowed_origins {
-  type = list(string)
-  default = []
-}
-
-variable domain_parts {
+variable website_access_principal {
   type = object({
-    top_level_domain = string
-    controlled_domain_part = string
+    type = string
+    identifiers = list(string)
   })
+  default = {
+    type = "*"
+    identifiers = ["*"]
+  }
 }
 
-variable "lambda_notifications" {
+variable lambda_notifications {
   type = list(object({
     lambda_arn = string
     lambda_name = string
@@ -28,25 +26,42 @@ variable "lambda_notifications" {
   default = []
 }
 
-variable "object_policy_statements" {
+variable lifecycle_rules {
   type = list(object({
-    actions = list(string)
+    id = string
     prefix = string
-    principals = list(object({
-      type = string
-      identifiers = list(string)
-    }))
+    tags = map(string)
+    enabled = bool
+    expiration_days = number
   }))
   default = []
 }
 
-variable "bucket_policy_statements" {
+variable prefix_object_permissions {
   type = list(object({
-    actions = list(string)
-    principals = list(object({
-      type = string
-      identifiers = list(string)
-    }))
+    permission_type = string
+    prefix = string
+    arns = list(string)
   }))
   default = []
+}
+
+variable bucket_permissions {
+  type = list(object({
+    permission_type = string
+    arns = list(string)
+  }))
+  default = []
+}
+
+variable additional_allowed_origins {
+  type = list(string)
+  default = []
+}
+
+variable domain_parts {
+  type = object({
+    top_level_domain = string
+    controlled_domain_part = string
+  })
 }

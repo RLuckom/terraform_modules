@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.bucket
+  bucket = var.name
   acl = var.acl
   request_payer = var.request_payer
   dynamic "website" {
@@ -65,10 +65,10 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   }
 }
 
-data "aws_iam_policy_document" "bucket_policy_document" {
+data aws_iam_policy_document bucket_policy_document {
   count = local.need_policy ? 1 : 0
   dynamic "statement" {
-    for_each = var.object_policy_statements
+    for_each = local.prefix_object_permission_sets
     content {
       actions   = statement.value.actions
       resources   = ["${aws_s3_bucket.bucket.arn}/${statement.value.prefix == "" ? "" : "${trimsuffix(statement.value.prefix, "/")}/"}*"]
@@ -83,7 +83,7 @@ data "aws_iam_policy_document" "bucket_policy_document" {
   }
 
   dynamic "statement" {
-    for_each = var.bucket_policy_statements
+    for_each = local.bucket_permission_sets
     content {
       actions   = statement.value.actions
       resources   = [aws_s3_bucket.bucket.arn]
@@ -100,10 +100,14 @@ data "aws_iam_policy_document" "bucket_policy_document" {
   dynamic "statement" {
     for_each = var.lambda_notifications
     content {
-      actions   = local.permission_sets[statement.value.permission_type][0].actions
-      resources = [
-        "${aws_s3_bucket.bucket.arn}/${statement.value.filter_prefix}*"
-      ]
+      actions   = concat(
+        lookup(local.object_permission_set_actions, statement.value.permission_type, []),
+        lookup(local.bucket_permission_set_actions, statement.value.permission_type, [])
+      )
+      resources = concat(
+        length(lookup(local.object_permission_set_actions, statement.value.permission_type, [])) > 0 ? ["${aws_s3_bucket.bucket.arn}/${trimsuffix(statement.value.filter_prefix, "/")}${statement.value.filter_prefix == "" ? "" : "/"}*"] : [],
+        length(lookup(local.bucket_permission_set_actions, statement.value.permission_type, [])) > 0 ? [aws_s3_bucket.bucket.arn] : []
+      )
       principals {
         type = "AWS"
         identifiers = [statement.value.lambda_role_arn]
@@ -119,94 +123,114 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 locals {
-  permission_sets = {
-    athena_query_execution = [{
-      actions   =  [
-        "s3:GetObject",
-        "s3:ListMultipartUploadParts",
-        "s3:PutObject",
-        "s3:GetBucketLocation",
-        "s3:GetBucketAcl",
-        "s3:ListBucket"
-      ]
-      resources = [
-        aws_s3_bucket.bucket.arn,
-        "${aws_s3_bucket.bucket.arn}/*"
-      ]
-    }]
-    read_and_tag = [{
-      actions   =  [
-        "s3:GetObject",
-        "s3:PutObjectTagging",
-        "s3:ListBucket"
-      ]
-      resources = [
-        aws_s3_bucket.bucket.arn,
-        "${aws_s3_bucket.bucket.arn}/*"
-      ]
-    }]
-    read_and_tag_known = [{
-      actions   =  [
-        "s3:GetObject",
-        "s3:PutObjectTagging",
-      ]
-      resources = [
-        "${aws_s3_bucket.bucket.arn}/*"
-      ]
-    }]
-    move_objects_out = [{
-      actions   =  [
-        "s3:GetObject",
-        "s3:DeleteObject",
-      ]
-      resources = [
-        aws_s3_bucket.bucket.arn,
-        "${aws_s3_bucket.bucket.arn}/*"
-      ]
-    }]
-    move_known_object_out = [{
-      actions   =  [
-        "s3:GetObject",
-        "s3:DeleteObject",
-      ]
-      resources = [
-        "${aws_s3_bucket.bucket.arn}/*"
-      ]
-    }]
-    read_write_objects = [{
-      actions   =  [
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:ListBucket"
-      ]
-      resources = [
-        aws_s3_bucket.bucket.arn,
-        "${aws_s3_bucket.bucket.arn}/*"
-      ]
-    }]
-    put_object = [
-      {
-        actions   = ["s3:PutObject"]
-        resources = ["${aws_s3_bucket.bucket.arn}/*"]
-      }
-    ]
-    delete_object = [
-      {
-        actions   = ["s3:DeleteObject"]
-        resources = ["${aws_s3_bucket.bucket.arn}/*"]
-      }
-    ]
-    put_object_tagging = [
-      {
-        actions   = ["s3:PutObjectTagging"]
-        resources = ["${aws_s3_bucket.bucket.arn}/*"]
-      }
-    ]
-    get_bucket_acl = [
-      {
-        actions = ["s3:GetBucketAcl"]
-        resources = [aws_s3_bucket.bucket.arn]
-      }
-    ]
+  list_bucket_actions = [
+    "s3:ListBucket",
+    "s3:GetBucketAcl",
+    "s3:GetBucketLocation"
+  ]
+
+  put_object_actions = [
+      "s3:PutObject",
+      "s3:AbortMultipartUpload",
+      "s3:ListMultipartUploadParts"
+  ]
+
+  read_known_object_actions = [
+    "s3:GetObject",
+    "s3:GetObjectVersion",
+  ]
+
+  tag_known_object_actions = [
+      "s3:PutObjectTagging",
+  ]
+
+  delete_known_object_actions = [
+      "s3:DeleteObject",
+  ]
+
+  move_known_object_out_actions = concat(
+    local.read_known_object_actions,
+    local.delete_known_object_actions
+  )
+
+  read_and_tag_known_actions =  concat(
+    local.read_known_object_actions,
+    local.tag_known_object_actions,
+  )
+
+  read_write_known_objects_actions = concat(
+    local.read_known_object_actions,
+    local.put_object_actions
+  )
+
+  bucket_permission_set_actions = {
+    list_bucket = local.list_bucket_actions
+    athena_query_execution = local.list_bucket_actions
   }
+
+  object_permission_set_actions = {
+    read_known_objects = local.read_known_object_actions
+    athena_query_execution =  local.read_write_known_objects_actions
+    read_and_tag = local.read_and_tag_known_actions
+    read_and_tag_known = local.read_and_tag_known_actions
+    move_objects_out = local.move_known_object_out_actions
+    move_known_objects_out = local.move_known_object_out_actions
+    read_write_objects = local.read_write_known_objects_actions
+    put_object = local.put_object_actions
+    delete_object = local.delete_known_object_actions
+    put_object_tagging = local.tag_known_object_actions
+  }
+}
+
+locals {
+  prefix_object_permissions = concat(
+    var.prefix_object_permissions,
+    [ for prefix_config in var.prefix_athena_query_permissions : {
+      prefix = prefix_config.prefix
+      permission_type = "athena_query_execution"
+      arns = prefix_config.arns
+    }]
+  )
+  bucket_permissions = concat(
+    var.bucket_permissions,
+    [ for prefix_config in var.prefix_athena_query_permissions : {
+      permission_type = "athena_query_execution"
+      arns = prefix_config.arns
+    }]
+  )
+}
+
+locals {
+  prefix_object_permission_sets = concat(
+    [ for prefix_config in local.prefix_object_permissions : {
+      prefix = prefix_config.prefix
+      actions = local.object_permission_set_actions[prefix_config.permission_type]
+      principals = [
+        {
+          type = "AWS"
+          identifiers = prefix_config.arns 
+        }
+      ]
+    }],
+    [ for prefix_config in var.principal_prefix_object_permissions : {
+      prefix = prefix_config.prefix
+      actions = local.object_permission_set_actions[prefix_config.permission_type]
+      principals = prefix_config.principals
+    }]
+  )
+  bucket_permission_sets = concat(
+    [ for bucket_config in local.bucket_permissions : {
+      actions = local.bucket_permission_set_actions[bucket_config.permission_type]
+      principals = [
+        {
+          type = "AWS"
+          identifiers = bucket_config.arns 
+        }
+      ]
+    }],
+    [ for bucket_config in var.principal_bucket_permissions : {
+      actions = local.bucket_permission_set_actions[bucket_config.permission_type]
+      principals = bucket_config.principals
+    }]
+  )
 }

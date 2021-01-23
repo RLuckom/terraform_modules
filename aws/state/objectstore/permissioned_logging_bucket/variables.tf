@@ -1,45 +1,11 @@
-variable move_objects_out_permissions {
-  type = list(object({
-    prefix = string
-    arns = list(string)
-  }))
-  default = []
-}
-
-variable bucket_name {
+variable name {
   type = string
 }
 
-variable lifecycle_rules {
+variable prefix_athena_query_permissions {
   type = list(object({
-    id = string
     prefix = string
-    tags = map(string)
-    enabled = bool
-    expiration_days = number
-  }))
-  default = []
-}
-
-variable object_policy_statements {
-  type = list(object({
-    actions = list(string)
-    prefix = string
-    principals = list(object({
-      type = string
-      identifiers = list(string)
-    }))
-  }))
-  default = []
-}
-
-variable bucket_policy_statements {
-  type = list(object({
-    actions = list(string)
-    principals = list(object({
-      type = string
-      identifiers = list(string)
-    }))
+    arns = list(string)
   }))
   default = []
 }
@@ -53,6 +19,34 @@ variable lambda_notifications {
     filter_prefix = string
     filter_suffix = string
     permission_type = string
+  }))
+  default = []
+}
+
+variable lifecycle_rules {
+  type = list(object({
+    id = string
+    prefix = string
+    tags = map(string)
+    enabled = bool
+    expiration_days = number
+  }))
+  default = []
+}
+
+variable prefix_object_permissions {
+  type = list(object({
+    permission_type = string
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
+variable bucket_permissions {
+  type = list(object({
+    permission_type = string
+    arns = list(string)
   }))
   default = []
 }

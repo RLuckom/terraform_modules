@@ -1,9 +1,5 @@
-variable prefix_put_permissions {
-  type = list(object({
-    prefix = string
-    arns = list(string)
-  }))
-  default = []
+variable name {
+  type = string
 }
 
 variable prefix_athena_query_permissions {
@@ -14,21 +10,15 @@ variable prefix_athena_query_permissions {
   default = []
 }
 
-variable list_bucket_permission_arns {
-  type = list(string)
-  default = []
-}
-
-variable bucket_name {
-  type = string
-}
-
-variable partitioned_data_sink {
+variable lambda_notifications {
   type = list(object({
-    filter_prefix = string
-    filter_suffix = string
     lambda_arn = string
     lambda_name = string
+    lambda_role_arn = string
+    events = list(string)
+    filter_prefix = string
+    filter_suffix = string
+    permission_type = string
   }))
   default = []
 }
@@ -44,25 +34,19 @@ variable lifecycle_rules {
   default = []
 }
 
-variable object_policy_statements {
+variable prefix_object_permissions {
   type = list(object({
-    actions = list(string)
+    permission_type = string
     prefix = string
-    principals = list(object({
-      type = string
-      identifiers = list(string)
-    }))
+    arns = list(string)
   }))
   default = []
 }
 
-variable bucket_policy_statements {
+variable bucket_permissions {
   type = list(object({
-    actions = list(string)
-    principals = list(object({
-      type = string
-      identifiers = list(string)
-    }))
+    permission_type = string
+    arns = list(string)
   }))
   default = []
 }
