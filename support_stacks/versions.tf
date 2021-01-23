@@ -3,6 +3,7 @@ provider "archive" {}
 provider "aws" {
   shared_credentials_file = "/.aws/credentials"
   region     = "us-east-1"
+  profile    = "default"
 }
 
 terraform {
@@ -14,8 +15,10 @@ terraform {
   }
   required_version = ">= 0.13"
   backend "s3" {
+    shared_credentials_file = "/.aws/credentials"
     bucket = "raph"
     key    = "supporting_stacks"
     region = "us-east-1"
+    profile    = "default"
   }
 }

@@ -1,11 +1,11 @@
 module "layer_bucket" {
-  source = "github.com/RLuckom/terraform_modules//aws/state/objectstore/permissioned_bucket"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   request_payer = "Requester"
   acl = "public-read"
   versioning = [{
     enabled = true
   }]
-  bucket = var.layer_bucket_name
+  name = var.layer_bucket_name
 }
 
 module "donut_days" {
