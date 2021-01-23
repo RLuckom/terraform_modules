@@ -25,7 +25,6 @@ variable lambda_notifications {
 
 variable lifecycle_rules {
   type = list(object({
-    id = string
     prefix = string
     tags = map(string)
     enabled = bool

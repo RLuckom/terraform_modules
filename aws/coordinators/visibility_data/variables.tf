@@ -57,6 +57,39 @@ variable lambda_prefix {
   default = "lambda-logs"
 }
 
+variable expire_athena_results {
+  type = object({
+    enabled = bool
+    expiration_days = number
+  })
+  default = {
+    enabled = true
+    expiration_days = 7 * 8
+  }
+}
+
+variable expire_cloudfront_logs {
+  type = object({
+    enabled = bool
+    expiration_days = number
+  })
+  default = {
+    enabled = true
+    expiration_days = 5 * 365
+  }
+}
+
+variable expire_lambda_logs {
+  type = object({
+    enabled = bool
+    expiration_days = number
+  })
+  default = {
+    enabled = true
+    expiration_days = 31 * 3
+  }
+}
+
 data aws_caller_identity current {}
 
 module column_schemas {
@@ -70,6 +103,24 @@ locals {
 }
 
 locals {
+  cloudfront_log_path_lifecycle_rules = [ for k, v in var.serverless_site_configs : {
+    prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+    tags = {}
+    enabled = var.expire_cloudfront_logs.enabled
+    expiration_days = var.expire_cloudfront_logs.expiration_days
+  }]
+  lambda_log_path_lifecycle_rules = [ for scope in var.scopes : {
+    prefix = "${local.lambda_prefix}/scope=${scope}/"
+    tags = {}
+    enabled = var.expire_lambda_logs.enabled
+    expiration_days = var.expire_lambda_logs.expiration_days
+  }]
+  athena_result_path_lifecycle_rules = [{
+    prefix = "${local.athena_prefix}/"
+    tags = {}
+    enabled = var.expire_athena_results.enabled
+    expiration_days = var.expire_athena_results.expiration_days
+  }]
   serverless_site_configs = zipmap(
     [ for k in keys(var.serverless_site_configs) : k ],
     [ for k, v in var.serverless_site_configs : {
@@ -144,6 +195,14 @@ locals {
       source_bucket = var.lambda_source_bucket
       scope = scope
     }]
+  )
+}
+
+output visibility_lifecycle_rules {
+  value = concat(
+    local.cloudfront_log_path_lifecycle_rules,
+    local.lambda_log_path_lifecycle_rules,
+    local.athena_result_path_lifecycle_rules
   )
 }
 

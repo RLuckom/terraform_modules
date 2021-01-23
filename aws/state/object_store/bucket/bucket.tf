@@ -31,7 +31,6 @@ resource "aws_s3_bucket" "bucket" {
   dynamic "lifecycle_rule" {
     for_each = var.lifecycle_rules
     content {
-      id = lifecycle_rule.value.id
       prefix = lifecycle_rule.value.prefix
       tags = lifecycle_rule.value.tags
       enabled = lifecycle_rule.value.enabled
