@@ -6,7 +6,7 @@ locals {
 }
 
 module bucket {
-  source = "../permissioned_bucket"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = var.name
   acl    = "public-read"
   lifecycle_rules = var.lifecycle_rules

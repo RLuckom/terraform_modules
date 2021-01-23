@@ -1,5 +1,5 @@
 module "bucket" {
-  source = "github.com/RLuckom/terraform_modules//aws/state/objectstore/permissioned_bucket"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = var.name
   acl    = "log-delivery-write"
   lambda_notifications = var.lambda_notifications
