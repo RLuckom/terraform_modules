@@ -2,15 +2,27 @@ variable name {
   type = string
 }
 
-variable website_access_principal {
-  type = object({
+variable allow_direct_access {
+  type = bool
+  default = false
+}
+
+variable website_access_principals {
+  type = list(object({
     type = string
     identifiers = list(string)
-  })
-  default = {
-    type = "*"
-    identifiers = ["*"]
-  }
+  }))
+  default = []
+}
+
+locals {
+  website_access_principals = concat(
+    var.website_access_principals,
+    var.allow_direct_access ? [{
+      type = "*"
+      identifiers = ["*"]
+    }] : []
+  )
 }
 
 variable lambda_notifications {

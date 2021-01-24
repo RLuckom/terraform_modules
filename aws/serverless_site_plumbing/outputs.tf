@@ -82,6 +82,9 @@ output trails_updater_function {
   }
 }
 
-output cloudfront_origin_access_identity {
-  value = module.site.origin_access_identity
+output cloudfront_origin_access_principal {
+  value = {
+    type = "AWS"
+    identifiers = [module.site.origin_access_identity.iam_arn]
+  }
 }

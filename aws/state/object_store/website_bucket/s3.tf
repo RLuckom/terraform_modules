@@ -13,11 +13,11 @@ module bucket {
   lambda_notifications = var.lambda_notifications
   prefix_object_permissions = var.prefix_object_permissions
   bucket_permissions = var.bucket_permissions
-  principal_prefix_object_permissions = [{
+  principal_prefix_object_permissions = length(local.website_access_principals) > 0 ? [{
     prefix = ""
     permission_type = "read_known_objects"
-    principals = [var.website_access_principal]
-  }]
+    principals = local.website_access_principals
+  }] : []
 
   website_configs = [{
     index_document = "index.html"
