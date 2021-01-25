@@ -115,4 +115,29 @@ variable default_cloudfront_ttls {
 
 variable site_description_content {
   type = string
+  default = ""
+}
+
+variable site_title {
+  type = string
+  default = ""
+}
+
+variable maintainer {
+  type = object({
+    name = string
+    email = string
+  })
+  default = {
+    name = ""
+    email = ""
+  }
+}
+
+variable nav_links {
+  type = list(object({
+    name = string
+    target = string
+  }))
+  default = []
 }

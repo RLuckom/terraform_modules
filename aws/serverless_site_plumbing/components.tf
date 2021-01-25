@@ -16,12 +16,33 @@ locals {
   }]
 }
 
+locals {
+  nav_links = concat(
+    var.nav_links,
+    [{
+      name = "Posts"
+      target = "https://${var.coordinator_data.domain}/trails/posts.html"
+    }]
+  )
+  site_description_content = var.site_description_content == "" ? templatefile(
+    "${path.module}/src/site_description.json",
+    {
+      domain_name = var.coordinator_data.domain
+      site_title = var.site_title
+      maintainer = var.maintainer
+      nav = {
+        links = local.nav_links
+      }
+    }
+  ) : var.site_description_content
+}
+
 resource "aws_s3_bucket_object" "site_description" {
   bucket = var.site_bucket
   key    = "site_description.json"
   content_type = "application/json"
-  content = var.site_description_content
-  etag = md5(var.site_description_content)
+  content = local.site_description_content
+  etag = md5(local.site_description_content)
 }
 
 module archive_function {
