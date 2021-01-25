@@ -17,7 +17,7 @@ locals {
 }
 
 module default_assets {
-  source = "github.com/RLuckom/terraform_modules//themes/trails?ref=site-dressing"
+  source = "github.com/RLuckom/terraform_modules//themes/trails"
 }
 
 locals {
@@ -43,13 +43,13 @@ locals {
 }
 
 module asset_file_configs {
-  source = "github.com/RLuckom/terraform_modules//aws/coordinators/asset_directory?ref=site-dressing"
+  source = "github.com/RLuckom/terraform_modules//aws/coordinators/asset_directory"
   asset_directory_root = local.asset_path
 }
 
 module site_static_assets {
   bucket_name = var.site_bucket
-  source = "github.com/RLuckom/terraform_modules//aws/s3_directory?ref=site-dressing"
+  source = "github.com/RLuckom/terraform_modules//aws/s3_directory"
   file_configs = module.asset_file_configs.file_configs
 }
 
