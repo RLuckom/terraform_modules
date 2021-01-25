@@ -141,3 +141,8 @@ variable nav_links {
   }))
   default = []
 }
+
+variable asset_path {
+  type = string
+  default = ""
+}

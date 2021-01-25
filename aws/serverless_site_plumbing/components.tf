@@ -16,6 +16,10 @@ locals {
   }]
 }
 
+module default_assets {
+  source = "github.com/RLuckom/terraform_modules//themes/trails?ref=site-dressing"
+}
+
 locals {
   nav_links = concat(
     var.nav_links,
@@ -35,6 +39,18 @@ locals {
       }
     }
   ) : var.site_description_content
+  asset_path = var.asset_path == "" ? module.default_assets.asset_directory_root : var.asset_path
+}
+
+module asset_file_configs {
+  source = "github.com/RLuckom/terraform_modules//aws/coordinators/asset_directory?ref=site-dressing"
+  asset_directory_root = local.asset_path
+}
+
+module site_static_assets {
+  bucket_name = var.site_bucket
+  source = "github.com/RLuckom/terraform_modules//aws/s3_directory?ref=site-dressing"
+  file_configs = module.asset_file_configs.file_configs
 }
 
 resource "aws_s3_bucket_object" "site_description" {
