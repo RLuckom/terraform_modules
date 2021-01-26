@@ -56,10 +56,11 @@ data "archive_file" "deployment_package" {
 
 locals {
   s3_deployment = length(var.lambda_event_configs) > 0 && var.source_bucket != ""
+  need_event_config = length(var.source_contents) > 0 &&  length(var.lambda_event_configs) > 0
 }
 
 resource "aws_lambda_function_event_invoke_config" "function_notifications" {
-  count = length(var.source_contents) == 0 ? 0 : 1
+  count = local.need_event_config ? 1 : 0
   function_name    = aws_lambda_function.lambda.arn
   maximum_event_age_in_seconds = var.lambda_event_configs[0].maximum_event_age_in_seconds
   maximum_retry_attempts = var.lambda_event_configs[0].maximum_retry_attempts
