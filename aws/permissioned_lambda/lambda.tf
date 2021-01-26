@@ -54,8 +54,12 @@ data "archive_file" "deployment_package" {
   }
 }
 
+locals {
+  s3_deployment = length(var.lambda_event_configs) > 0 && var.source_bucket != ""
+}
+
 resource "aws_lambda_function_event_invoke_config" "function_notifications" {
-  count = length(var.lambda_event_configs) == 0 ? 0 : 1
+  count = length(var.source_contents) == 0 ? 0 : 1
   function_name    = aws_lambda_function.lambda.arn
   maximum_event_age_in_seconds = var.lambda_event_configs[0].maximum_event_age_in_seconds
   maximum_retry_attempts = var.lambda_event_configs[0].maximum_retry_attempts
@@ -80,8 +84,8 @@ resource "aws_lambda_function_event_invoke_config" "function_notifications" {
 }
 
 resource "aws_s3_bucket_object" "deployment_package_zip" {
-  count = length(var.source_contents) == 0 ? 0 : 1
-  bucket = var.lambda_details.bucket
+  count = local.s3_deployment ? 1 : 0
+  bucket = var.source_bucket
   key    = local.deployment_package_key
   source = local.deployment_package_local_path
 
@@ -90,8 +94,9 @@ resource "aws_s3_bucket_object" "deployment_package_zip" {
 
 resource "aws_lambda_function" "lambda" {
   function_name = local.scoped_lambda_name
-  s3_bucket = var.lambda_details.bucket
-	s3_key = local.deployment_package_key
+  s3_bucket = local.s3_deployment ? var.source_bucket : null
+  s3_key = local.s3_deployment ? local.deployment_package_key : null
+  filename = local.s3_deployment ? null : local.deployment_package_local_path
   role          = module.lambda_role.role.arn
   handler       = var.handler
   layers = var.layers

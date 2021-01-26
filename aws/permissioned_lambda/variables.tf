@@ -2,12 +2,16 @@ variable "lambda_details" {
   type = object({
     action_name = string
     scope_name = string
-    bucket = string
     policy_statements = list(object({
       actions = list(string)
       resources = list(string)
     }))
   })
+}
+
+variable source_bucket {
+  type = string
+  default = ""
 }
 
 locals {
