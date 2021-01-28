@@ -169,11 +169,11 @@ locals {
           }
           columns = module.column_schemas.lambda_log_columns
           partition_keys = module.column_schemas.year_month_day_hour_partition_keys
-        },
+        }]
       ),
       zipmap(
       [ for k, v in var.serverless_site_configs : replace("${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}", ".", "_") if v.scope == scope],
-      [ for k, v in var.serverless_site_configs : v if v.scope == scope],
+      [ for k, v in var.serverless_site_configs : 
         {
           bucket_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}"
           skip_header_line_count = 2
@@ -187,7 +187,7 @@ locals {
           }
           columns = module.column_schemas.cloudfront_access_log_columns
           partition_keys = module.column_schemas.year_month_day_hour_partition_keys
-        }]
+        } if v.scope == scope]
       )
     )
     }]
@@ -203,12 +203,84 @@ locals {
   )
 }
 
+locals {
+  visibility_lifecycle_rules = concat(
+    local.cloudfront_log_path_lifecycle_rules,
+    local.lambda_log_path_lifecycle_rules,
+    local.athena_result_path_lifecycle_rules
+  )
+}
+
 output visibility_lifecycle_rules {
   value = concat(
     local.cloudfront_log_path_lifecycle_rules,
     local.lambda_log_path_lifecycle_rules,
     local.athena_result_path_lifecycle_rules
   )
+}
+
+variable scoped_logging_functions {
+  type = map(map(object({
+    permission_type = string
+    role_arns = list(string)
+  })))
+  default = {}
+}
+
+variable scoped_athena_query_functions {
+  type = map(map(list(string)))
+  default = {}
+}
+
+variable glue_permission_name_map {
+  type = map(map(object({
+    add_partition_permission_names = list(string)
+  })))
+  default = {}
+}
+
+variable scoped_archive_notifications {
+  type = map(map(object({
+      lambda_arn = string
+      lambda_name = string
+      lambda_role_arn = string
+      permission_type = string
+      events              = list(string)
+      filter_prefix       = string
+      filter_suffix       = string
+  })))
+  default = {}
+}
+
+locals {
+  visibility_prefix_object_permissions = flatten([
+    for scope, v in var.scoped_logging_functions : [
+      for prefix in [
+        local.data_warehouse_configs[scope].lambda_log_prefix
+      ] : lookup(v, prefix, {
+        permission_type = ""
+        role_arns = []
+      }) if lookup(v, prefix, {
+        permission_type = ""
+        role_arns = []
+      }).permission_type != ""
+    ]
+  ])
+  log_delivery_notifications = flatten([
+    for k, v in local.serverless_site_configs : [
+      [ for scope, prefix_notifications_map in var.scoped_archive_notifications : [
+        for prefix, notification in prefix_notifications_map : notification if prefix == v.cloudfront_log_delivery_prefix ] if scope == v.scope]
+    ]
+  ])
+  visibility_prefix_athena_query_permissions = flatten([
+    for k, v in local.serverless_site_configs : [
+      [ for scope, prefix_arns_map in var.scoped_athena_query_functions: [
+        for prefix, arns in prefix_arns_map : {
+          prefix = prefix
+          arns = arns
+      } if prefix == v.cloudfront_result_prefix ] if scope == v.scope]
+    ]
+  ])
 }
 
 output visibility_data_bucket {

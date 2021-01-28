@@ -10,7 +10,7 @@ module visibility_bucket {
   // ensure that writes to any incorrect location will fail.
   prefix_athena_query_permissions = local.visibility_prefix_athena_query_permissions
   prefix_object_permissions = local.visibility_prefix_object_permissions 
-  lifecycle_rules = module.visibility_data_coordinator.visibility_lifecycle_rules
+  lifecycle_rules = local.visibility_lifecycle_rules
 }
 
 /*
@@ -23,7 +23,6 @@ and moves them into the visibility bucket.
 module log_delivery_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/logging_bucket"
   name = local.cloudfront_delivery_bucket
-  prefix_object_permissions = local.log_delivery_prefix_permissions
   lambda_notifications = local.log_delivery_notifications
 }
 
@@ -31,7 +30,8 @@ module data_warehouse {
   source = "github.com/RLuckom/terraform_modules//aws/state/data_warehouse"
   for_each = local.data_warehouse_configs
   data_bucket = local.visibility_data_bucket
+  scope = each.value.scope
   database_name = each.value.glue_database_name
   table_configs = each.value.glue_table_configs
-  table_permission_names = local.prod_glue_table_permission_names
+  table_permission_names = lookup(var.glue_permission_name_map, each.value.scope, {})
 }

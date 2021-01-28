@@ -23,6 +23,11 @@ variable coordinator_data {
   })
 }
 
+variable additional_allowed_origins {
+  type = list(string)
+  default = []
+}
+
 variable enable {
   default = true
 }

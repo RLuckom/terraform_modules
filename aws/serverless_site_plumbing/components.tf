@@ -263,3 +263,70 @@ module site {
   subject_alternative_names = var.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }
+
+locals {
+  trails_table_delete_role_names = module.trails_updater.*.role.name
+  trails_table_write_permission_role_names = module.trails_updater.*.role.name
+  trails_table_read_permission_role_names = flatten([
+    module.trails_resolver.*.role.name,
+    module.trails_updater.*.role.name
+  ])
+  website_bucket_lambda_notifications = var.enable ? [
+    {
+      lambda_arn = module.site_render[0].lambda.arn
+      lambda_name = module.site_render[0].lambda.function_name
+      lambda_role_arn = module.site_render[0].role.arn
+      permission_type = "put_object"
+      events              = ["s3:ObjectCreated:*" ]
+      filter_prefix       = ""
+      filter_suffix       = ".md"
+    },
+    {
+      lambda_arn = module.deletion_cleanup[0].lambda.arn
+      lambda_name = module.deletion_cleanup[0].lambda.function_name
+      lambda_role_arn = module.deletion_cleanup[0].role.arn
+      permission_type = "delete_object"
+      events              = ["s3:ObjectRemoved:*" ]
+      filter_prefix       = ""
+      filter_suffix       = ".md"
+    }
+  ] : []
+  glue_table_permission_names = {}
+  website_access_principals = [local.cloudfront_origin_access_principal]
+}
+
+module trails_table {
+  source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  table_name = "test-trails_table"
+  delete_item_permission_role_names = local.trails_table_delete_role_names
+  write_permission_role_names = local.trails_table_write_permission_role_names
+  read_permission_role_names = local.trails_table_read_permission_role_names
+  partition_key = {
+    name = "trailName"
+    type = "S"
+  }
+  range_key = {
+    name = "memberKey"
+    type = "S"
+  }
+  global_indexes = [
+    {
+      name = "reverseDependencyIndex"
+      hash_key = "memberKey"
+      range_key = "trailName"
+      write_capacity = 0
+      read_capacity = 0
+      projection_type = "ALL"
+      non_key_attributes = []
+    }
+  ]
+}
+
+module website_bucket {
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
+  name = var.coordinator_data.domain
+  domain_parts = var.coordinator_data.domain_parts
+  additional_allowed_origins = var.additional_allowed_origins
+  website_access_principals = local.website_access_principals
+  lambda_notifications = local.website_bucket_lambda_notifications
+}
