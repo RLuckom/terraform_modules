@@ -39,21 +39,24 @@ locals {
       }
     }
   ) : var.site_description_content
-  asset_path = var.asset_path == "" ? module.default_assets.asset_directory_root : var.asset_path
+  asset_path = var.asset_path == "" ? module.default_assets[0].asset_directory_root : var.asset_path
 }
 
 module asset_file_configs {
+  count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/coordinators/asset_directory"
   asset_directory_root = local.asset_path
 }
 
 module site_static_assets {
+  count = var.enable ? 1 : 0
   bucket_name = var.site_bucket
   source = "github.com/RLuckom/terraform_modules//aws/s3_directory"
-  file_configs = module.asset_file_configs.file_configs
+  file_configs = module.asset_file_configs[0].file_configs
 }
 
 resource "aws_s3_bucket_object" "site_description" {
+  count = var.enable ? 1 : 0
   bucket = var.site_bucket
   key    = "site_description.json"
   content_type = "application/json"
@@ -62,6 +65,7 @@ resource "aws_s3_bucket_object" "site_description" {
 }
 
 module archive_function {
+  count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 15
   mem_mb = 128
@@ -91,6 +95,7 @@ module archive_function {
 }
 
 module site_render {
+  count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 256
@@ -101,7 +106,7 @@ module site_render {
       website_bucket = var.site_bucket
       domain_name = var.coordinator_data.domain
       site_description_path = "site_description.json"
-      dependency_update_function = module.trails_updater.lambda.arn
+      dependency_update_function = module.trails_updater[0].lambda.arn
     })
   additional_helpers = [
     {
@@ -118,7 +123,7 @@ module site_render {
   scope_name = var.coordinator_data.scope
   source_bucket = var.coordinator_data.lambda_source_bucket
   policy_statements =  concat(
-    module.trails_updater.permission_sets.invoke
+    module.trails_updater[0].permission_sets.invoke
   )
   donut_days_layer_arn = var.layer_arns.donut_days
   additional_layers = [
@@ -127,6 +132,7 @@ module site_render {
 }
 
 module deletion_cleanup {
+  count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 128
@@ -137,7 +143,7 @@ module deletion_cleanup {
     website_bucket = var.site_bucket
     domain_name = var.coordinator_data.domain
     site_description_path = "site_description.json"
-    dependency_update_function = module.trails_updater.lambda.arn
+    dependency_update_function = module.trails_updater[0].lambda.arn
   }) 
   additional_helpers = [
     {
@@ -150,7 +156,7 @@ module deletion_cleanup {
   scope_name = var.coordinator_data.scope
   source_bucket = var.lambda_bucket
   policy_statements =  concat(
-    module.trails_updater.permission_sets.invoke
+    module.trails_updater[0].permission_sets.invoke
   )
   donut_days_layer_arn = var.layer_arns.donut_days
   additional_layers = [
@@ -159,6 +165,7 @@ module deletion_cleanup {
 }
 
 module trails_updater {
+  count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 192
@@ -197,6 +204,7 @@ module trails_updater {
 }
 
 module trails_resolver {
+  count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 128
@@ -217,6 +225,7 @@ module trails_resolver {
 }
 
 module site {
+  count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
   website_buckets = [{
     origin_id = var.coordinator_data.domain_parts.controlled_domain_part
@@ -243,8 +252,8 @@ module site {
       headers = []
     }
     lambda = {
-      arn = module.trails_resolver.lambda.arn
-      name = module.trails_resolver.lambda.function_name
+      arn = module.trails_resolver[0].lambda.arn
+      name = module.trails_resolver[0].lambda.function_name
     }
   }]
   route53_zone_name = var.route53_zone_name

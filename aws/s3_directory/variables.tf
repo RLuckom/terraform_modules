@@ -17,4 +17,5 @@ resource "aws_s3_bucket_object" "assets" {
   key    = var.file_configs[count.index].key
   content_type = var.file_configs[count.index].content_type
   source = var.file_configs[count.index].file_path
+  etag = filemd5(var.file_configs[count.index].file_path)
 }

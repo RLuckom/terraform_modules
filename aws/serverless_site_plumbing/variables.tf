@@ -23,6 +23,10 @@ variable coordinator_data {
   })
 }
 
+variable enable {
+  default = true
+}
+
 locals {
   lambda_logging_config = {
     debug = var.default_log_level
