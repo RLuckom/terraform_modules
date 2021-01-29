@@ -256,11 +256,19 @@ locals {
   visibility_prefix_object_permissions = flatten([
     for scope, v in var.scoped_logging_functions : [
       for prefix in [
-        local.data_warehouse_configs[scope].lambda_log_prefix
-      ] : lookup(v, prefix, {
-        permission_type = ""
-        role_arns = []
-      }) if lookup(v, prefix, {
+        local.data_warehouse_configs[scope].lambda_log_prefix,
+        local.serverless_site_configs[scope].cloudfront_log_storage_prefix
+      ] : {
+        prefix = prefix
+        arns = lookup(v, prefix, {
+          permission_type = ""
+          role_arns = []
+        }).role_arns 
+        permission_type = lookup(v, prefix, {
+          permission_type = ""
+          role_arns = []
+        }).permission_type 
+      } if lookup(v, prefix, {
         permission_type = ""
         role_arns = []
       }).permission_type != ""

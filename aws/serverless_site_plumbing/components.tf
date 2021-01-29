@@ -39,7 +39,7 @@ locals {
       }
     }
   ) : var.site_description_content
-  asset_path = var.asset_path == "" ? module.default_assets[0].asset_directory_root : var.asset_path
+  asset_path = var.asset_path == "" ? module.default_assets.asset_directory_root : var.asset_path
 }
 
 module asset_file_configs {
@@ -297,7 +297,7 @@ locals {
 
 module trails_table {
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
-  table_name = "test-trails_table"
+  table_name = var.trails_table_name
   delete_item_permission_role_names = local.trails_table_delete_role_names
   write_permission_role_names = local.trails_table_write_permission_role_names
   read_permission_role_names = local.trails_table_read_permission_role_names
