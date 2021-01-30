@@ -65,9 +65,9 @@ module function {
   lambda_details = {
     action_name = var.action_name
     scope_name = var.scope_name
-    bucket = var.source_bucket
     policy_statements = var.policy_statements
   }
+  source_bucket = var.source_bucket
   layers = concat([
     var.donut_days_layer_arn == null ? module.donut_days_layer[0].layer.arn : var.donut_days_layer_arn,
   ], var.additional_layers)

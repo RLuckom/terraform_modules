@@ -1,5 +1,6 @@
 variable source_bucket {
   type = string
+  default = ""
 }
 
 variable action_name {

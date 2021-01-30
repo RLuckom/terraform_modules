@@ -32,8 +32,25 @@ variable serverless_site_configs {
   default = {}
 }
 
+variable log_level {
+  type =  bool
+  default = false
+}
+
+variable donut_days_layer_arn {
+  type = string
+  default = ""
+}
+
 locals {
-  scopes = var.scopes
+  lambda_logging_config = {
+    bucket = local.visibility_data_bucket
+    prefix = local.scoped_log_prefixes["default"].lambda_log_prefix
+  }
+}
+
+locals {
+  scopes = concat(["default"], var.scopes)
   cloudfront_delivery_bucket = var.cloudfront_delivery_bucket
   visibility_data_bucket = var.visibility_data_bucket
   athena_results_bucket = var.athena_results_bucket == "" ? var.visibility_data_bucket : var.athena_results_bucket
@@ -92,6 +109,20 @@ variable expire_lambda_logs {
   }
 }
 
+variable lambda_event_configs {
+  type = list(object({
+    maximum_event_age_in_seconds = number
+    maximum_retry_attempts = number
+    on_success = list(object({
+      function_arn = string
+    }))
+    on_failure = list(object({
+      function_arn = string
+    }))
+  }))
+  default = []
+}
+
 data aws_caller_identity current {}
 
 module column_schemas {
@@ -123,6 +154,67 @@ locals {
     enabled = var.expire_athena_results.enabled
     expiration_days = var.expire_athena_results.expiration_days
   }]
+  archive_function_destination_maps = {
+    athena_destinations_map = zipmap(
+      values(local.serverless_site_configs).*.cloudfront_log_delivery_prefix,
+      values(local.serverless_site_configs).*.cloudfront_athena_result_location
+    )
+    log_destination_map = zipmap(
+      values(local.serverless_site_configs).*.cloudfront_log_delivery_prefix,
+      values(local.serverless_site_configs).*.cloudfront_log_storage_prefix
+    )
+    glue_table_map = zipmap(
+      values(local.serverless_site_configs).*.cloudfront_log_delivery_prefix,
+      values(local.serverless_site_configs).*.glue_table_name
+    )
+    glue_db_map = zipmap(
+      values(local.serverless_site_configs).*.cloudfront_log_delivery_prefix,
+      values(local.serverless_site_configs).*.glue_database_name
+    )
+  }
+  archive_function_visibility_bucket_permissions = flatten(
+    [
+      [
+        for site, config in local.serverless_site_configs : {
+          permission_type = "put_object"
+          prefix = config.cloudfront_log_storage_prefix
+          arns = [
+            module.archive_function.role.arn
+          ]
+        }
+      ],
+      [
+        {
+          permission_type = "put_object"
+          prefix = local.scoped_log_prefixes["default"].lambda_log_prefix
+          arns = [
+            module.archive_function.role.arn
+          ]
+        }
+      ],
+    ]
+  )
+  archive_function_cloudfront_delivery_bucket_notifications = flatten(
+    [
+      [
+        for site, config in local.serverless_site_configs : {
+          permission_type = "move_known_objects_out"
+          lambda_role_arn = module.archive_function.role.arn
+          lambda_arn = module.archive_function.lambda.arn
+          lambda_name = module.archive_function.lambda.function_name
+          events = ["s3:ObjectCreated:*"]
+          filter_prefix = config.cloudfront_log_delivery_prefix
+          filter_suffix = ""
+        }
+      ],
+    ]
+  )
+  scoped_log_prefixes = zipmap(
+    local.scopes,
+    [for scope in local.scopes : {
+      lambda_log_prefix = "${local.lambda_prefix}/scope=${scope}/"
+    }]
+  )
   serverless_site_configs = zipmap(
     keys(var.serverless_site_configs),
     [ for k, v in var.serverless_site_configs : {
@@ -274,12 +366,12 @@ locals {
       }).permission_type != ""
     ]
   ])
-  log_delivery_notifications = flatten([
-    for k, v in local.serverless_site_configs : [
-      [ for scope, prefix_notifications_map in var.scoped_archive_notifications : [
-        for prefix, notification in prefix_notifications_map : notification if prefix == v.cloudfront_log_delivery_prefix ] if scope == v.scope]
-    ]
-  ])
+  archive_function_visibility_prefix_athena_query_permissions = [
+    for k, config in local.serverless_site_configs : {
+      prefix = config.cloudfront_result_prefix
+      arns = [module.archive_function.role.arn]
+    } 
+  ]
   visibility_prefix_athena_query_permissions = flatten([
     for k, v in local.serverless_site_configs : [
       [ for scope, prefix_arns_map in var.scoped_athena_query_functions: [

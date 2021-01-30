@@ -98,36 +98,6 @@ locals {
   )
 }
 
-module archive_function {
-  count = var.enable ? 1 : 0
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
-  timeout_secs = 15
-  mem_mb = 128
-  logging_config = local.lambda_logging_config
-  log_level = var.log_level
-  config_contents = templatefile("${path.module}/src/configs/s3_to_athena.js",
-  {
-    athena_region = var.coordinator_data.athena_region
-    glue_db_map = jsonencode(local.glue_db_map)
-    glue_table_map = jsonencode(local.glue_table_map)
-    athena_catalog = "AwsDataCatalog"
-    athena_destinations_map = jsonencode(local.athena_destinations_map)
-    log_destinations_map = jsonencode(local.log_destination_map)
-    partition_bucket = var.coordinator_data.log_partition_bucket
-  })
-  lambda_event_configs = var.lambda_event_configs
-  additional_helpers = [
-    {
-      helper_name = "athenaHelpers.js",
-      file_contents = file("${path.module}/src/helpers/athenaHelpers.js")
-    }
-  ]
-  action_name = "cloudfront_log_collector"
-  scope_name = var.coordinator_data.scope
-  source_bucket = var.coordinator_data.lambda_source_bucket
-  donut_days_layer_arn = var.layer_arns.donut_days
-}
-
 module site_render {
   count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"

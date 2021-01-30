@@ -34,7 +34,6 @@ variable enable {
 
 locals {
   lambda_logging_config = {
-    debug = var.default_log_level
     bucket = var.coordinator_data.log_partition_bucket
     prefix = var.coordinator_data.lambda_log_prefix
   }
@@ -92,6 +91,11 @@ variable lambda_event_configs {
     }))
   }))
   default = []
+}
+
+variable donut_days_layer_arn {
+  type = string
+  default = ""
 }
 
 variable lambda_bucket {
