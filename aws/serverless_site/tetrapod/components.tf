@@ -64,21 +64,55 @@ resource "aws_s3_bucket_object" "site_description" {
   etag = md5(local.site_description_content)
 }
 
+locals {
+  cloudfront_delivery_prefixes = [
+    var.coordinator_data.cloudfront_log_delivery_prefix
+  ]
+  athena_destinations = [
+    var.coordinator_data.cloudfront_athena_result_location
+  ]
+  log_destination_prefixes = [
+    var.coordinator_data.cloudfront_log_storage_prefix
+  ]
+  glue_database_names = [
+    var.coordinator_data.glue_database_name
+  ]
+  glue_table_names = [
+    var.coordinator_data.glue_table_name
+  ]
+  athena_destinations_map = zipmap(
+    local.cloudfront_delivery_prefixes,
+    local.athena_destinations
+  )
+  log_destination_map = zipmap(
+    local.cloudfront_delivery_prefixes,
+    local.log_destination_prefixes
+  )
+  glue_db_map = zipmap(
+    local.cloudfront_delivery_prefixes,
+    local.glue_database_names
+  )
+  glue_table_map = zipmap(
+    local.cloudfront_delivery_prefixes,
+    local.glue_table_names
+  )
+}
+
 module archive_function {
   count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 15
   mem_mb = 128
   logging_config = local.lambda_logging_config
-  log_level =var.log_level
+  log_level = var.log_level
   config_contents = templatefile("${path.module}/src/configs/s3_to_athena.js",
   {
     athena_region = var.coordinator_data.athena_region
-    athena_db = var.coordinator_data.glue_database_name
-    athena_table = var.coordinator_data.glue_table_name
+    glue_db_map = jsonencode(local.glue_db_map)
+    glue_table_map = jsonencode(local.glue_table_map)
     athena_catalog = "AwsDataCatalog"
-    athena_result_location = var.coordinator_data.cloudfront_athena_result_location
-    partition_prefix = var.coordinator_data.cloudfront_log_storage_prefix
+    athena_destinations_map = jsonencode(local.athena_destinations_map)
+    log_destinations_map = jsonencode(local.log_destination_map)
     partition_bucket = var.coordinator_data.log_partition_bucket
   })
   lambda_event_configs = var.lambda_event_configs
@@ -99,7 +133,7 @@ module site_render {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 256
-  log_level =var.log_level
+  log_level = var.log_level
   logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
     {
@@ -170,7 +204,7 @@ module trails_updater {
   timeout_secs = 40
   mem_mb = 192
   logging_config = local.lambda_logging_config
-  log_level =var.log_level
+  log_level = var.log_level
   config_contents = templatefile("${path.module}/src/configs/update_trails.js",
     {
       table = var.trails_table_name,

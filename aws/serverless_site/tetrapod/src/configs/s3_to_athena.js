@@ -1,10 +1,32 @@
 const _ = require('lodash')
-const { parseKeyDate, athenaPartitionQuery, createDatedS3Key} = require('./helpers/athenaHelpers')
+const { parseKey, athenaPartitionQuery, createDatedS3Key} = require('./helpers/athenaHelpers')
+
+
+// e.g { log_delivery_prefix: log_storage_destination}
+const logDestinations = ${log_destinations_map}
+const athenaDestinations = ${athena_destinations_map}
 
 module.exports = {
   stages: {
     addPartitions: {
       index: 0,
+      transformers: {
+        storageConfig: {
+          helper: 'transform',
+          params: {
+            arg: {
+              all: {
+                logDestinationsMap: {value: ${log_destinations_map}},
+                athenaResultLocationsMap: {value: ${athena_destinations_map}},
+                glueDbMap: {value: ${glue_db_map}},
+                glueTableMap: {value: ${glue_table_map}},
+                objectKey: {ref: 'event.Records[0].s3.object.key'},
+              }
+            },
+            func: parseKey
+          }
+        }
+      },
       dependencies: {
         partitions: {
           action: 'exploranda',
@@ -16,28 +38,22 @@ module.exports = {
                 QueryString: {
                   helper: 'transform',
                   params: {
-                    arg: {
-                      all: {
-                        athenaDb: {value: '${athena_db}'},
-                        athenaTable: {value: '${athena_table}'},
-                        objectKey: {ref: 'event.Records[0].s3.object.key'},
-                      },
-                    },
+                    arg: { ref: 'stage.storageConfig' },
                     func: athenaPartitionQuery,
                   }
                 },
                 QueryExecutionContext: {
-                  value: {
-                    Catalog: '${athena_catalog}',
-                    Database: '${athena_db}',
+                  all: {
+                    Catalog: {value: '${athena_catalog}'},
+                    Database: {ref: 'stage.storageConfig.glueDb'},
                   }
                 },
                 ResultConfiguration: {
-                  value: {
-                    OutputLocation: '${athena_result_location}',
+                  all: {
+                    OutputLocation: { ref: 'stage.storageConfig.athenaResultLocation' }
                   }
                 }
-              }
+              },
             },
           },
         },
@@ -100,20 +116,6 @@ module.exports = {
     copy: {
       index: 3,
       transformers: {
-        destKey: {
-          helper: 'transform',
-          params: {
-            arg: {
-              all: {
-                key: {ref: 'event.Records[0].s3.object.key'},
-              }
-            },
-            func: ({key}) => {
-              const { date, uniqId, year, month, day, hour } = parseKeyDate(key)
-              return createDatedS3Key("${partition_prefix}",  date + '.' + uniqId + '.gz', { year, month, day, hour })
-            },
-          }
-        },
         copySource: {
           helper: 'transform',
           params: {
@@ -136,7 +138,7 @@ module.exports = {
               explorandaParams: {
                 Bucket: '${partition_bucket}',
                 CopySource: {ref: 'stage.copySource'},
-                Key: { ref: 'stage.destKey'} 
+                Key: { ref: 'addPartitions.vars.storageConfig.datedArchiveKey'} 
               }
             }
           },
