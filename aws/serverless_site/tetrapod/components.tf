@@ -125,7 +125,6 @@ module site_render {
   lambda_event_configs = var.lambda_event_configs
   action_name = "site_render"
   scope_name = var.coordinator_data.scope
-  source_bucket = var.coordinator_data.lambda_source_bucket
   policy_statements =  concat(
     module.trails_updater[0].permission_sets.invoke
   )
@@ -158,7 +157,6 @@ module deletion_cleanup {
   lambda_event_configs = var.lambda_event_configs
   action_name = "deletion_cleanup"
   scope_name = var.coordinator_data.scope
-  source_bucket = var.lambda_bucket
   policy_statements =  concat(
     module.trails_updater[0].permission_sets.invoke
   )
@@ -197,7 +195,6 @@ module trails_updater {
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_updater"
   scope_name = var.coordinator_data.scope
-  source_bucket = var.lambda_bucket
   policy_statements = concat(
     local.render_invoke_permission,
   )
@@ -224,7 +221,6 @@ module trails_resolver {
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_resolver"
   scope_name = var.coordinator_data.scope
-  source_bucket = var.lambda_bucket
   donut_days_layer_arn = var.layer_arns.donut_days
 }
 
