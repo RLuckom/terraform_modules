@@ -39,7 +39,16 @@ module data_warehouse {
   scope = each.value.scope
   database_name = each.value.glue_database_name
   table_configs = each.value.glue_table_configs
-  table_permission_names = lookup(var.glue_permission_name_map, each.value.scope, {})
+  table_permission_names = zipmap(
+    keys(each.value.glue_table_configs),
+    [for k in keys(each.value.glue_table_configs) : {
+      add_partition_permission_names = concat(
+        [module.archive_function.role.name],
+        lookup(lookup(var.glue_permission_name_map, each.value.scope, {}), k, { add_partition_permission_names = [] }).add_partition_permission_names 
+
+      )
+    }]
+  )
 }
 
 module archive_function {
