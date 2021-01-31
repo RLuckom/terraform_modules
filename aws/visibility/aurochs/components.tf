@@ -43,7 +43,7 @@ module data_warehouse {
 }
 
 module archive_function {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=move-archive-to-vis"
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 15
   mem_mb = 128
   logging_config = local.lambda_logging_config
