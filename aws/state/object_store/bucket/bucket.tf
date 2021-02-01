@@ -188,14 +188,14 @@ locals {
       prefix = prefix_config.prefix
       permission_type = "athena_query_execution"
       arns = prefix_config.arns
-    }]
+    } if length(prefix_config.arns) > 0],
   )
   bucket_permissions = concat(
     var.bucket_permissions,
     [ for prefix_config in var.prefix_athena_query_permissions : {
       permission_type = "athena_query_execution"
       arns = prefix_config.arns
-    }]
+    } if length(prefix_config.arns) > 0],
   )
 }
 
@@ -210,12 +210,12 @@ locals {
           identifiers = prefix_config.arns 
         }
       ]
-    }],
+    } if length(prefix_config.arns) > 0],
     [ for prefix_config in var.principal_prefix_object_permissions : {
       prefix = prefix_config.prefix
       actions = local.object_permission_set_actions[prefix_config.permission_type]
       principals = prefix_config.principals
-    }]
+    } if length(prefix_config.principals) > 0],
   )
   bucket_permission_sets = concat(
     [ for bucket_config in local.bucket_permissions : {
@@ -226,10 +226,11 @@ locals {
           identifiers = bucket_config.arns 
         }
       ]
-    }],
+    } if length(bucket_config.arns) > 0],
     [ for bucket_config in var.principal_bucket_permissions : {
       actions = local.bucket_permission_set_actions[bucket_config.permission_type]
       principals = bucket_config.principals
-    }]
+    } if length(bucket_config.principals) > 0],
   )
+  need_policy = length(local.prefix_object_permission_sets) + length(local.bucket_permission_sets) > 0
 }

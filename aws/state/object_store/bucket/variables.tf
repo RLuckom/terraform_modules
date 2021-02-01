@@ -107,14 +107,3 @@ variable cors_rules {
   }))
   default = []
 }
-
-locals {
-  need_policy = length(concat(
-    var.principal_bucket_permissions,
-    var.principal_prefix_object_permissions,
-    var.bucket_permissions,
-    var.prefix_object_permissions,
-    var.lambda_notifications,
-    var.prefix_athena_query_permissions
-  )) > 0
-}

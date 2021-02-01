@@ -292,7 +292,14 @@ locals {
     }
   ] : []
   glue_table_permission_names = {}
-  website_access_principals = [local.cloudfront_origin_access_principal]
+  website_access_principals = local.cloudfront_origin_access_principals
+}
+
+locals {
+  cloudfront_origin_access_principals = [for id in module.site.*.origin_access_identity.iam_arn : {
+    type = "AWS"
+    identifiers = [id]
+  }]
 }
 
 module trails_table {

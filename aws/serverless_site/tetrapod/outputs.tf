@@ -23,10 +23,3 @@ output cloudfront_origin_access_principal {
     identifiers = module.site.*.origin_access_identity.iam_arn
   }
 }
-
-locals {
-  cloudfront_origin_access_principal = {
-    type = "AWS"
-    identifiers = module.site.*.origin_access_identity.iam_arn
-  }
-}
