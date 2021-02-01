@@ -37,9 +37,15 @@ variable log_level {
   default = false
 }
 
-variable donut_days_layer_arn {
-  type = string
-  default = ""
+variable donut_days_layer {
+  type = object({
+    present = bool
+    arn = string
+  })
+  default = {
+    present = false
+    arn = ""
+  }
 }
 
 locals {

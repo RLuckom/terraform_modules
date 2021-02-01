@@ -76,5 +76,5 @@ module archive_function {
   ]
   action_name = "cloudfront_log_collector"
   scope_name = "default"
-  donut_days_layer_arn = var.donut_days_layer_arn
+  donut_days_layer = var.donut_days_layer
 }
