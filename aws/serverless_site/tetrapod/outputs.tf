@@ -1,7 +1,7 @@
 output lambda_logging_prefix_role_map {
   value = zipmap(
     [
-      var.coordinator_data.lambda_log_prefix,
+      var.coordinator_data.lambda_log_delivery_prefix,
     ],
     [
       {
@@ -22,4 +22,8 @@ output cloudfront_origin_access_principal {
     type = "AWS"
     identifiers = module.site.*.origin_access_identity.iam_arn
   }
+}
+
+output routing {
+  value = local.routing
 }

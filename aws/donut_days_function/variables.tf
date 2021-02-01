@@ -11,9 +11,15 @@ variable scope_name {
   type = string
   default = ""
 }
-variable donut_days_layer_arn {
-  type = string
-  default = null
+variable donut_days_layer {
+  type = object({
+    present = bool
+    arn = string
+  })
+  default = {
+    present = false
+    arn = ""
+  }
 }
 
 variable config_contents {
@@ -38,7 +44,10 @@ variable logging_config {
 }
 
 variable additional_layers {
-  type = list(string)
+  type = list(object({
+    present = bool
+    arn = string
+  }))
   default = []
 }
 

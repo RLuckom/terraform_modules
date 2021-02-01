@@ -1,25 +1,26 @@
 variable coordinator_data {
   type = object({
-    domain = string
-    athena_region = string
-    lambda_source_bucket = string
-    lambda_log_prefix = string
+    lambda_log_delivery_prefix = string
+    lambda_log_delivery_bucket = string
     cloudfront_log_delivery_prefix = string
-    cloudfront_log_storage_prefix = string
-    cloudfront_result_prefix = string
-    cloudfront_athena_result_location = string
-    log_delivery_bucket = string
-    log_partition_bucket = string
-    athena_result_bucket = string
-    lambda_result_prefix = string
-    lambda_athena_result_location = string
-    glue_table_name = string
-    glue_database_name = string
-    scope = string
+    cloudfront_log_delivery_bucket = string
+  })
+  default = {
+    lambda_log_delivery_prefix = ""
+    lambda_log_delivery_bucket = ""
+    cloudfront_log_delivery_prefix = ""
+    cloudfront_log_delivery_bucket = ""
+  }
+}
+
+variable routing {
+  type = object({
     domain_parts = object({
       top_level_domain = string
       controlled_domain_part = string
     })
+    scope = string
+    route53_zone_name = string
   })
 }
 
@@ -34,11 +35,11 @@ variable enable {
 
 locals {
   lambda_logging_config = {
-    bucket = var.coordinator_data.log_partition_bucket
-    prefix = var.coordinator_data.lambda_log_prefix
+    bucket = var.coordinator_data.lambda_log_delivery_bucket
+    prefix = var.coordinator_data.lambda_log_delivery_prefix
   }
   cloudfront_logging_config = {
-    bucket = var.coordinator_data.log_delivery_bucket
+    bucket = var.coordinator_data.cloudfront_log_delivery_bucket
     prefix = var.coordinator_data.cloudfront_log_delivery_prefix
   }
 }
@@ -93,24 +94,32 @@ variable lambda_event_configs {
   default = []
 }
 
-variable donut_days_layer_arn {
+variable lambda_bucket {
   type = string
   default = ""
 }
 
-variable lambda_bucket {
-  type = string
-}
-
-variable layer_arns {
+variable layers {
   type = object({
-    donut_days = string
-    markdown_tools = string
+    donut_days = object({
+      present = bool
+      arn = string
+    })
+    markdown_tools = object({
+      present = bool
+      arn = string
+    })
   })
-}
-
-variable route53_zone_name {
-  type = string
+  default = {
+    donut_days = {
+      present = false 
+      arn = ""
+    }
+    markdown_tools = {
+      present = false 
+      arn = ""
+    }
+  }
 }
 
 variable default_cloudfront_ttls {

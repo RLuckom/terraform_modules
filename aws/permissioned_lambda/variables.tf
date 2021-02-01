@@ -1,4 +1,4 @@
-variable "lambda_details" {
+variable lambda_details {
   type = object({
     action_name = string
     scope_name = string
@@ -20,7 +20,7 @@ locals {
   scoped_lambda_name = "${var.lambda_details.action_name}${var.lambda_details.scope_name == "" ? "" : "-"}${var.lambda_details.scope_name}"
 }
 
-variable "invoking_principals" {
+variable invoking_principals {
   type = list(object({
     service = string
     source_arn = string
@@ -42,7 +42,7 @@ variable lambda_event_configs {
   default = []
 }
 
-variable "self_invoke" {
+variable self_invoke {
   type = object({
     allowed = bool
     concurrent_executions = number
@@ -54,7 +54,10 @@ variable "self_invoke" {
 }
 
 variable layers {
-  type = list(string)
+  type = list(object({
+    present = bool
+    arn = string
+  }))
   default = []
 }
 
@@ -66,7 +69,7 @@ variable source_contents {
   default = []
 }
 
-variable "bucket_notifications" {
+variable bucket_notifications {
   type = list(object({
     bucket = string
     events = list(string)
@@ -76,14 +79,14 @@ variable "bucket_notifications" {
   default = []
 }
 
-variable "cron_notifications" {
+variable cron_notifications {
   type = list(object({
     period_expression = string
   }))
   default = []
 }
 
-variable "queue_event_sources" {
+variable queue_event_sources {
   type = list(object({
     arn = string
     batch_size = number
@@ -91,12 +94,12 @@ variable "queue_event_sources" {
   default = []
 }
 
-variable "deny_cloudwatch" {
+variable deny_cloudwatch {
   type = bool
   default = false
 }
 
-variable "log_writer_policy" {
+variable log_writer_policy {
   type = list(object({
     actions = list(string)
     resources = list(string)
@@ -113,32 +116,32 @@ variable "log_writer_policy" {
   }]
 }
 
-variable "handler" {
+variable handler {
   type = string
   default = "index.handler"
 }
 
-variable "timeout_secs" {
+variable timeout_secs {
   type = number
   default = 10
 }
 
-variable "mem_mb" {
+variable mem_mb {
   type = number
   default = 256
 }
 
-variable "log_retention_period" {
+variable log_retention_period {
   type = number
   default = 7
 }
 
-variable "reserved_concurrent_executions" {
+variable reserved_concurrent_executions {
   type = number
   default = -1
 }
 
-variable "environment_var_map" {
+variable environment_var_map {
   type = map(string)
   default = {
     NO_VARS = "true"

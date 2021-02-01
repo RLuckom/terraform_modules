@@ -5,42 +5,42 @@
   font-style: italic;
   font-weight: 100;
   font-display: swap;
-  src: url(https://raphaelluckom.com/assets/static/fonts/Montserrat-ThinItalic.woff2) format('woff2');
+  src: url(/assets/static/fonts/Montserrat-ThinItalic.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'Source400';
   font-weight: 400;
   font-display: swap;
-  src: url(https://raphaelluckom.com/assets/static/fonts/Source400.woff2) format('woff2');
+  src: url(/assets/static/fonts/Source400.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'IBMPlex300';
   font-weight: 300;
   font-display: swap;
-  src: url(https://raphaelluckom.com/assets/static/fonts/IBMPlex300.woff2) format('woff2');
+  src: url(/assets/static/fonts/IBMPlex300.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'IBMPlex400';
   font-weight: 400;
   font-display: swap;
-  src: url(https://raphaelluckom.com/assets/static/fonts/IBMPlex400.woff2) format('woff2');
+  src: url(/assets/static/fonts/IBMPlex400.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'IBMPlex600';
   font-weight: 600;
   font-display: swap;
-  src: url(https://raphaelluckom.com/assets/static/fonts/IBMPlex600.woff2) format('woff2');
+  src: url(/assets/static/fonts/IBMPlex600.woff2) format('woff2');
 }
 
 @font-face {
   font-family: 'Garamond700';
   font-weight: 700;
   font-display: swap;
-  src: url(https://raphaelluckom.com/assets/static/fonts/Garamond700.woff2) format('woff2');
+  src: url(/assets/static/fonts/Garamond700.woff2) format('woff2');
 }
 
 .nav-links {

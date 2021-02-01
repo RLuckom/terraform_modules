@@ -100,7 +100,7 @@ resource "aws_lambda_function" "lambda" {
   filename = local.s3_deployment ? null : local.deployment_package_local_path
   role          = module.lambda_role.role.arn
   handler       = var.handler
-  layers = var.layers
+  layers = var.layers.*.arn
 	timeout = var.timeout_secs
   source_code_hash = length(data.archive_file.deployment_package) > 0 ? data.archive_file.deployment_package[0].output_base64sha256 : null
   reserved_concurrent_executions = var.self_invoke.allowed ? var.self_invoke.concurrent_executions : var.reserved_concurrent_executions

@@ -40,10 +40,13 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  logging_config {
-    include_cookies = var.log_cookies
-    bucket          = "${var.logging_config.bucket}.s3.amazonaws.com"
-    prefix          = var.logging_config.prefix
+  dynamic "logging_config" {
+    for_each = var.logging_config.bucket == "" ? [] : [var.logging_config]
+    content {
+      include_cookies = var.log_cookies
+      bucket          = "${var.logging_config.bucket}.s3.amazonaws.com"
+      prefix          = var.logging_config.prefix
+    }
   }
 
   aliases = concat([var.domain_name], var.subject_alternative_names)

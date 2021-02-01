@@ -2,16 +2,22 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 locals {
-  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${var.coordinator_data.scope}"
-  render_name = "site_render-${var.coordinator_data.scope}"
-  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${var.coordinator_data.scope}"
-  deletion_cleanup_name = "deletion_cleanup-${var.coordinator_data.scope}"
+  routing = {
+    domain_parts = var.routing.domain_parts
+    scope = var.routing.scope
+    route53_zone_name = var.routing.route53_zone_name
+    domain = "${trimsuffix(var.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.routing.domain_parts.top_level_domain, ".")}"
+  }
+  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.routing.scope}"
+  render_name = "site_render-${local.routing.scope}"
+  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${local.routing.scope}"
+  deletion_cleanup_name = "deletion_cleanup-${local.routing.scope}"
   render_invoke_permission = [{
     actions   =  [
       "lambda:InvokeFunction"
     ]
     resources = [
-      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${var.coordinator_data.scope}",
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.routing.scope}",
     ]
   }]
 }
@@ -25,13 +31,13 @@ locals {
     var.nav_links,
     [{
       name = "Posts"
-      target = "https://${var.coordinator_data.domain}/trails/posts.html"
+      target = "https://${local.routing.domain}/trails/posts.html"
     }]
   )
   site_description_content = var.site_description_content == "" ? templatefile(
     "${path.module}/src/site_description.json",
     {
-      domain_name = var.coordinator_data.domain
+      domain_name = local.routing.domain
       site_title = var.site_title
       maintainer = var.maintainer
       nav = {
@@ -68,34 +74,38 @@ locals {
   cloudfront_delivery_prefixes = [
     var.coordinator_data.cloudfront_log_delivery_prefix
   ]
-  athena_destinations = [
-    var.coordinator_data.cloudfront_athena_result_location
-  ]
   log_destination_prefixes = [
-    var.coordinator_data.cloudfront_log_storage_prefix
+    var.coordinator_data.cloudfront_log_delivery_prefix
   ]
-  glue_database_names = [
-    var.coordinator_data.glue_database_name
-  ]
-  glue_table_names = [
-    var.coordinator_data.glue_table_name
-  ]
-  athena_destinations_map = zipmap(
-    local.cloudfront_delivery_prefixes,
-    local.athena_destinations
-  )
-  log_destination_map = zipmap(
-    local.cloudfront_delivery_prefixes,
-    local.log_destination_prefixes
-  )
-  glue_db_map = zipmap(
-    local.cloudfront_delivery_prefixes,
-    local.glue_database_names
-  )
-  glue_table_map = zipmap(
-    local.cloudfront_delivery_prefixes,
-    local.glue_table_names
-  )
+}
+
+resource "random_id" "layer_suffix" {
+  byte_length = 8
+}
+
+module markdown_tools_layer {
+  count = var.layers.markdown_tools.present ? 0 : 1
+  source = "github.com/RLuckom/terraform_modules//aws/layers/markdown_tools"
+  layer_name = "markdown_tools_${random_id.layer_suffix.b64_url}"
+}
+
+module donut_days_layer {
+  count = var.layers.donut_days.present ? 0 : 1
+  source = "github.com/RLuckom/terraform_modules//aws/layers/donut_days"
+  layer_name = "donut_days_${random_id.layer_suffix.b64_url}"
+}
+
+locals {
+  layers = {
+    donut_days = var.layers.donut_days.present ? var.layers.donut_days : {
+      present = true
+      arn = module.donut_days_layer[0].layer.arn
+    }
+    markdown_tools = var.layers.markdown_tools.present ? var.layers.markdown_tools : {
+      present = true 
+      arn = module.markdown_tools_layer[0].layer.arn
+    }
+  }
 }
 
 module site_render {
@@ -108,7 +118,7 @@ module site_render {
   config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
     {
       website_bucket = var.site_bucket
-      domain_name = var.coordinator_data.domain
+      domain_name = local.routing.domain
       site_description_path = "site_description.json"
       dependency_update_function = module.trails_updater[0].lambda.arn
     })
@@ -124,13 +134,13 @@ module site_render {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "site_render"
-  scope_name = var.coordinator_data.scope
+  scope_name = local.routing.scope
   policy_statements =  concat(
     module.trails_updater[0].permission_sets.invoke
   )
-  donut_days_layer_arn = var.layer_arns.donut_days
+  donut_days_layer = local.layers.donut_days
   additional_layers = [
-    var.layer_arns.markdown_tools,
+    local.layers.markdown_tools,
   ]
 }
 
@@ -144,7 +154,7 @@ module deletion_cleanup {
   config_contents = templatefile("${path.module}/src/configs/deletion_cleanup.js",
   {
     website_bucket = var.site_bucket
-    domain_name = var.coordinator_data.domain
+    domain_name = local.routing.domain
     site_description_path = "site_description.json"
     dependency_update_function = module.trails_updater[0].lambda.arn
   }) 
@@ -156,13 +166,13 @@ module deletion_cleanup {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "deletion_cleanup"
-  scope_name = var.coordinator_data.scope
+  scope_name = local.routing.scope
   policy_statements =  concat(
     module.trails_updater[0].permission_sets.invoke
   )
-  donut_days_layer_arn = var.layer_arns.donut_days
+  donut_days_layer = local.layers.donut_days
   additional_layers = [
-    var.layer_arns.markdown_tools,
+    local.layers.markdown_tools,
   ]
 }
 
@@ -177,7 +187,7 @@ module trails_updater {
     {
       table = var.trails_table_name,
       reverse_association_index = "reverseDependencyIndex"
-      domain_name = var.coordinator_data.domain
+      domain_name = local.routing.domain
       site_description_path = "site_description.json"
       render_function = local.render_arn
       self_type = "relations.meta.trail"
@@ -194,13 +204,13 @@ module trails_updater {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_updater"
-  scope_name = var.coordinator_data.scope
+  scope_name = local.routing.scope
   policy_statements = concat(
     local.render_invoke_permission,
   )
-  donut_days_layer_arn = var.layer_arns.donut_days
+  donut_days_layer = local.layers.donut_days
   additional_layers = [
-    var.layer_arns.markdown_tools,
+    local.layers.markdown_tools,
   ]
 }
 
@@ -220,15 +230,15 @@ module trails_resolver {
   })
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_resolver"
-  scope_name = var.coordinator_data.scope
-  donut_days_layer_arn = var.layer_arns.donut_days
+  scope_name = local.routing.scope
+  donut_days_layer = local.layers.donut_days
 }
 
 module site {
   count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
   website_buckets = [{
-    origin_id = var.coordinator_data.domain_parts.controlled_domain_part
+    origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${var.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
   }]
   logging_config = local.cloudfront_logging_config
@@ -256,10 +266,10 @@ module site {
       name = module.trails_resolver[0].lambda.function_name
     }
   }]
-  route53_zone_name = var.route53_zone_name
-  domain_name = var.coordinator_data.domain
+  route53_zone_name = local.routing.route53_zone_name
+  domain_name = local.routing.domain
   no_cache_s3_path_patterns = [ "/site_description.json" ]
-  controlled_domain_part = var.coordinator_data.domain_parts.controlled_domain_part
+  controlled_domain_part = local.routing.domain_parts.controlled_domain_part
   subject_alternative_names = var.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }
@@ -331,8 +341,8 @@ module trails_table {
 
 module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
-  name = var.coordinator_data.domain
-  domain_parts = var.coordinator_data.domain_parts
+  name = local.routing.domain
+  domain_parts = local.routing.domain_parts
   additional_allowed_origins = var.additional_allowed_origins
   website_access_principals = local.website_access_principals
   lambda_notifications = local.website_bucket_lambda_notifications

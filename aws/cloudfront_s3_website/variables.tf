@@ -81,6 +81,10 @@ variable logging_config {
     bucket = string
     prefix = string
   })
+  default = {
+    bucket = ""
+    prefix = ""
+  }
 }
 
 variable log_cookies {

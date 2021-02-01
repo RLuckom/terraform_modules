@@ -232,5 +232,5 @@ locals {
       principals = bucket_config.principals
     } if length(bucket_config.principals) > 0],
   )
-  need_policy = length(local.prefix_object_permission_sets) + length(local.bucket_permission_sets) > 0
+  need_policy = (length(local.prefix_object_permission_sets) + length(local.bucket_permission_sets) + length(var.lambda_notifications)) > 0
 }
