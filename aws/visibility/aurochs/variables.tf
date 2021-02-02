@@ -25,8 +25,10 @@ variable scopes {
 
 variable serverless_site_configs {
   type = map(object({
-    top_level_domain = string
-    controlled_domain_part = string
+    domain_parts = object({
+      top_level_domain = string
+      controlled_domain_part = string
+    })
     scope = string
   }))
   default = {}
@@ -143,7 +145,7 @@ locals {
 
 locals {
   cloudfront_log_path_lifecycle_rules = [ for k, v in var.serverless_site_configs : {
-    prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+    prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
     tags = {}
     enabled = var.expire_cloudfront_logs.enabled
     expiration_days = var.expire_cloudfront_logs.expiration_days
@@ -224,9 +226,9 @@ locals {
   serverless_site_configs = zipmap(
     keys(var.serverless_site_configs),
     [ for k, v in var.serverless_site_configs : {
-      domain = "${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}"
-      cloudfront_log_delivery_prefix = "${local.cloudfront_prefix}/${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
-      cloudfront_log_storage_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}/"
+      domain = "${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
+      cloudfront_log_delivery_prefix = "${local.cloudfront_prefix}/${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
+      cloudfront_log_storage_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
       cloudfront_result_prefix = "${local.athena_prefix}/${local.cloudfront_prefix}/scope=${k}/"
       cloudfront_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.cloudfront_prefix}/scope=${k}/"
       lambda_log_prefix = "${local.lambda_prefix}/scope=${k}/"
@@ -240,9 +242,9 @@ locals {
       lambda_log_delivery_bucket = local.visibility_data_bucket
       athena_result_bucket = local.visibility_data_bucket
       athena_region = var.athena_region
-      glue_table_name = replace("${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}", ".", "_")
+      glue_table_name = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
       glue_database_name = replace("${k}-${local.visibility_data_bucket}", "-", "_")
-      domain_parts = v
+      domain_parts = v.domain_parts
       scope = v.scope
     }]
   )
@@ -273,10 +275,10 @@ locals {
         }]
       ),
       zipmap(
-      [ for k, v in var.serverless_site_configs : replace("${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}", ".", "_") if v.scope == scope],
+      [ for k, v in var.serverless_site_configs : replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_") if v.scope == scope],
       [ for k, v in var.serverless_site_configs : 
         {
-          bucket_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.controlled_domain_part, ".")}.${trimprefix(v.top_level_domain, ".")}"
+          bucket_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
           skip_header_line_count = 2
           ser_de_info = {
             name                  = "cf_logs"

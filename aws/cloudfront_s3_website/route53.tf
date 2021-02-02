@@ -1,5 +1,5 @@
 data "aws_route53_zone" "selected" {
-  name         = var.route53_zone_name
+  name         = local.routing.route53_zone_name
   private_zone = false
 }
 
@@ -14,7 +14,7 @@ resource "aws_route53_record" "cert_validation" {
 
 resource "aws_route53_record" "www_site_cname" {
   zone_id = data.aws_route53_zone.selected.id
-  name    = "www.${var.domain_name}"
+  name    = "www.${local.routing.domain}"
   type    = "CNAME"
   ttl     = "300"
   records = [aws_cloudfront_distribution.website_distribution.domain_name]
@@ -22,7 +22,7 @@ resource "aws_route53_record" "www_site_cname" {
 
 resource "aws_route53_record" "site_a_record" {
   zone_id = data.aws_route53_zone.selected.id
-  name    = var.domain_name
+  name    = local.routing.domain
   type    = "A"
 
   alias {

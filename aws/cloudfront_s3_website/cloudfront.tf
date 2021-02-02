@@ -1,9 +1,9 @@
 locals {
-  s3_origin_id = var.controlled_domain_part
+  s3_origin_id = local.routing.domain_parts.controlled_domain_part
 }
 
 resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
-  comment = "access identity for cloudfront to ${var.controlled_domain_part} bucket"
+  comment = "access identity for cloudfront to ${local.routing.domain_parts.controlled_domain_part} bucket"
 }
 
 resource "aws_cloudfront_distribution" "website_distribution" {
@@ -49,7 +49,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     }
   }
 
-  aliases = concat([var.domain_name], var.subject_alternative_names)
+  aliases = concat([local.routing.domain], var.subject_alternative_names)
 
   dynamic "ordered_cache_behavior" {
     for_each = var.lambda_origins

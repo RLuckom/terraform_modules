@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "cert" {
-  domain_name       = var.domain_name
+  domain_name       = local.routing.domain
   subject_alternative_names = var.subject_alternative_names
   validation_method = "DNS"
 

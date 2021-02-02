@@ -241,6 +241,7 @@ module site {
     origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${var.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
   }]
+  routing = local.routing
   logging_config = local.cloudfront_logging_config
   lambda_origins = [{
     id = "trails"
@@ -266,10 +267,7 @@ module site {
       name = module.trails_resolver[0].lambda.function_name
     }
   }]
-  route53_zone_name = local.routing.route53_zone_name
-  domain_name = local.routing.domain
   no_cache_s3_path_patterns = [ "/site_description.json" ]
-  controlled_domain_part = local.routing.domain_parts.controlled_domain_part
   subject_alternative_names = var.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }
