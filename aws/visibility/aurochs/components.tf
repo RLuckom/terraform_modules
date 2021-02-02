@@ -36,7 +36,7 @@ module data_warehouse {
   source = "github.com/RLuckom/terraform_modules//aws/state/data_warehouse"
   for_each = local.data_warehouse_configs
   data_bucket = local.visibility_data_bucket
-  scope = each.value.scope
+  scope = each.value.security_scope
   database_name = each.value.glue_database_name
   table_configs = each.value.glue_table_configs
   table_permission_names = zipmap(
@@ -44,7 +44,7 @@ module data_warehouse {
     [for k in keys(each.value.glue_table_configs) : {
       add_partition_permission_names = concat(
         [module.archive_function.role.name],
-        lookup(lookup(var.glue_permission_name_map, each.value.scope, {}), k, { add_partition_permission_names = [] }).add_partition_permission_names 
+        lookup(lookup(var.glue_permission_name_map, each.value.security_scope, {}), k, { add_partition_permission_names = [] }).add_partition_permission_names 
 
       )
     }]
@@ -75,6 +75,6 @@ module archive_function {
     }
   ]
   action_name = "cloudfront_log_collector"
-  scope_name = "default"
+  scope_name = "visibility"
   donut_days_layer = var.donut_days_layer
 }

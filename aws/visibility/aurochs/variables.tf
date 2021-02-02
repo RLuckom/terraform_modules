@@ -18,6 +18,8 @@ variable lambda_source_bucket {
   default = ""
 }
 
+// If any of the supported systems use the same
+// security_scope as the visibility system, bad things will happen
 variable visibility_system_id {
   type = object({
     security_scope = string
@@ -32,7 +34,7 @@ variable visibility_system_id {
 variable supported_systems {
   type = list(object({
     security_scope = string
-    subsystem_name = string
+    subsystem_names = list(string)
   }))
   default = []
 }
@@ -43,7 +45,10 @@ variable serverless_site_configs {
       top_level_domain = string
       controlled_domain_part = string
     })
-    security_scope = string
+    system_id = object({
+      security_scope = string
+      subsystem_name = string
+    })
   }))
   default = {}
 }
@@ -67,18 +72,26 @@ variable donut_days_layer {
 locals {
   lambda_logging_config = {
     bucket = local.visibility_data_bucket
-    prefix = local.scoped_log_prefixes["default"].lambda_log_prefix
+    prefix = local.scoped_log_prefixes[var.visibility_system_id.security_scope][var.visibility_system_id.subsystem_name].lambda_log_prefix
   }
 }
 
 locals {
-  system_ids = concat([var.visibility_system_id], var.supported_systems)
+  system_ids = concat([{
+    subsystem_names = [var.visibility_system_id.subsystem_name]
+    security_scope = var.visibility_system_id.security_scope
+  }], var.supported_systems)
   cloudfront_delivery_bucket = var.cloudfront_delivery_bucket
   visibility_data_bucket = var.visibility_data_bucket
   athena_results_bucket = var.athena_results_bucket == "" ? var.visibility_data_bucket : var.athena_results_bucket
 }
 
 variable athena_prefix {
+  type = string
+  default = "source=athena"
+}
+
+variable athena_delivery_prefix {
   type = string
   default = "athena"
 }
@@ -90,12 +103,22 @@ variable athena_region {
 
 variable cloudfront_prefix {
   type = string
-  default = "cloudfront-logs"
+  default = "source=cloudfront"
+}
+
+variable cloudfront_delivery_prefix {
+  type = string
+  default = "cloudfront"
 }
 
 variable lambda_prefix {
   type = string
-  default = "lambda-logs"
+  default = "source=lambda"
+}
+
+variable lambda_delivery_prefix {
+  type = string
+  default = "lambda"
 }
 
 variable expire_athena_results {
@@ -152,6 +175,9 @@ module column_schemas {
 }
 
 locals {
+  cloudfront_delivery_prefix = trim(var.cloudfront_delivery_prefix, "/")
+  athena_delivery_prefix = trim(var.athena_delivery_prefix, "/")
+  lambda_delivery_prefix = trim(var.lambda_delivery_prefix, "/")
   cloudfront_prefix = trim(var.cloudfront_prefix, "/")
   athena_prefix = trim(var.athena_prefix, "/")
   lambda_prefix = trim(var.lambda_prefix, "/")
@@ -159,17 +185,20 @@ locals {
 
 locals {
   cloudfront_log_path_lifecycle_rules = [ for k, v in var.serverless_site_configs : {
-    prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
+    prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
     tags = {}
     enabled = var.expire_cloudfront_logs.enabled
     expiration_days = var.expire_cloudfront_logs.expiration_days
   }]
-  lambda_log_path_lifecycle_rules = [ for system_id in var.system_ids : {
-    prefix = "${local.lambda_prefix}/security_scope=${system_id.security_scope}/"
-    tags = {}
-    enabled = var.expire_lambda_logs.enabled
-    expiration_days = var.expire_lambda_logs.expiration_days
-  }]
+  lambda_log_path_lifecycle_rules = flatten(
+    [ for system_id in local.system_ids : 
+    [ for subsystem_name in system_id.subsystem_names : {
+      prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
+      tags = {}
+      enabled = var.expire_lambda_logs.enabled
+      expiration_days = var.expire_lambda_logs.expiration_days
+    }]]
+  )
   athena_result_path_lifecycle_rules = [{
     prefix = "${local.athena_prefix}/"
     tags = {}
@@ -208,7 +237,7 @@ locals {
       [
         {
           permission_type = "put_object"
-          prefix = local.scoped_log_prefixes["default"].lambda_log_prefix
+          prefix = local.scoped_log_prefixes[var.visibility_system_id.security_scope][var.visibility_system_id.subsystem_name].lambda_log_prefix
           arns = [
             module.archive_function.role.arn
           ]
@@ -232,23 +261,27 @@ locals {
     ]
   )
   scoped_log_prefixes = zipmap(
-    local.system_ids,
-    [for system_id in local.system_ids : {
-      lambda_log_prefix = "${local.lambda_prefix}/security_scope=${system_id.security_scope}/"
-    }]
+    local.system_ids.*.security_scope,
+    [for system_id in local.system_ids : 
+    zipmap(
+      system_id.subsystem_names,
+      [for subsystem_name in system_id.subsystem_names : {
+        lambda_log_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
+      }]
+    )]
   )
   serverless_site_configs = zipmap(
     keys(var.serverless_site_configs),
     [ for k, v in var.serverless_site_configs : {
       domain = "${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
-      cloudfront_log_delivery_prefix = "${local.cloudfront_prefix}/${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
-      cloudfront_log_storage_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
-      cloudfront_result_prefix = "${local.athena_prefix}/${local.cloudfront_prefix}/security_scope=${k}/"
-      cloudfront_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.cloudfront_prefix}/security_scope=${k}/"
-      lambda_log_prefix = "${local.lambda_prefix}/security_scope=${k}/"
-      lambda_log_delivery_prefix = "${local.lambda_prefix}/security_scope=${k}/"
-      lambda_result_prefix = "${local.athena_prefix}/${local.lambda_prefix}/security_scope=${k}/"
-      lambda_athena_result_location = "s3://${local.visibility_data_bucket}/${local.athena_prefix}/${local.lambda_prefix}/security_scope=${k}"
+      cloudfront_log_delivery_prefix = "${local.cloudfront_delivery_prefix}/${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
+      cloudfront_log_storage_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
+      cloudfront_result_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
+      cloudfront_athena_result_location = "s3://${local.visibility_data_bucket}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
+      lambda_log_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.lambda_prefix}/"
+      lambda_log_delivery_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.lambda_prefix}/"
+      lambda_result_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
+      lambda_athena_result_location = "s3://${local.visibility_data_bucket}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
       lambda_source_bucket = var.lambda_source_bucket
       log_delivery_bucket = local.cloudfront_delivery_bucket
       cloudfront_log_delivery_bucket = local.cloudfront_delivery_bucket
@@ -259,22 +292,23 @@ locals {
       glue_table_name = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
       glue_database_name = replace("${k}-${local.visibility_data_bucket}", "-", "_")
       domain_parts = v.domain_parts
-      security_scope = v.security_scope
+      security_scope = v.system_id.security_scope
+      subsystem_name = v.system_id.subsystem_name
     }]
   )
   data_warehouse_configs = zipmap(
-    local.system_ids,
-    [ for system_id in local.system_ids : {
-      lambda_log_prefix = "${local.lambda_prefix}/security_scope=${system_id.security_scope}/"
+    local.system_ids.*.security_scope,
+    [for system_id in local.system_ids : {
       log_delivery_bucket = local.cloudfront_delivery_bucket
       data_bucket = local.visibility_data_bucket
       glue_database_name = replace("${system_id.security_scope}-${local.visibility_data_bucket}", "-", "_")
       athena_region = var.athena_region
       security_scope = system_id.security_scope
       glue_table_configs = merge(zipmap(
-        ["${system_id.security_scope}_lambda_logs"],  
-        [{
-          bucket_prefix = "${local.lambda_prefix}/security_scope=${system_id.security_scope}"
+        [for subsystem_name in system_id.subsystem_names : "${subsystem_name}_lambda_logs"],
+        [for subsystem_name in system_id.subsystem_names : {
+          bucket_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}"
+          subsystem_name = subsystem_name
           skip_header_line_count = 0
           ser_de_info = {
             name                  = "json-ser-de"
@@ -289,10 +323,10 @@ locals {
         }]
       ),
       zipmap(
-      [ for k, v in var.serverless_site_configs : replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_") if v.security_scope == system_id.security_scope],
-      [ for k, v in var.serverless_site_configs : 
+        [ for k, v in var.serverless_site_configs : replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_") if v.system_id.security_scope == system_id.security_scope],
+        [ for k, v in var.serverless_site_configs : 
         {
-          bucket_prefix = "${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
+          bucket_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
           skip_header_line_count = 2
           ser_de_info = {
             name                  = "cf_logs"
@@ -304,19 +338,23 @@ locals {
           }
           columns = module.column_schemas.cloudfront_access_log_columns
           partition_keys = module.column_schemas.year_month_day_hour_partition_keys
-        } if v.security_scope == system_id.security_scope]
+        } if v.system_id.security_scope == system_id.security_scope]
       )
-    )
-    }]
+    )}]
   )
   lambda_log_configs = zipmap(
-    local.system_ids,
-    [ for system_id in local.system_ids : {
-      log_prefix = "${local.lambda_prefix}/security_scope=${system_id.security_scope}/"
-      log_bucket = local.visibility_data_bucket
-      source_bucket = var.lambda_source_bucket
-      security_scope = system_id.security_scope
-    }]
+    local.system_ids.*.security_scope,
+    [for system_id in local.system_ids : 
+    zipmap(
+      system_id.subsystem_names,
+      [for subsystem_name in system_id.subsystem_names : {
+        log_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
+        log_bucket = local.visibility_data_bucket
+        source_bucket = var.lambda_source_bucket
+        security_scope = system_id.security_scope
+        subsystem_name = subsystem_name
+      }]
+    )]
   )
 }
 
@@ -337,10 +375,10 @@ output visibility_lifecycle_rules {
 }
 
 variable scoped_logging_functions {
-  type = map(map(object({
+  type = map(map(map(object({
     permission_type = string
     role_arns = list(string)
-  })))
+  }))))
   default = {}
 }
 
@@ -371,26 +409,26 @@ variable scoped_archive_notifications {
 
 locals {
   visibility_prefix_object_permissions = flatten([
-    for security_scope, v in var.scoped_logging_functions : [
-      for prefix in [
-        local.data_warehouse_configs[security_scope].lambda_log_prefix,
-        local.serverless_site_configs[security_scope].cloudfront_log_storage_prefix
+    for security_scope, subsystem_map in var.scoped_logging_functions : [
+      for subsystem_name, prefix_map in subsystem_map : [
+        for prefix in [
+        local.lambda_log_configs[security_scope][subsystem_name].log_prefix,
       ] : {
         prefix = prefix
-        arns = lookup(v, prefix, {
+        arns = lookup(prefix_map, prefix, {
           permission_type = ""
           role_arns = []
         }).role_arns 
-        permission_type = lookup(v, prefix, {
+        permission_type = lookup(prefix_map, prefix, {
           permission_type = ""
           role_arns = []
         }).permission_type 
-      } if lookup(v, prefix, {
+      } if lookup(prefix_map, prefix, {
         permission_type = ""
         role_arns = []
       }).permission_type != ""
     ]
-  ])
+  ]])
   archive_function_visibility_prefix_athena_query_permissions = [
     for k, config in local.serverless_site_configs : {
       prefix = config.cloudfront_result_prefix
