@@ -8,7 +8,7 @@ locals {
 module bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = var.name
-  acl    = "public-read"
+  acl    = var.allow_direct_access ? "public-read" : "private"
   lifecycle_rules = var.lifecycle_rules
   lambda_notifications = var.lambda_notifications
   prefix_object_permissions = var.prefix_object_permissions
