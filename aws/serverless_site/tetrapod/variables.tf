@@ -13,13 +13,19 @@ variable coordinator_data {
   }
 }
 
+variable system_id {
+  type = object({
+    security_scope = string
+    subsystem_name = string
+  })
+}
+
 variable routing {
   type = object({
     domain_parts = object({
       top_level_domain = string
       controlled_domain_part = string
     })
-    scope = string
     route53_zone_name = string
   })
 }

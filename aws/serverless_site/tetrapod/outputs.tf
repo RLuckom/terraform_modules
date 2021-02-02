@@ -27,3 +27,7 @@ output cloudfront_origin_access_principal {
 output routing {
   value = local.routing
 }
+
+output system_id {
+  value = local.system_id
+}

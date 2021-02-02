@@ -2,22 +2,22 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 locals {
+  system_id = var.system_id
   routing = {
     domain_parts = var.routing.domain_parts
-    scope = var.routing.scope
     route53_zone_name = var.routing.route53_zone_name
     domain = "${trimsuffix(var.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.routing.domain_parts.top_level_domain, ".")}"
   }
-  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.routing.scope}"
-  render_name = "site_render-${local.routing.scope}"
-  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${local.routing.scope}"
-  deletion_cleanup_name = "deletion_cleanup-${local.routing.scope}"
+  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.system_id.scope}"
+  render_name = "site_render-${local.system_id.scope}"
+  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${local.system_id.scope}"
+  deletion_cleanup_name = "deletion_cleanup-${local.system_id.scope}"
   render_invoke_permission = [{
     actions   =  [
       "lambda:InvokeFunction"
     ]
     resources = [
-      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.routing.scope}",
+      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.system_id.scope}",
     ]
   }]
 }
@@ -134,7 +134,7 @@ module site_render {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "site_render"
-  scope_name = local.routing.scope
+  scope_name = local.system_id.scope
   policy_statements =  concat(
     module.trails_updater[0].permission_sets.invoke
   )
@@ -166,7 +166,7 @@ module deletion_cleanup {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "deletion_cleanup"
-  scope_name = local.routing.scope
+  scope_name = local.system_id.scope
   policy_statements =  concat(
     module.trails_updater[0].permission_sets.invoke
   )
@@ -204,7 +204,7 @@ module trails_updater {
   ]
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_updater"
-  scope_name = local.routing.scope
+  scope_name = local.system_id.scope
   policy_statements = concat(
     local.render_invoke_permission,
   )
@@ -230,7 +230,7 @@ module trails_resolver {
   })
   lambda_event_configs = var.lambda_event_configs
   action_name = "trails_resolver"
-  scope_name = local.routing.scope
+  scope_name = local.system_id.scope
   donut_days_layer = local.layers.donut_days
 }
 
