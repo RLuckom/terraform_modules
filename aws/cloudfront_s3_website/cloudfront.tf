@@ -25,7 +25,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     content {
       domain_name = trimprefix(module.lambda_api_gateway[index(local.apigateway_names, origin.value.gateway_name_stem)].api.api_endpoint, "https://")
       origin_id = origin.value.id
-      origin_path = "/prod${origin.value.path}"
+      // TODO: match module index to lambda origin
+      origin_path = "/${module.lambda_api_gateway[0].stage_name}${origin.value.path}"
 
       custom_origin_config {
         http_port = 80

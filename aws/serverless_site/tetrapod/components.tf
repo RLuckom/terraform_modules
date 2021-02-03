@@ -244,6 +244,7 @@ module site {
     regional_domain_name = "${local.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
   }]
   routing = local.routing
+  system_id = local.system_id
   logging_config = local.cloudfront_logging_config
   lambda_origins = [{
     id = "trails"

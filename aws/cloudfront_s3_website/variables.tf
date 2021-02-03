@@ -8,6 +8,13 @@ variable routing {
   })
 }
 
+variable system_id {
+  type = object({
+    security_scope = string
+    subsystem_name = string
+  })
+}
+
 locals {
   routing = {
     domain_parts = var.routing.domain_parts

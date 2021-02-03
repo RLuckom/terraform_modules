@@ -2,6 +2,10 @@ output "api" {
   value = aws_apigatewayv2_api.api
 }
 
+output stage_name {
+  value = local.stage_name
+}
+
 output "api_deployment" {
   value = {
     id = aws_apigatewayv2_deployment.api.id

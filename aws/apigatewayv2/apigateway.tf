@@ -72,13 +72,13 @@ resource "aws_apigatewayv2_deployment" "api" {
 }
 
 resource "aws_cloudwatch_log_group" "apigateway_log_group" {
-	name              = "/aws/apigateway/${aws_apigatewayv2_api.api.id}/${var.apigateway_stage_name}"
+	name              = "/aws/apigateway/${aws_apigatewayv2_api.api.id}/${local.stage_name}"
 	retention_in_days = var.log_retention_period
 }
 
 resource "aws_apigatewayv2_stage" "stage" {
   api_id = aws_apigatewayv2_api.api.id
-  name   = var.apigateway_stage_name
+  name   = local.stage_name
   deployment_id = aws_apigatewayv2_deployment.api.id
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.apigateway_log_group.arn

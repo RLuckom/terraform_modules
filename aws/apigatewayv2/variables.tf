@@ -24,9 +24,15 @@ variable "cors_configuration" {
   default = []
 }
 
-variable "apigateway_stage_name" {
-  type = string
-  default = "prod"
+variable system_id {
+  type = object({
+    security_scope = string
+    subsystem_name = string
+  })
+}
+
+locals {
+  stage_name = "${var.system_id.security_scope}-${var.system_id.subsystem_name}"
 }
 
 variable "log_retention_period" {
