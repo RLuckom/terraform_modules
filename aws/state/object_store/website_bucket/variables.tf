@@ -2,6 +2,11 @@ variable name {
   type = string
 }
 
+variable force_destroy {
+  type = bool
+  default = false
+}
+
 variable allow_direct_access {
   type = bool
   default = false

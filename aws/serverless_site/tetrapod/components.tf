@@ -59,6 +59,7 @@ module site_static_assets {
   bucket_name = local.site_bucket
   source = "github.com/RLuckom/terraform_modules//aws/s3_directory"
   file_configs = module.asset_file_configs[0].file_configs
+  depends_on = [module.website_bucket]
 }
 
 resource "aws_s3_bucket_object" "site_description" {
@@ -68,6 +69,7 @@ resource "aws_s3_bucket_object" "site_description" {
   content_type = "application/json"
   content = local.site_description_content
   etag = md5(local.site_description_content)
+  depends_on = [module.website_bucket]
 }
 
 locals {
@@ -340,6 +342,7 @@ module trails_table {
 module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
   name = local.site_bucket
+  force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts
   additional_allowed_origins = var.additional_allowed_origins
   website_access_principals = local.website_access_principals

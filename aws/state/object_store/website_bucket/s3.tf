@@ -9,6 +9,7 @@ module bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = var.name
   acl    = var.allow_direct_access ? "public-read" : "private"
+  force_destroy = var.force_destroy
   lifecycle_rules = var.lifecycle_rules
   lambda_notifications = var.lambda_notifications
   prefix_object_permissions = var.prefix_object_permissions
@@ -16,6 +17,11 @@ module bucket {
   principal_prefix_object_permissions = length(local.website_access_principals) > 0 ? [{
     prefix = ""
     permission_type = "read_known_objects"
+    principals = local.website_access_principals
+  }] : []
+
+  principal_bucket_permissions = length(local.website_access_principals) > 0 ? [{
+    permission_type = "list_bucket"
     principals = local.website_access_principals
   }] : []
 

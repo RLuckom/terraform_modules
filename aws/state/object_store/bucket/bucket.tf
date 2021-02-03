@@ -2,6 +2,7 @@ resource "aws_s3_bucket" "bucket" {
   bucket = var.name
   acl = var.acl
   request_payer = var.request_payer
+  force_destroy = var.force_destroy
   dynamic "website" {
     for_each = var.website_configs
     content {

@@ -2,6 +2,11 @@ variable name {
   type = string
 }
 
+variable force_destroy {
+  type = bool
+  default = false
+}
+
 variable prefix_athena_query_permissions {
   type = list(object({
     prefix = string

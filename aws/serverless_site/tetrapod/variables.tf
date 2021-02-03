@@ -13,6 +13,11 @@ variable coordinator_data {
   }
 }
 
+variable force_destroy {
+  type = bool
+  default = false
+}
+
 variable system_id {
   type = object({
     security_scope = string
