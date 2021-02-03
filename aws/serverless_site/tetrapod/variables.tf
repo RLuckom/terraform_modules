@@ -52,10 +52,16 @@ locals {
 
 variable site_bucket {
   type = string
+  default = null
 }
 
 variable trails_table_name {
   type = string
+  default = null
+}
+
+locals {
+  trails_table_name = var.trails_table_name == null ? "${var.system_id.security_scope}-${var.system_id.subsystem_name}-trails_table" : var.trails_table_name
 }
 
 // configuration vars
@@ -83,7 +89,12 @@ variable individual_log_levels {
 
 variable subject_alternative_names {
   type = list(string)
-  default = []
+  default = null
+}
+
+locals {
+  subject_alternative_names = var.subject_alternative_names == null ? ["www.${local.routing.domain}"] : var.subject_alternative_names
+  site_bucket = var.site_bucket == null ? local.routing.domain : var.site_bucket
 }
 
 variable lambda_event_configs {
@@ -98,11 +109,6 @@ variable lambda_event_configs {
     }))
   }))
   default = []
-}
-
-variable lambda_bucket {
-  type = string
-  default = ""
 }
 
 variable layers {
@@ -148,7 +154,7 @@ variable site_description_content {
 
 variable site_title {
   type = string
-  default = ""
+  default = "Test Site"
 }
 
 variable maintainer {

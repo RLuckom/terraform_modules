@@ -56,14 +56,14 @@ module asset_file_configs {
 
 module site_static_assets {
   count = var.enable ? 1 : 0
-  bucket_name = var.site_bucket
+  bucket_name = local.site_bucket
   source = "github.com/RLuckom/terraform_modules//aws/s3_directory"
   file_configs = module.asset_file_configs[0].file_configs
 }
 
 resource "aws_s3_bucket_object" "site_description" {
   count = var.enable ? 1 : 0
-  bucket = var.site_bucket
+  bucket = local.site_bucket
   key    = "site_description.json"
   content_type = "application/json"
   content = local.site_description_content
@@ -117,7 +117,7 @@ module site_render {
   logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
     {
-      website_bucket = var.site_bucket
+      website_bucket = local.site_bucket
       domain_name = local.routing.domain
       site_description_path = "site_description.json"
       dependency_update_function = module.trails_updater[0].lambda.arn
@@ -153,7 +153,7 @@ module deletion_cleanup {
   log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/deletion_cleanup.js",
   {
-    website_bucket = var.site_bucket
+    website_bucket = local.site_bucket
     domain_name = local.routing.domain
     site_description_path = "site_description.json"
     dependency_update_function = module.trails_updater[0].lambda.arn
@@ -185,7 +185,7 @@ module trails_updater {
   log_level = var.log_level
   config_contents = templatefile("${path.module}/src/configs/update_trails.js",
     {
-      table = var.trails_table_name,
+      table = local.trails_table_name,
       reverse_association_index = "reverseDependencyIndex"
       domain_name = local.routing.domain
       site_description_path = "site_description.json"
@@ -223,7 +223,7 @@ module trails_resolver {
   log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
   {
-    table = var.trails_table_name
+    table = local.trails_table_name
     forward_key_type = "trailName"
     reverse_key_type = "memberKey"
     reverse_association_index = "reverseDependencyIndex"
@@ -239,7 +239,7 @@ module site {
   source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
-    regional_domain_name = "${var.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
+    regional_domain_name = "${local.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
   }]
   routing = local.routing
   logging_config = local.cloudfront_logging_config
@@ -268,7 +268,7 @@ module site {
     }
   }]
   no_cache_s3_path_patterns = [ "/site_description.json" ]
-  subject_alternative_names = var.subject_alternative_names
+  subject_alternative_names = local.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }
 
@@ -312,7 +312,7 @@ locals {
 
 module trails_table {
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
-  table_name = var.trails_table_name
+  table_name = local.trails_table_name
   delete_item_permission_role_names = local.trails_table_delete_role_names
   write_permission_role_names = local.trails_table_write_permission_role_names
   read_permission_role_names = local.trails_table_read_permission_role_names
@@ -339,7 +339,7 @@ module trails_table {
 
 module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
-  name = local.routing.domain
+  name = local.site_bucket
   domain_parts = local.routing.domain_parts
   additional_allowed_origins = var.additional_allowed_origins
   website_access_principals = local.website_access_principals
