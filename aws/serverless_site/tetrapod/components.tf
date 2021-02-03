@@ -236,7 +236,7 @@ module trails_resolver {
 
 module site {
   count = var.enable ? 1 : 0
-  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=system-ids"
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${var.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
