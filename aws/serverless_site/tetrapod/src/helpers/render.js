@@ -50,6 +50,8 @@ function parsePost(s) {
       if (_.trim(r) === '---') {
         if (!started) {
           started = true
+        } else {
+          content += r + "\n"
         }
       } else {
         if (started) {

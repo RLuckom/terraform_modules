@@ -34,7 +34,14 @@ function createDatedS3Key(prefix, scope, action, requestId, date) {
 function buildLogger(event, context, callback) {
   const logBucket = process.env.LOG_BUCKET
   if (!logBucket) {
-    return {callback}
+    return {
+      log: function(arg) {
+        if (process.env.DONUT_DAYS_DEBUG === "true" || arg.level === 'ERROR' || arg.level === "WARN") {
+          console.log(JSON.stringify(arg))
+        }
+      },
+      callback
+    }
   }
   const logKey = createDatedS3Key(process.env.LOG_PREFIX, process.env.SCOPE, process.env.ACTION, _.get(context, 'awsRequestId'))
   const logs = []
