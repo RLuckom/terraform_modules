@@ -24,6 +24,10 @@ output cloudfront_origin_access_principal {
   }
 }
 
+output website_bucket_name {
+  value = local.site_bucket
+}
+
 output routing {
   value = local.routing
 }
