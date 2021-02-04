@@ -6,7 +6,7 @@ locals {
 }
 
 module bucket {
-  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
+  source= "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket?ref=f5ba570f905b"
   name = var.name
   acl    = var.allow_direct_access ? "public-read" : "private"
   force_destroy = var.force_destroy

@@ -1,6 +1,6 @@
 module "lambda_api_gateway" {
   count = length(local.apigateway_configs)
-  source = "github.com/RLuckom/terraform_modules//aws/apigatewayv2"
+  source= "github.com/RLuckom/terraform_modules//aws/apigatewayv2?ref=f5ba570f905b"
   name_stem = local.apigateway_configs[count.index][0].gateway_name_stem
   system_id = var.system_id
   protocol = "HTTP"
