@@ -90,16 +90,16 @@ function renderFeed(feedType, {siteDetails, item, dependencies}) {
     language: "en",
     image: item.image || '',
     favicon: item.favicon || '',
-    copyright: "CC-BY-NC-SA Raphael Luckom, 2020",
+    copyright: "2021",
     feedLinks: {
       json: item.formatUrls['json1.0'].uri,
       rss: item.formatUrls['rss2.0'].uri,
       atom: item.formatUrls['atom1.0'].uri
     },
     author: {
-      name: "Raphael Luckom",
-      email: "raphaelluckom@gmail.com",
-      link: "https://raphaelluckom.com"
+      name: siteDetails.maintainer || "",
+      email: siteDetails.maintainerEmail || "",
+      link: siteDetails.browserRoot || ''
     }
   })
   _.each(accumulators.members, (member) => {
@@ -111,9 +111,9 @@ function renderFeed(feedType, {siteDetails, item, dependencies}) {
       id: _.get(member, 'memberUri'),
       link: _.get(member, 'memberUri'),
       author: [{
-        name: "Raphael Luckom",
-        email: "raphaelluckom@gmail.com",
-        link: "https://raphaelluckom.com",
+        name: _.get(member, 'memberMetadata.frontMatter.author') || "",
+        email: _.get(member, 'memberMetadata.frontMatter.email') || "",
+        link: siteDetails.browserRoot || '',
       }],
       contributor: [],
       image: '',
