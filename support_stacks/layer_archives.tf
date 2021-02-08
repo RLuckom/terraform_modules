@@ -50,3 +50,11 @@ module "nlp" {
   bucket = module.layer_bucket.bucket.id
   output_path = "${path.root}/src/aws/layers/nlp/layer.zip"
 }
+
+module "cognito_utils" {
+  source = "github.com/RLuckom/terraform_modules//aws/s3_archive"
+  key = "cognito_utils"
+  path = "${path.root}/src/aws/layers/cognito_utils/"
+  bucket = module.layer_bucket.bucket.id
+  output_path = "${path.root}/src/aws/layers/cognito_utils/layer.zip"
+}
