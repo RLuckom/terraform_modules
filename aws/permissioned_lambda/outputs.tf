@@ -9,6 +9,7 @@ output "lambda" {
     timeout = aws_lambda_function.lambda.timeout
     environment = var.environment_var_map
     tags = aws_lambda_function.lambda.tags
+    qualified_arn = aws_lambda_function.lambda.qualified_arn
   }
 }
 

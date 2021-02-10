@@ -14,6 +14,10 @@ variable source_bucket {
   default = ""
 }
 
+variable publish {
+  default = false
+}
+
 locals {
   deployment_package_local_path = "${path.root}/functions/zip/${local.scoped_lambda_name}/lambda.zip"
   deployment_package_key = "${local.scoped_lambda_name}/lambda.zip"

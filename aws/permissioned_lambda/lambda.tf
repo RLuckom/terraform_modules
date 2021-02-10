@@ -95,6 +95,7 @@ resource "aws_s3_bucket_object" "deployment_package_zip" {
 
 resource "aws_lambda_function" "lambda" {
   function_name = local.scoped_lambda_name
+  publish = var.publish
   s3_bucket = local.s3_deployment ? var.source_bucket : null
   s3_key = local.s3_deployment ? local.deployment_package_key : null
   filename = local.s3_deployment ? null : local.deployment_package_local_path
