@@ -6,7 +6,7 @@ resource "aws_lambda_layer_version" "layer" {
   layer_name = var.layer_name
   s3_bucket = "rluckom-public-layer-archives"
   s3_key = "cognito_utils"
-  s3_object_version = "iGeAsSoc4KH0Nqw.hEoU3N9r57QP.6DL"
+  s3_object_version = "eC9ZgrzPsk58tSIgJEhSlPfntNrgsnCY"
   compatible_runtimes = ["nodejs12.x"]
   lifecycle {
     create_before_destroy = true
