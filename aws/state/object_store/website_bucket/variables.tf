@@ -1,5 +1,13 @@
+variable domain_parts {
+  type = object({
+    top_level_domain = string
+    controlled_domain_part = string
+  })
+}
+
 variable name {
   type = string
+  default = ""
 }
 
 variable force_destroy {
@@ -73,11 +81,4 @@ variable bucket_permissions {
 variable additional_allowed_origins {
   type = list(string)
   default = []
-}
-
-variable domain_parts {
-  type = object({
-    top_level_domain = string
-    controlled_domain_part = string
-  })
 }
