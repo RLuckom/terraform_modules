@@ -147,7 +147,5 @@ variable reserved_concurrent_executions {
 
 variable environment_var_map {
   type = map(string)
-  default = {
-    NO_VARS = "true"
-  }
+  default = {}
 }

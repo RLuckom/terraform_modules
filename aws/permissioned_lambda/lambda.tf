@@ -108,8 +108,11 @@ resource "aws_lambda_function" "lambda" {
 	memory_size = var.mem_mb
 
   runtime = "nodejs12.x"
-  environment {
-    variables = var.environment_var_map
+  dynamic "environment" {
+    for_each = length(values(var.environment_var_map)) > 0 ? [1] : []
+    content {
+      variables = var.environment_var_map
+    }
   }
   depends_on = [aws_s3_bucket_object.deployment_package_zip]
 }
