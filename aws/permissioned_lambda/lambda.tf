@@ -38,16 +38,29 @@ locals {
        var.lambda_event_configs[0].on_failure[0].function_arn
     ]
   }] : []) : [])
+  local_source_files = tolist(fileset(var.local_source_directory, "**"))
+  source_contents = concat(var.source_contents, 
+  var.local_source_directory == null ? [] :
+  [for n in range(length(local.local_source_files)) :
+  {
+    file_contents = data.local_file.local_sources[n].content
+    file_name = local.local_source_files[n]
+  }]
+)
+}
+
+data local_file local_sources {
+  count = length(local.local_source_files)
+  filename = "${var.local_source_directory}/${local.local_source_files[count.index]}"
 }
 
 data "archive_file" "deployment_package" {
-  count = length(var.source_contents) == 0 ? 0 : 1
+  count = length(local.source_contents) == 0 ? 0 : 1
   type        = "zip"
   output_path = local.deployment_package_local_path
-  source_dir = var.local_source_directory
 
   dynamic "source" {
-    for_each = var.source_contents
+    for_each = local.source_contents
     content {
       content  = source.value.file_contents
       filename = source.value.file_name
