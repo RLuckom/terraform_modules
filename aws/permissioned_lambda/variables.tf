@@ -9,6 +9,11 @@ variable lambda_details {
   })
 }
 
+variable role_service_principal_ids {
+  type = list(string)
+  default = ["lambda.amazonaws.com"]
+}
+
 variable source_bucket {
   type = string
   default = ""
