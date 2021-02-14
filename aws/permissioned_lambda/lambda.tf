@@ -44,6 +44,7 @@ data "archive_file" "deployment_package" {
   count = length(var.source_contents) == 0 ? 0 : 1
   type        = "zip"
   output_path = local.deployment_package_local_path
+  source_dir = var.local_source_directory
 
   dynamic "source" {
     for_each = var.source_contents

@@ -23,6 +23,11 @@ variable publish {
   default = false
 }
 
+variable local_source_directory {
+  type = string
+  default = null
+}
+
 locals {
   deployment_package_local_path = "${path.root}/functions/zip/${local.scoped_lambda_name}/lambda.zip"
   deployment_package_key = "${local.scoped_lambda_name}/lambda.zip"
