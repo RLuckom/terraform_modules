@@ -38,7 +38,7 @@ locals {
        var.lambda_event_configs[0].on_failure[0].function_arn
     ]
   }] : []) : [])
-  local_source_files = tolist(fileset(var.local_source_directory, "**"))
+  local_source_files = var.local_source_directory == null ? [] : tolist(fileset(var.local_source_directory, "**"))
   source_contents = concat(var.source_contents, 
   var.local_source_directory == null ? [] :
   [for n in range(length(local.local_source_files)) :
