@@ -290,7 +290,7 @@ locals {
       athena_result_bucket = local.visibility_data_bucket
       athena_region = var.athena_region
       glue_table_name = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
-      glue_database_name = replace("${k}-${local.visibility_data_bucket}", "-", "_")
+      glue_database_name = replace("${v.system_id.security_scope}-${local.visibility_data_bucket}", "-", "_")
       domain_parts = v.domain_parts
       security_scope = v.system_id.security_scope
       subsystem_name = v.system_id.subsystem_name
