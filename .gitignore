@@ -3,3 +3,4 @@
 .terraform
 *.zip
 **/node_modules/**
+**/.nyc*
