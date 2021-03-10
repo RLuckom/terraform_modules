@@ -27,16 +27,21 @@ variable user_email {
   type = string
 }
 
+variable additional_protected_domains {
+  type = list(string)
+  default = []
+}
+
 locals {
   protected_site_domain = "${var.protected_domain_routing.domain_parts.controlled_domain_part}.${var.protected_domain_routing.domain_parts.top_level_domain}"
   bucket_domain_parts = var.protected_domain_routing.domain_parts
   cognito_domain = "auth.${local.protected_site_domain}"
-  callback_urls = [
+  callback_urls = concat([
     "https://${local.protected_site_domain}/parseauth"
-  ]
-  logout_urls = [
+  ], [for domain in var.additional_protected_domains : "https://${domain}/parseauth"] )
+  logout_urls = concat([
     "https://${local.protected_site_domain}/"
-  ]
+  ], [for domain in var.additional_protected_domains : "https://${domain}/"] )
   allowed_oauth_scopes = ["phone", "email", "profile", "openid", "aws.cognito.signin.user.admin"]
   allowed_oauth_flows_user_pool_client = true
 }
