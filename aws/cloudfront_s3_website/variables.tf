@@ -15,12 +15,25 @@ variable system_id {
   })
 }
 
-locals {
-  routing = {
-    domain_parts = var.routing.domain_parts
-    route53_zone_name = var.routing.route53_zone_name
-    domain = "${trimsuffix(var.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.routing.domain_parts.top_level_domain, ".")}"
-  }
+variable access_control_function_qualified_arns {
+  type = list(object({
+    refresh_auth = string
+    parse_auth = string
+    check_auth = string
+    sign_out = string
+    http_headers = string
+  }))
+  default = []
+}
+
+variable secure_default_origin {
+  type = bool
+  default = true
+}
+
+variable enable_distribution {
+  type = bool
+  default = true
 }
 
 variable "subject_alternative_names" {
@@ -37,7 +50,10 @@ variable "compress" {
 }
 
 variable "no_cache_s3_path_patterns" {
-  type = list(string)
+  type = list(object({
+    path = string
+    access_controlled = bool
+  }))
   default = []
 }
 
@@ -59,6 +75,7 @@ variable "lambda_origins" {
     id = string
     path = string
     site_path = string
+    access_controlled = bool
     apigateway_path = string
     gateway_name_stem = string
     allowed_methods = list(string)
@@ -109,4 +126,12 @@ locals {
   apigateway_names = distinct([ for origin in var.lambda_origins: origin.gateway_name_stem])
   apigateway_configs = [for gateway in distinct([ for origin in var.lambda_origins: origin.gateway_name_stem]) :
   [ for origin in var.lambda_origins: origin if origin.gateway_name_stem == gateway] ]
+}
+
+locals {
+  routing = {
+    domain_parts = var.routing.domain_parts
+    route53_zone_name = var.routing.route53_zone_name
+    domain = "${trimsuffix(var.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.routing.domain_parts.top_level_domain, ".")}"
+  }
 }

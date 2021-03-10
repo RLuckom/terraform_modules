@@ -237,8 +237,10 @@ module trails_resolver {
 }
 
 module site {
-  count = var.enable ? 1 : 0
-  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
+  count = 1
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=cloudfront-access-control"
+  enable_distribution = var.enable
+  access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${local.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
@@ -251,6 +253,7 @@ module site {
     path = "/meta/relations/trails"
     site_path = "/meta/relations/trails*"
     apigateway_path = "/meta/relations/trails/{trail+}"
+    access_controlled = length(var.access_control_function_qualified_arns) > 0  && var.secure_default_origin
     gateway_name_stem = "trails"
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods = ["GET", "HEAD"]
@@ -270,7 +273,10 @@ module site {
       name = module.trails_resolver[0].lambda.function_name
     }
   }]
-  no_cache_s3_path_patterns = [ "/site_description.json" ]
+  no_cache_s3_path_patterns = [ {
+    path = "/site_description.json"
+    access_controlled = length(var.access_control_function_qualified_arns) > 0  && var.secure_default_origin
+  } ]
   subject_alternative_names = local.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }

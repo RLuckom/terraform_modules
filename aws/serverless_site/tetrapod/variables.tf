@@ -13,6 +13,22 @@ variable coordinator_data {
   }
 }
 
+variable access_control_function_qualified_arns {
+  type = list(object({
+    refresh_auth = string
+    parse_auth = string
+    check_auth = string
+    sign_out = string
+    http_headers = string
+  }))
+  default = []
+}
+
+variable secure_default_origin {
+  type = bool
+  default = true
+}
+
 variable force_destroy {
   type = bool
   default = false
