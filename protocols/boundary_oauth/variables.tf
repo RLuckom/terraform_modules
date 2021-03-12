@@ -43,15 +43,20 @@ variable log_level {
   default = "ERROR"
 }
 
-locals {
-  http_header_values = {
-    "Content-Security-Policy" = "default-src 'none'; img-src 'self'; script-src 'self' https://code.jquery.com https://stackpath.bootstrapcdn.com; style-src 'self' 'unsafe-inline' https://stackpath.bootstrapcdn.com; object-src 'none'; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com"
+variable http_header_values {
+  type = map(string)
+  default = {
+    "Content-Security-Policy" = "default-src 'self'"
     "Strict-Transport-Security" = "max-age=31536000; includeSubdomains; preload"
     "Referrer-Policy" = "same-origin"
     "X-XSS-Protection" = "1; mode=block"
     "X-Frame-Options" = "DENY"
     "X-Content-Type-Options" = "nosniff"
   }
+}
+
+locals {
+  http_header_values = var.http_header_values
   set_headers_config = {
     httpHeaders = local.http_header_values
     logLevel = var.log_level
