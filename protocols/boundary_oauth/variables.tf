@@ -43,6 +43,11 @@ variable log_level {
   default = "ERROR"
 }
 
+variable sign_out_path {
+  type = string
+  default = "/"
+}
+
 variable http_header_values {
   type = map(string)
   default = {
@@ -72,7 +77,7 @@ locals {
     oauthScopes = ["phone", "email", "profile", "openid", "aws.cognito.signin.user.admin"]
     authDomain = var.auth_domain
     redirectPathSignIn = "/parseauth"
-    redirectPathSignOut = "/"
+    redirectPathSignOut = var.sign_out_path
     redirectPathAuthRefresh = "/refreshauth"
     cookieSettings = {
       idToken = null
