@@ -73,9 +73,9 @@ variable "default_cloudfront_ttls" {
 variable "lambda_origins" {
   type = list(object({
     id = string
+    access_controlled = bool
     path = string
     site_path = string
-    access_controlled = bool
     apigateway_path = string
     gateway_name_stem = string
     allowed_methods = list(string)

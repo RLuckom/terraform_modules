@@ -238,7 +238,7 @@ module trails_resolver {
 
 module site {
   count = 1
-  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=cloudfront-access-control"
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
   enable_distribution = var.enable
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
