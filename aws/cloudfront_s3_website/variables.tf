@@ -72,11 +72,26 @@ variable "default_cloudfront_ttls" {
 
 variable "lambda_origins" {
   type = list(object({
+    # This is going to be the origin_id in cloudfront. Should be a string
+    # that suggests the function's purpose
     id = string
+    # This should only be set to true if the access_control_function_qualified_arns
+    # above are set AND you want the function access-controlled
     access_controlled = bool
+    # unitary path denoting the function's endpoint, e.g.
+    # "/meta/relations/trails"
     path = string
+    # cloudfront routing pattern e.g.
+    # "/meta/relations/trails*"
     site_path = string
+    # apigateway path expression e.g.
+    # "/meta/relations/trails/{trail+}"
     apigateway_path = string
+    # Usually all lambdas in a dist should share one gateway, so the gway
+    # name stems should be the same across all lambda endpoints.
+    # But if you wanted multiple apigateways within a single dist., you
+    # could set multiple name stems and the lambdas would get allocated
+    # to different gateways
     gateway_name_stem = string
     allowed_methods = list(string)
     cached_methods = list(string)
@@ -87,8 +102,13 @@ variable "lambda_origins" {
       max = number
     })
     forwarded_values = object({
+      # usually true
       query_string = bool
+      # usually empty list
       query_string_cache_keys = any
+      # probably best left to empty list; that way headers used for
+      # auth can't be leaked by insecure functions. If there's
+      # a reason to want certain headers, go ahead.
       headers = list(string)
     })
     lambda = object({
