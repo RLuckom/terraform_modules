@@ -58,3 +58,11 @@ module "cognito_utils" {
   bucket = module.layer_bucket.bucket.id
   output_path = "${path.root}/src/aws/layers/cognito_utils/layer.zip"
 }
+
+module "aws_sdk" {
+  source = "github.com/RLuckom/terraform_modules//aws/s3_archive"
+  key = "aws_sdk"
+  path = "${path.root}/src/aws/layers/aws_sdk/"
+  bucket = module.layer_bucket.bucket.id
+  output_path = "${path.root}/src/aws/layers/aws_sdk/layer.zip"
+}
