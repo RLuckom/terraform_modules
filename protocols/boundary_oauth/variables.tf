@@ -140,6 +140,17 @@ locals {
       action_name = "check_auth"
     }
   }
+  move_cookie_to_auth_header = {
+    source_contents = concat(local.function_defaults.shared_source, [
+      {
+        file_name = "index.js"
+        file_contents = local.move_cookie_to_auth_header_function
+      },
+    ])
+    details = {
+      action_name = "move_cookie"
+    }
+  }
   sign_out = {
     source_contents = concat(local.function_defaults.shared_source, [
       {
@@ -191,12 +202,49 @@ output directory {
   value  = "${path.module}/nodejs"
 }
 
+locals {
+  move_cookie_to_auth_header_function = <<EOF
+const { parse } = require("cookie")
+
+function extractCookiesFromHeaders(headers) {
+  // Cookies are present in the HTTP header "Cookie" that may be present multiple times.
+  // This utility function parses occurrences  of that header and splits out all the cookies and their values
+  // A simple object is returned that allows easy access by cookie name: e.g. cookies["nonce"]
+  if (!headers["cookie"]) {
+    return {};
+  }
+  const cookies = headers["cookie"].reduce(
+    (reduced, header) => Object.assign(reduced, parse(header.value)),
+    {}
+  );
+  return cookies;
+}
+
+function handler(event, context, callback) {
+  const request = event.Records[0].cf.request;
+  const idToken = extractCookiesFromHeaders(request.headers)["ID-TOKEN"];
+  request.headers.authorization = [
+    {
+      key: "Authorization",
+      value: idToken
+    }
+  ]
+  callback(null, request)
+}
+
+module.exports = {
+  handler
+}
+EOF
+}
+
 output function_configs {
   value = {
     function_defaults = local.function_defaults
     http_headers = local.http_headers
     parse_auth = local.parse_auth
     check_auth = local.check_auth
+    move_cookie_to_auth_header = local.move_cookie_to_auth_header
     refresh_auth = local.refresh_auth
     sign_out = local.sign_out
   }

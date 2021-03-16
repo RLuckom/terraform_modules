@@ -44,6 +44,7 @@ module site {
   routing = local.routing
   system_id = local.system_id
   logging_config = local.cloudfront_logging_config
+  lambda_authorizers = var.lambda_authorizers
   lambda_origins = var.lambda_origins 
   no_cache_s3_path_patterns = var.no_cache_s3_path_patterns
   subject_alternative_names = local.subject_alternative_names

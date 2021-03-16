@@ -248,12 +248,13 @@ module site {
   routing = local.routing
   system_id = local.system_id
   logging_config = local.cloudfront_logging_config
+  lambda_authorizers = var.lambda_authorizer.name == "NONE" ? {} : map(var.lambda_authorizer.name, var.lambda_authorizer)
   lambda_origins = [{
     id = "trails"
     path = "/meta/relations/trails"
     site_path = "/meta/relations/trails*"
     apigateway_path = "/meta/relations/trails/{trail+}"
-    access_controlled = length(var.access_control_function_qualified_arns) > 0  && var.secure_default_origin
+    authorizer = var.lambda_authorizer.name
     gateway_name_stem = "trails"
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods = ["GET", "HEAD"]

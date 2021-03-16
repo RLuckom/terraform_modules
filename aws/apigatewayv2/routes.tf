@@ -1,6 +1,7 @@
 resource "aws_apigatewayv2_route" "route" {
   count = length(var.lambda_routes)
-  authorization_type = "NONE"
+  authorization_type = var.lambda_routes[count.index].authorizer == "NONE" ? "NONE" : "JWT"
+  authorizer_id = var.lambda_routes[count.index].authorizer == "NONE" ? null : aws_apigatewayv2_authorizer.jwt_auth[var.lambda_routes[count.index].authorizer].id
   api_id    = aws_apigatewayv2_api.api.id
   route_key = var.lambda_routes[count.index].route_key
   target = "integrations/${aws_apigatewayv2_integration.integration[count.index].id}"
@@ -20,6 +21,19 @@ locals {
                       jsonencode(var.lambda_routes),
                           )))
 
+}
+
+resource "aws_apigatewayv2_authorizer" "jwt_auth" {
+  for_each = var.authorizers
+  api_id    = aws_apigatewayv2_api.api.id
+  authorizer_type  = "JWT"
+  identity_sources = each.value.identity_sources
+  name             = each.key
+
+  jwt_configuration {
+    audience = each.value.audience
+    issuer   = each.value.issuer 
+  }
 }
 
 resource "aws_lambda_permission" "lambda_permission" {

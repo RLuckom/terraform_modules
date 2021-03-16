@@ -45,8 +45,19 @@ variable "lambda_routes" {
     route_key = string
     handler_arn = string
     handler_name = string
+    authorizer = string 
   }))
   default = []
+}
+
+variable authorizers {
+  type = map(object({
+    name = string
+    audience = list(string)
+    issuer = string
+    identity_sources = list(string)
+  }))
+  default = {}
 }
 
 variable domain_record {

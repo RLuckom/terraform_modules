@@ -1,3 +1,7 @@
+output move_cookie_to_auth_header {
+  value = module.move_cookie_to_auth_header
+}
+
 output sign_out {
   value = module.sign_out
 }

@@ -1,3 +1,4 @@
+
 module cognito_fn_template {
   source = "github.com/RLuckom/terraform_modules//protocols/boundary_oauth"
   token_issuer = var.token_issuer
@@ -20,6 +21,21 @@ module check_auth {
   source_contents = module.cognito_fn_template.function_configs.check_auth.source_contents
   lambda_details = {
     action_name = module.cognito_fn_template.function_configs.check_auth.details.action_name
+    scope_name = var.security_scope
+    policy_statements = []
+  }
+  local_source_directory = module.cognito_fn_template.directory
+}
+
+module move_cookie_to_auth_header {
+  source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
+  publish = true
+  timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
+  mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
+  role_service_principal_ids = module.cognito_fn_template.function_configs.function_defaults.role_service_principal_ids
+  source_contents = module.cognito_fn_template.function_configs.move_cookie_to_auth_header.source_contents
+  lambda_details = {
+    action_name = module.cognito_fn_template.function_configs.move_cookie_to_auth_header.details.action_name
     scope_name = var.security_scope
     policy_statements = []
   }

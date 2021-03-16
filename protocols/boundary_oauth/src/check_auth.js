@@ -80,7 +80,6 @@ const handler = async (event) => {
 
     // Validate the token and if a group is required make sure the token has it.
     // If not throw an Error or MissingRequiredGroupError
-    console.log('check')
     await shared.validateAndCheckIdToken(idToken, CONFIG);
 
     // Return the request unaltered to allow access to the resource:

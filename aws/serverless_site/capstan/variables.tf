@@ -30,6 +30,16 @@ variable coordinator_data {
   }
 }
 
+variable lambda_authorizers {
+  type = map(object({
+    name = string
+    audience = list(string)
+    issuer = string
+    identity_sources = list(string)
+  }))
+  default = {}
+}
+
 variable lambda_origins {
   type = list(object({
     # This is going to be the origin_id in cloudfront. Should be a string
@@ -37,7 +47,7 @@ variable lambda_origins {
     id = string
     # This should only be set to true if the access_control_function_qualified_arns
     # above are set AND you want the function access-controlled
-    access_controlled = bool
+    authorizer = string
     # unitary path denoting the function's endpoint, e.g.
     # "/meta/relations/trails"
     path = string
@@ -109,6 +119,7 @@ variable access_control_function_qualified_arns {
     check_auth = string
     sign_out = string
     http_headers = string
+    move_cookie_to_auth_header = string
   }))
   default = []
 }

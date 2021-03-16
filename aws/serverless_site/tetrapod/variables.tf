@@ -20,8 +20,24 @@ variable access_control_function_qualified_arns {
     check_auth = string
     sign_out = string
     http_headers = string
+    move_cookie_to_auth_header = string
   }))
   default = []
+}
+
+variable lambda_authorizer {
+  type = object({
+    name = string
+    audience = list(string)
+    issuer = string
+    identity_sources = list(string)
+  })
+  default = {
+    name = "NONE"
+    audience = []
+    issuer = ""
+    identity_sources = []
+  }
 }
 
 variable secure_default_origin {
