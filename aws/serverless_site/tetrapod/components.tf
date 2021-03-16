@@ -266,6 +266,7 @@ module site {
     forwarded_values = {
       query_string = true
       query_string_cache_keys = []
+      cookie_names = []
       headers = []
     }
     lambda = {

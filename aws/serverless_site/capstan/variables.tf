@@ -70,6 +70,8 @@ variable lambda_origins {
       # auth can't be leaked by insecure functions. If there's
       # a reason to want certain headers, go ahead.
       headers = list(string)
+      # same as headers; should generally be empty
+      cookie_names = list(string)
     })
     lambda = object({
       arn = string

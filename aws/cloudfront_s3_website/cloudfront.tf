@@ -185,8 +185,19 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         query_string_cache_keys = ordered_cache_behavior.value.forwarded_values.query_string_cache_keys
         headers = ordered_cache_behavior.value.forwarded_values.headers
 
-        cookies {
-          forward = "all"
+        dynamic "cookies" {
+          for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) > 0 ? [1] : []
+          content {
+            forward = "whitelist"
+            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names
+          }
+        }
+
+        dynamic "cookies" {
+          for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) == 0 ? [1] : []
+          content {
+            forward = "none"
+          }
         }
       }
       viewer_protocol_policy = "redirect-to-https"
