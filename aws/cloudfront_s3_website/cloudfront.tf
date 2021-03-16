@@ -57,12 +57,12 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   dynamic "origin" {
-    for_each = var.lambda_origins
+    for_each = distinct([for origin in var.lambda_origins : origin.gateway_name_stem])
     content {
-      domain_name = trimprefix(module.lambda_api_gateway[index(local.apigateway_names, origin.value.gateway_name_stem)].api.api_endpoint, "https://")
-      origin_id = origin.value.id
+      domain_name = trimprefix(module.lambda_api_gateway[index(local.apigateway_names, origin.value)].api.api_endpoint, "https://")
+      origin_id = origin.value
       // TODO: match module index to lambda origin
-      origin_path = "/${module.lambda_api_gateway[0].stage_name}${origin.value.path}"
+      origin_path = "/${module.lambda_api_gateway[0].stage_name}"
 
       custom_origin_config {
         http_port = 80
@@ -173,7 +173,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     for_each = var.lambda_origins
     content {
       path_pattern = ordered_cache_behavior.value.site_path
-      target_origin_id = ordered_cache_behavior.value.id
+      target_origin_id = ordered_cache_behavior.value.gateway_name_stem
       allowed_methods = ordered_cache_behavior.value.allowed_methods
       cached_methods = ordered_cache_behavior.value.cached_methods
       compress = ordered_cache_behavior.value.compress
