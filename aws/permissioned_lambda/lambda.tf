@@ -1,5 +1,5 @@
 module "lambda_role" {
-  source = "../permissioned_role"
+  source = "github.com/RLuckom/terraform_modules//aws/permissioned_role"
   role_name = "${local.scoped_lambda_name}-lambda"
   role_policy = concat(local.lambda_destinations, var.self_invoke.allowed ? local.lambda_invoke : [], var.deny_cloudwatch ? [] : var.log_writer_policy, var.lambda_details.policy_statements)
   principals = [{
