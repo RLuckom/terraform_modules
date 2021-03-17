@@ -1,7 +1,7 @@
-
 module cognito_fn_template {
   source = "github.com/RLuckom/terraform_modules//protocols/boundary_oauth"
   token_issuer = var.token_issuer
+  http_header_values = var.http_header_values
   client_id = var.client_id
   client_secret = var.client_secret
   nonce_signing_secret = var.nonce_signing_secret

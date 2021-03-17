@@ -46,3 +46,8 @@ variable log_level {
   type = string
   default = "ERROR"
 }
+
+variable http_header_values {
+  type = map(string)
+  default = null
+}
