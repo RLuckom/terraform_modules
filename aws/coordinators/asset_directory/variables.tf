@@ -2,6 +2,11 @@ variable asset_directory_root {
   type = string
 }
 
+variable s3_asset_prefix {
+  type = string
+  default = ""
+}
+
 locals {
   file_types = {
     woff2 = "font/woff2"
@@ -21,7 +26,7 @@ locals {
   file_hash = zipmap(
     fileset(var.asset_directory_root, "**"),
     [for file_path in fileset(var.asset_directory_root, "**") : {
-      asset_path = "assets/${file_path}"
+      asset_path = "${var.s3_asset_prefix}${file_path}"
       abspath = "${var.asset_directory_root}/${file_path}"
       extension = split(".", file_path)[length(split(".", file_path)) - 1]
     }]

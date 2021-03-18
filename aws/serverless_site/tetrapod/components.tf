@@ -52,6 +52,7 @@ module asset_file_configs {
   count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/coordinators/asset_directory"
   asset_directory_root = local.asset_path
+  s3_asset_prefix = "assets/"
 }
 
 module site_static_assets {
