@@ -133,6 +133,7 @@ module glue_table_query_permissions {
     {
       actions   =  [
         "glue:GetDatabase",
+        "glue:GetPartitions",
         "glue:GetTable"
       ]
       resources = [
