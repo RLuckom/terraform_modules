@@ -1,9 +1,18 @@
+module "logging_bucket" {
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/logging_bucket"
+  name = "rluckom-support-s3-logging"
+}
+
 module "layer_bucket" {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   acl = "public-read"
   versioning = [{
     enabled = true
   }]
+  bucket_logging_config = {
+    target_bucket = module.logging_bucket.bucket.id
+    target_prefix = "${var.layer_bucket_name}/"
+  }
   name = var.layer_bucket_name
   principal_prefix_object_permissions = [
     {
