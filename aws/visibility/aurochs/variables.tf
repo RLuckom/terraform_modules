@@ -441,7 +441,7 @@ locals {
         for prefix, arns in prefix_arns_map : {
           prefix = prefix
           arns = arns
-      } if prefix == v.cloudfront_result_prefix ] if security_scope == v.security_scope]
+      } if prefix == v.cloudfront_log_storage_prefix ] if security_scope == v.security_scope]
     ]
   ])
 }
