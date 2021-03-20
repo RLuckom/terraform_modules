@@ -4,7 +4,8 @@ variable name {
 
 variable prefix_athena_query_permissions {
   type = list(object({
-    prefix = string
+    log_storage_prefix = string
+    result_prefix = string
     arns = list(string)
   }))
   default = []

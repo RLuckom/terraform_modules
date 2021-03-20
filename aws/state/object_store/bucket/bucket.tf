@@ -194,11 +194,19 @@ locals {
 locals {
   prefix_object_permissions = concat(
     var.prefix_object_permissions,
+    concat(
+      [ for prefix_config in var.prefix_athena_query_permissions : {
+        prefix = prefix_config.log_storage_prefix
+        permission_type = "athena_query_execution"
+        arns = prefix_config.arns
+      } if length(prefix_config.arns) > 0
+    ],
     [ for prefix_config in var.prefix_athena_query_permissions : {
-      prefix = prefix_config.prefix
-      permission_type = "athena_query_execution"
+      prefix = prefix_config.result_prefix
+      permission_type = "read_write_objects"
       arns = prefix_config.arns
-    } if length(prefix_config.arns) > 0],
+    } if length(prefix_config.arns) > 0
+  ])
   )
   bucket_permissions = concat(
     var.bucket_permissions,
