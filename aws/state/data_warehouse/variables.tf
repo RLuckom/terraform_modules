@@ -34,6 +34,7 @@ variable table_configs {
 variable table_permission_names {
   type = map(object({
     add_partition_permission_names = list(string)
+    query_permission_names = list(string)
   }))
   default = {}
 }
@@ -68,7 +69,10 @@ module glue_table_add_partition_permissions {
   source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
   for_each = var.table_configs
   policy_name = "${each.key}-addpart"
-  role_names = lookup(var.table_permission_names, each.key, {add_partition_permission_names = [] }).add_partition_permission_names
+  role_names = lookup(var.table_permission_names, each.key, {
+    add_partition_permission_names = [] 
+    query_permission_names = [] 
+  }).add_partition_permission_names
   policy_statements = [
     {
       actions   =  [
@@ -100,6 +104,41 @@ module glue_table_add_partition_permissions {
       resources = [
         aws_glue_catalog_database.database.arn,
         local.default_catalog,
+        module.table[each.key].table.arn,
+        "${module.table[each.key].table.arn}/*",
+      ]
+    },
+  ]
+}
+
+module glue_table_query_permissions {
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
+  for_each = var.table_configs
+  policy_name = "${each.key}-query"
+  role_names = lookup(var.table_permission_names, each.key, {
+    query_permission_names = [] 
+    add_partition_permission_names = [] 
+  }).query_permission_names
+  policy_statements = [
+    {
+      actions   =  [
+        "athena:StartQueryExecution",
+        "athena:GetQueryResults",
+        "athena:GetQueryExecution"
+      ]
+      resources = [
+        "arn:aws:athena:*"
+      ]
+    },
+    {
+      actions   =  [
+        "glue:GetDatabase",
+        "glue:GetTable"
+      ]
+      resources = [
+        local.default_db,
+        local.default_catalog,
+        aws_glue_catalog_database.database.arn,
         module.table[each.key].table.arn,
         "${module.table[each.key].table.arn}/*",
       ]

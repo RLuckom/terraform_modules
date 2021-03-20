@@ -390,6 +390,7 @@ variable scoped_athena_query_roles {
 variable glue_permission_name_map {
   type = map(map(object({
     add_partition_permission_names = list(string)
+    query_permission_names = list(string)
   })))
   default = {}
 }

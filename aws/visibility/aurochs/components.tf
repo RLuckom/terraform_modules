@@ -44,9 +44,20 @@ module data_warehouse {
     [for k in keys(each.value.glue_table_configs) : {
       add_partition_permission_names = concat(
         [module.archive_function.role.name],
-        lookup(lookup(var.glue_permission_name_map, each.value.security_scope, {}), k, { add_partition_permission_names = [] }).add_partition_permission_names 
+        lookup(lookup(var.glue_permission_name_map, each.value.security_scope, {}), k, 
+        {
+          add_partition_permission_names = []
+          query_permission_names = [] 
+        }
+      ).add_partition_permission_names 
 
       )
+      query_permission_names = lookup(lookup(var.glue_permission_name_map, each.value.security_scope, {}), k, 
+        { 
+          add_partition_permission_names = []
+          query_permission_names = [] 
+        }
+      ).query_permission_names 
     }]
   )
 }
