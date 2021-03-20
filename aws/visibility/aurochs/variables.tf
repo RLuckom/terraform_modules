@@ -382,7 +382,7 @@ variable scoped_logging_functions {
   default = {}
 }
 
-variable scoped_athena_query_functions {
+variable scoped_athena_query_roles {
   type = map(map(list(string)))
   default = {}
 }
@@ -437,7 +437,7 @@ locals {
   ]
   visibility_prefix_athena_query_permissions = flatten([
     for k, v in local.serverless_site_configs : [
-      [ for security_scope, prefix_arns_map in var.scoped_athena_query_functions: [
+      [ for security_scope, prefix_arns_map in var.scoped_athena_query_roles: [
         for prefix, arns in prefix_arns_map : {
           prefix = prefix
           arns = arns
