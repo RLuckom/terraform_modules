@@ -7,6 +7,17 @@ variable force_destroy {
   default = false
 }
 
+variable bucket_logging_config {
+  type = object({
+    target_bucket = string
+    target_prefix = string
+  })
+  default = {
+    target_bucket = ""
+    target_prefix = ""
+  }
+}
+
 variable prefix_athena_query_permissions {
   type = list(object({
     prefix = string

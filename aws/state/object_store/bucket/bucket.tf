@@ -3,6 +3,15 @@ resource "aws_s3_bucket" "bucket" {
   acl = var.acl
   request_payer = var.request_payer
   force_destroy = var.force_destroy
+
+  dynamic "logging" {
+    for_each = var.bucket_logging_config.target_bucket == "" ? [] : [1]
+    content {
+      target_bucket = var.bucket_logging_config.target_bucket
+      target_prefix = var.bucket_logging_config.target_prefix
+    }
+  }
+
   dynamic "website" {
     for_each = var.website_configs
     content {
