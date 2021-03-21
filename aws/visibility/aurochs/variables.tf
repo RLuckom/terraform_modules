@@ -308,6 +308,7 @@ locals {
         [for subsystem_name in system_id.subsystem_names : "${subsystem_name}_lambda_logs"],
         [for subsystem_name in system_id.subsystem_names : {
           bucket_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}"
+          result_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
           subsystem_name = subsystem_name
           skip_header_line_count = 0
           ser_de_info = {
@@ -327,6 +328,7 @@ locals {
         [ for k, v in var.serverless_site_configs : 
         {
           bucket_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
+          result_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
           skip_header_line_count = 2
           ser_de_info = {
             name                  = "cf_logs"
@@ -382,15 +384,12 @@ variable scoped_logging_functions {
   default = {}
 }
 
-variable scoped_athena_query_roles {
-  type = map(map(list(string)))
-  default = {}
-}
-
 variable glue_permission_name_map {
   type = map(map(object({
     add_partition_permission_names = list(string)
     query_permission_names = list(string)
+    add_partition_permission_arns = list(string)
+    query_permission_arns = list(string)
   })))
   default = {}
 }
@@ -438,13 +437,13 @@ locals {
     } 
   ]
   visibility_prefix_athena_query_permissions = flatten([
-    for k, v in local.serverless_site_configs : [
-      [ for security_scope, prefix_arns_map in var.scoped_athena_query_roles: [
-        for prefix, arns in prefix_arns_map : {
-          log_storage_prefix = prefix
-          result_prefix = v.cloudfront_result_prefix
-          arns = arns
-      } if prefix == v.cloudfront_log_storage_prefix ] if security_scope == v.security_scope]
+    for system_id in local.system_ids : [
+      for table, permission_map in lookup(var.glue_permission_name_map, system_id.security_scope, {}) : 
+      [ for table_name, table_map in local.data_warehouse_configs[system_id.security_scope].glue_table_configs: {
+        log_storage_prefix = table_map.bucket_prefix
+        result_prefix = table_map.result_prefix
+        arns = concat(permission_map.add_partition_permission_arns, permission_map.query_permission_arns)
+      } if table == table_name]
     ]
   ])
 }

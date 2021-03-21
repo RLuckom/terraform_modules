@@ -48,6 +48,8 @@ module data_warehouse {
         {
           add_partition_permission_names = []
           query_permission_names = [] 
+          add_partition_permission_arns = []
+          query_permission_arns = [] 
         }
       ).add_partition_permission_names 
 
@@ -56,6 +58,8 @@ module data_warehouse {
         { 
           add_partition_permission_names = []
           query_permission_names = [] 
+          add_partition_permission_arns = []
+          query_permission_arns = [] 
         }
       ).query_permission_names 
     }]
