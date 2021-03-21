@@ -179,7 +179,7 @@ locals {
 
   object_permission_set_actions = {
     read_known_objects = local.read_known_object_actions
-    athena_query_execution =  local.read_write_known_objects_actions
+    athena_query_execution =  local.read_known_object_actions
     read_and_tag = local.read_and_tag_known_actions
     read_and_tag_known = local.read_and_tag_known_actions
     move_objects_out = local.move_known_object_out_actions
