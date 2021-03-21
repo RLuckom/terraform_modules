@@ -238,7 +238,7 @@ module trails_resolver {
 
 module site {
   count = var.enable ? 1 : 0
-  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=b1b400e6a57a9d5"
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=e976eb69c5db951b"
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${local.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
@@ -314,7 +314,7 @@ locals {
 }
 
 module trails_table {
-  source= "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table?ref=f5ba570f905b"
+  source= "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table?ref=e976eb69c5db951b"
   table_name = local.trails_table_name
   delete_item_permission_role_names = local.trails_table_delete_role_names
   write_permission_role_names = local.trails_table_write_permission_role_names
