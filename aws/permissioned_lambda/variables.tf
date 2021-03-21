@@ -28,6 +28,19 @@ variable local_source_directory {
   default = null
 }
 
+variable preuploaded_source {
+  type = object({
+    supplied = bool
+    bucket = string
+    path = string
+  })
+  default = {
+    supplied = false
+    bucket = ""
+    path = ""
+  }
+}
+
 locals {
   deployment_package_local_path = "${path.root}/functions/zip/${local.scoped_lambda_name}/lambda.zip"
   deployment_package_key = "${local.scoped_lambda_name}/lambda.zip"

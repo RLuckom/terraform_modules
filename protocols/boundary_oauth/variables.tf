@@ -2,6 +2,21 @@ variable token_issuer {
   type = string
 }
 
+variable bucket_config {
+  type = object({
+    supplied = bool
+    credentials_file = string
+    bucket = string
+    prefix = string
+  })
+  default = {
+    supplied = false
+    credentials_file = ""
+    bucket = ""
+    prefix = ""
+  }
+}
+
 variable client_id {
   type = string
 }
@@ -144,7 +159,7 @@ locals {
     source_contents = concat(local.function_defaults.shared_source, [
       {
         file_name = "index.js"
-        file_contents = local.move_cookie_to_auth_header_function
+        file_contents = file("${path.module}/src/move_cookie.js")
       },
     ])
     details = {
@@ -202,42 +217,6 @@ output directory {
   value  = "${path.module}/nodejs"
 }
 
-locals {
-  move_cookie_to_auth_header_function = <<EOF
-const { parse } = require("cookie")
-
-function extractCookiesFromHeaders(headers) {
-  // Cookies are present in the HTTP header "Cookie" that may be present multiple times.
-  // This utility function parses occurrences  of that header and splits out all the cookies and their values
-  // A simple object is returned that allows easy access by cookie name: e.g. cookies["nonce"]
-  if (!headers["cookie"]) {
-    return {};
-  }
-  const cookies = headers["cookie"].reduce(
-    (reduced, header) => Object.assign(reduced, parse(header.value)),
-    {}
-  );
-  return cookies;
-}
-
-function handler(event, context, callback) {
-  const request = event.Records[0].cf.request;
-  const idToken = extractCookiesFromHeaders(request.headers)["ID-TOKEN"];
-  request.headers.authorization = [
-    {
-      key: "Authorization",
-      value: idToken
-    }
-  ]
-  callback(null, request)
-}
-
-module.exports = {
-  handler
-}
-EOF
-}
-
 output function_configs {
   value = {
     function_defaults = local.function_defaults
@@ -247,5 +226,68 @@ output function_configs {
     move_cookie_to_auth_header = local.move_cookie_to_auth_header
     refresh_auth = local.refresh_auth
     sign_out = local.sign_out
+  }
+}
+
+output s3_objects {
+  value = {
+    http_headers = {
+      supplied = true
+      bucket = var.bucket_config.bucket
+      path = trimprefix("${var.bucket_config.prefix}/http_headers_${local.version}.zip", "/")
+    }
+    parse_auth = {
+      supplied = true
+      bucket = var.bucket_config.bucket
+      path = trimprefix("${var.bucket_config.prefix}/parse_auth_${local.version}.zip", "/")
+    }
+    check_auth = {
+      supplied = true
+      bucket = var.bucket_config.bucket
+      path = trimprefix("${var.bucket_config.prefix}/check_auth_${local.version}.zip", "/")
+    }
+    move_cookie_to_auth_header = {
+      supplied = true
+      bucket = var.bucket_config.bucket
+      path = trimprefix("${var.bucket_config.prefix}/move_cookie_${local.version}.zip", "/")
+    }
+    refresh_auth = {
+      supplied = true
+      bucket = var.bucket_config.bucket
+      path = trimprefix("${var.bucket_config.prefix}/refresh_auth_${local.version}.zip", "/")
+    }
+    sign_out = {
+      supplied = true
+      bucket = var.bucket_config.bucket
+      path = trimprefix("${var.bucket_config.prefix}/sign_out_${local.version}.zip", "/")
+    }
+  }
+}
+
+locals {
+  version = 0
+}
+
+resource null_resource uploaded_objects {
+  count = var.bucket_config.supplied ? 1 : 0
+  triggers = {
+    config = jsonencode(local.full_config_json)
+    version = local.version
+  }
+
+  provisioner "local-exec" {
+    command = templatefile("${path.module}/upload_populated.sh",
+    {
+      // CSP headers include single-quotes, this shepherds them through bash
+      full_config = replace(jsonencode(local.full_config_json), "'", "'\"'\"'")
+      headers_config = replace(jsonencode(local.set_headers_config), "'", "'\"'\"'")
+      bucket = var.bucket_config.bucket
+      prefix = var.bucket_config.prefix
+      version = local.version
+    })
+    environment = {
+      AWS_SHARED_CREDENTIALS_FILE = var.bucket_config.credentials_file
+    }
+    working_dir = path.module
   }
 }

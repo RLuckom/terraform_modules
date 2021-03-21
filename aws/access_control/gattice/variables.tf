@@ -26,6 +26,11 @@ variable user_group_name {
   type = string
 }
 
+variable aws_credentials_file {
+  type = string
+  default = "/.aws/credentials"
+}
+
 variable log_source {
   type = string
   default = ""
