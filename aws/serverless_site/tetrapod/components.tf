@@ -254,7 +254,7 @@ module site {
     id = "trails"
     path = "/meta/relations/trails"
     site_path = "/meta/relations/trails*"
-    apigateway_path = "/meta/relations/trails/{trail+}"
+    apigateway_path = "/meta/relations/trails"
     authorizer = var.lambda_authorizer.name
     gateway_name_stem = "trails"
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
