@@ -112,7 +112,7 @@ locals {
 
 module site_render {
   count = var.enable ? 1 : 0
-  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=f5ba570f905b"
+  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=b1b400e6a57a9d5"
   timeout_secs = 40
   mem_mb = 256
   log_level = var.log_level
@@ -148,7 +148,7 @@ module site_render {
 
 module deletion_cleanup {
   count = var.enable ? 1 : 0
-  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=f5ba570f905b"
+  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=b1b400e6a57a9d5"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
@@ -180,7 +180,7 @@ module deletion_cleanup {
 
 module trails_updater {
   count = var.enable ? 1 : 0
-  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=f5ba570f905b"
+  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=b1b400e6a57a9d5"
   timeout_secs = 40
   mem_mb = 192
   logging_config = local.lambda_logging_config
@@ -218,7 +218,7 @@ module trails_updater {
 
 module trails_resolver {
   count = var.enable ? 1 : 0
-  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=f5ba570f905b"
+  source= "github.com/RLuckom/terraform_modules//aws/donut_days_function?ref=b1b400e6a57a9d5"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
@@ -238,7 +238,7 @@ module trails_resolver {
 
 module site {
   count = var.enable ? 1 : 0
-  source= "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=f5ba570f905b"
+  source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website?ref=b1b400e6a57a9d5"
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${local.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"

@@ -5,7 +5,7 @@ data "aws_route53_zone" "selected" {
 
 module "domain_cert" {
   count = length(var.domain_record) == 0 ? 0 : 1
-  source = "../validated_cert"
+  source = "github.com/RLuckom/terraform_modules//aws/validated_cert?ref=b1b400e6a57a9d5"
   route53_zone_name = data.aws_route53_zone.selected[0].name
   domain_name = var.domain_record[0].domain_name
 }
