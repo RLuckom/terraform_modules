@@ -2,6 +2,17 @@ output get_access_creds {
   value = module.get_access_creds
 }
 
+output lambda_authorizer_config {
+  value = {
+    (var.authorizer_name) = {
+    name = var.authorizer_name
+    audience = [var.client_id]
+    issuer = "https://${var.user_pool_endpoint}"
+    identity_sources = ["$request.header.Authorization"]
+    }
+  }
+}
+
 output lambda_origins {
   value = [{
     # This is going to be the origin_id in cloudfront. Should be a string

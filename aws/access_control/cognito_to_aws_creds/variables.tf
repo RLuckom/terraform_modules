@@ -6,6 +6,10 @@ variable user_pool_endpoint {
   type = string
 }
 
+variable client_id {
+  type = string
+}
+
 variable aws_sdk_layer {
   type = object({
     present = bool

@@ -15,7 +15,7 @@ locals {
     tpl = "text/html"
     tmpl = "text/html"
     json = "application/json"
-    js = "text/javascript"
+    js = "application/javascript"
     html = "text/html"
     htm = "text/html"
     css = "text/css"
