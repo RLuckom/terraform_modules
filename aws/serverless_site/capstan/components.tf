@@ -10,17 +10,11 @@ locals {
   }
 }
 
-module asset_file_configs {
-  count = var.asset_path == "" ? 0 : 1
-  source = "github.com/RLuckom/terraform_modules//aws/coordinators/asset_directory"
-  asset_directory_root = var.asset_path
-}
-
 module site_static_assets {
   count = var.asset_path == "" ? 0 : 1
+  source = "github.com/RLuckom/terraform_modules//aws/local_directory_to_s3"
   bucket_name = local.site_bucket
-  source = "github.com/RLuckom/terraform_modules//aws/s3_directory"
-  file_configs = module.asset_file_configs[0].file_configs
+  asset_directory_root = var.asset_path
   depends_on = [module.website_bucket]
 }
 
