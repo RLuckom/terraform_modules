@@ -1,4 +1,5 @@
 data aws_iam_policy_document policy {
+  count = length(var.role_policy) > 0 ? 1 : 0
   dynamic "statement" {
     for_each = var.role_policy
     content {
@@ -9,8 +10,9 @@ data aws_iam_policy_document policy {
 }
 
 resource aws_iam_policy role_policy {
+  count = length(var.role_policy) > 0 ? 1 : 0
   name = "${var.role_name}-policy"
-  policy = data.aws_iam_policy_document.policy.json
+  policy = data.aws_iam_policy_document.policy[0].json
 }
 
 data aws_iam_policy_document assume_role_policy {
@@ -47,6 +49,7 @@ resource aws_iam_role role {
 }
 
 resource "aws_iam_role_policy_attachment" "attach-policy-to-role" {
+  count = length(var.role_policy) > 0 ? 1 : 0
   role       = aws_iam_role.role.name
-  policy_arn = aws_iam_policy.role_policy.arn
+  policy_arn = aws_iam_policy.role_policy[0].arn
 }
