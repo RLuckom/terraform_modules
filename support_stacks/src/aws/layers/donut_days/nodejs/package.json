@@ -9,13 +9,13 @@
   "author": "Raphael Luckom",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.842.0",
+    "aws-sdk": "^2.872.0",
     "donut-days": "github:RLuckom/donut-days",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "needle": "^2.6.0",
     "parse-link-header": "^1.0.1",
-    "qs": "^6.9.6",
+    "qs": "^6.10.1",
     "raphlogger": "0.0.1",
     "url-template": "^2.0.8"
   }
