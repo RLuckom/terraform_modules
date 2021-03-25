@@ -1,3 +1,41 @@
+module "replication_role" {
+  source = "github.com/RLuckom/terraform_modules//aws/permissioned_role"
+  count = local.need_replication_role ? 1 : 0
+  role_name = "${var.name}-rep-fn"
+  role_policy = []
+  principals = [{
+    type = "Service"
+    identifiers = ["s3.amazonaws.com"]
+  }]
+}
+
+module "donut_days" {
+  count = local.need_donut_days_layer ? 1 : 0
+  source = "github.com/RLuckom/terraform_modules//aws/layers/donut_days"
+}
+
+module replication_lambda {
+  count = local.need_replication_lambda ? 1 : 0
+  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  timeout_secs = 2
+  mem_mb = 128
+  config_contents = templatefile("${path.module}/src/config.js",
+  {
+    rules = jsonencode(local.manual_replication_rules)
+    bucket = var.name
+  })
+  logging_config = var.replication_function_logging_config
+  lambda_event_configs = var.replication_lambda_event_configs
+  action_name = "${replace(var.name, "-", "_")}_repl"
+  scope_name = var.security_scope
+  donut_days_layer = local.donut_days_layer_config
+}
+
+locals {
+  donut_days_layer_config = local.need_donut_days_layer ? module.donut_days[0].layer_config : var.replication_configuration.donut_days_layer
+  auto_replication_role_arn = local.need_replication_role ? module.replication_role[0].role.arn : var.replication_configuration.role_arn
+}
+
 resource "aws_s3_bucket" "bucket" {
   bucket = var.name
   acl = var.acl
@@ -49,22 +87,43 @@ resource "aws_s3_bucket" "bucket" {
       }
     }
   }
+
+  dynamic "replication_configuration" {
+    for_each = length(local.auto_replication_rules) > 0 ? [1] : []
+    content {
+      role = local.auto_replication_role
+      dynamic "rules" {
+        for_each = local.auto_replication_rules
+        content {
+          priority = rules.value.priority
+          status = rules.value.enabled ? "Enabled" : "Disabled"
+          destination {
+            bucket = rules.value.destination.bucket
+          }
+          filter {
+            prefix = rules.value.filter.prefix == "" ? null : rules.value.filter.prefix
+            tags = length(values(rules.value.filter.tags)) > 0 ? rules.value.filter.tags : null
+          }
+        }
+      }
+    }
+  }
 }
 
 resource "aws_lambda_permission" "allow_caller" {
-  count = length(var.lambda_notifications)
+  count = length(local.lambda_notifications)
   action        = "lambda:InvokeFunction"
-  function_name = var.lambda_notifications[count.index].lambda_name
+  function_name = local.lambda_notifications[count.index].lambda_name
   principal     = "s3.amazonaws.com"
   source_arn = aws_s3_bucket.bucket.arn
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  count = length(var.lambda_notifications) == 0 ? 0 : 1
+  count = length(local.lambda_notifications) == 0 ? 0 : 1
   bucket = aws_s3_bucket.bucket.id
 
   dynamic "lambda_function" {
-    for_each = var.lambda_notifications
+    for_each = local.lambda_notifications
     content {
       lambda_function_arn = lambda_function.value.lambda_arn
       events              = lambda_function.value.events
@@ -146,6 +205,7 @@ locals {
 
   read_known_object_actions = [
     "s3:GetObject",
+    "s3:GetObjectTagging",
     "s3:GetObjectVersion",
   ]
 
@@ -194,6 +254,7 @@ locals {
 locals {
   prefix_object_permissions = concat(
     var.prefix_object_permissions,
+    local.replication_function_prefix_permissions,
     concat(
       [ for prefix_config in var.prefix_athena_query_permissions : {
         prefix = prefix_config.log_storage_prefix
