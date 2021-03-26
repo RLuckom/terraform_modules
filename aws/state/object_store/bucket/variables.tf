@@ -189,7 +189,7 @@ variable replication_function_logging_config {
 
 locals {
   auto_replication_rules = [for rule in var.replication_configuration.rules : rule if (rule.destination.prefix == "" && !rule.destination.manual && rule.filter.suffix == "")]
-  manual_replication_rules = [for rule in var.replication_configuration.rules : rule if (rule.enabled && (rule.destination.prefix != "" || rule.destination.manual || rule.filter.suffix != ""))]
+  manual_replication_rules = [for rule in var.replication_configuration.rules : rule if (rule.enabled && (rule.destination.prefix != "" || rule.destination.manual || rule.filter.suffix != "" || rule.destination.bucket == var.name || rule.destination.bucket == ""))]
   // we only need to create a role if there are autoreplication rules, because we automatically
   // assign a role to the lambda we create already. So if the lambda gets created so will a role.
   need_replication_role = var.replication_configuration.role_arn == "" && length(local.auto_replication_rules) > 0
@@ -212,7 +212,7 @@ locals {
       prefix = rule.destination.prefix
       permission_type = "put_object"
       arns = [module.replication_lambda[0].role.arn]
-    } if rule.destination.bucket == var.name
+    } if rule.destination.bucket == var.name || rule.destination.bucket == ""
   ]
   replication_function_prefix_permissions = concat(local.replication_function_prefix_read_permissions, local.replication_function_prefix_write_permissions)
   replication_function_external_buckets = [for rule in local.manual_replication_rules: rule.destination.bucket if rule.destination.bucket != var.name]

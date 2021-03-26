@@ -36,7 +36,7 @@ function getDestinationFromHighestMatchingRule({key, tags}) {
   console.log(rule)
   if (rule) {
     return {
-      bucket: rule.destination.bucket,
+      bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
       copySource: '/${bucket}/' + key,
       key: (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")
     }
