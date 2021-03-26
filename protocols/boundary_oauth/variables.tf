@@ -106,6 +106,7 @@ locals {
     additionalCookies = {}
     requiredGroup = var.user_group_name
   }
+  hash_suffix = substr(sha256(jsonencode(local.full_config_json)), 0, 4)
   function_defaults = {
     mem_mb = 128
     timeout_secs = 3
@@ -265,7 +266,7 @@ output s3_objects {
 }
 
 locals {
-  version = 0
+  version = "0_${local.hash_suffix}"
 }
 
 resource null_resource uploaded_objects {
@@ -290,4 +291,8 @@ resource null_resource uploaded_objects {
     }
     working_dir = path.module
   }
+}
+
+output config_hash {
+  value = sha256(jsonencode(local.full_config_json))
 }
