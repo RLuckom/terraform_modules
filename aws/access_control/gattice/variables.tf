@@ -18,12 +18,28 @@ variable nonce_signing_secret {
   type = string
 }
 
-variable auth_domain {
-  type = string
+variable protected_domain_routing {
+  type = object({
+    domain_parts = object({
+      top_level_domain = string
+      controlled_domain_part = string
+    })
+    route53_zone_name = string
+  })
+}
+
+locals {
+  protected_site_domain = "${var.protected_domain_routing.domain_parts.controlled_domain_part}.${var.protected_domain_routing.domain_parts.top_level_domain}"
+  auth_domain = "https://${var.auth_domain_prefix}.${local.protected_site_domain}"
 }
 
 variable user_group_name {
   type = string
+}
+
+variable auth_domain_prefix {
+  type = string
+  default = "auth"
 }
 
 variable aws_credentials_file {

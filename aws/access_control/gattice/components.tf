@@ -15,7 +15,7 @@ module cognito_fn_template {
   client_id = var.client_id
   client_secret = var.client_secret
   nonce_signing_secret = var.nonce_signing_secret
-  auth_domain = var.auth_domain
+  auth_domain = local.auth_domain
   user_group_name = var.user_group_name
   log_source = var.log_source
   log_source_instance = var.log_source_instance

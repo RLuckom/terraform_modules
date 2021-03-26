@@ -15,16 +15,17 @@ variable protected_domain_routing {
   })
 }
 
-variable aws_credentials_file {
-  type = string
-}
-
 variable user_group_name {
   type = string
 }
 
 variable user_email {
   type = string
+}
+
+variable aws_credentials_file {
+  type = string
+  default = "/.aws/credentials"
 }
 
 variable additional_protected_domains {
