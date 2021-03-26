@@ -1,22 +1,5 @@
 const _ = require('lodash')
 
-const getObjectTagging = {
-  dataSource: 'AWS',
-  namespaceDetails: {
-    name: 'S3',
-    constructorArgs: {}
-  },
-  name: 'getObjectTagging',
-  value: {
-    path: _.identity,
-  },
-  apiMethod: 'getObjectTagging',
-  requiredParams: {
-    Bucket: {},
-    Key: {},
-  },
-};
-
 const rules = _.sortBy(${rules}, 'priority')
 
 function getDestinationFromHighestMatchingRule({key, tags}) {
@@ -55,7 +38,7 @@ module.exports = {
         getTags: {
           action: 'exploranda',
           params: {
-            accessSchema: {value: getObjectTagging},
+            accessSchema: {value: 'dataSources.AWS.s3.getObjectTagging'},
             params: {
               explorandaParams: {
                 Bucket: { ref: 'stage.bucket'},
