@@ -63,17 +63,10 @@ data "aws_caller_identity" "current" {}
 locals {
   default_catalog = "arn:aws:glue:us-east-1:${data.aws_caller_identity.current.account_id}:catalog"
   default_db = "arn:aws:glue:us-east-1:${data.aws_caller_identity.current.account_id}:database/default"
-}
-
-module glue_table_add_partition_permissions {
-  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
-  for_each = var.table_configs
-  policy_name = "${each.key}-addpart"
-  role_names = lookup(var.table_permission_names, each.key, {
-    add_partition_permission_names = [] 
-    query_permission_names = [] 
-  }).add_partition_permission_names
-  policy_statements = [
+  roles_with_add_partition_permissions = distinct(flatten(values(var.table_permission_names).*.add_partition_permission_names))
+  per_role_add_partition_policy_map = zipmap(
+    local.roles_with_add_partition_permissions,
+    [for role_name in local.roles_with_add_partition_permissions : flatten([for table_name, config in var.table_configs: [
     {
       actions   =  [
         "athena:StartQueryExecution",
@@ -104,22 +97,19 @@ module glue_table_add_partition_permissions {
       resources = [
         aws_glue_catalog_database.database.arn,
         local.default_catalog,
-        module.table[each.key].table.arn,
-        "${module.table[each.key].table.arn}/*",
+        module.table[table_name].table.arn,
+        "${module.table[table_name].table.arn}/*",
       ]
     },
-  ]
-}
-
-module glue_table_query_permissions {
-  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
-  for_each = var.table_configs
-  policy_name = "${each.key}-query"
-  role_names = lookup(var.table_permission_names, each.key, {
-    query_permission_names = [] 
+  ] if contains(lookup(var.table_permission_names, table_name, {
     add_partition_permission_names = [] 
-  }).query_permission_names
-  policy_statements = [
+    query_permission_names = [] 
+  }).add_partition_permission_names, role_name)
+  ])])
+  roles_with_query_permissions = distinct(flatten(values(var.table_permission_names).*.query_permission_names))
+  per_role_query_policy_map = zipmap(
+    local.roles_with_query_permissions,
+    [for role_name in local.roles_with_query_permissions : flatten([for table_name, config in var.table_configs: [
     {
       actions   =  [
         "athena:StartQueryExecution",
@@ -140,9 +130,39 @@ module glue_table_query_permissions {
         local.default_db,
         local.default_catalog,
         aws_glue_catalog_database.database.arn,
-        module.table[each.key].table.arn,
-        "${module.table[each.key].table.arn}/*",
+        module.table[table_name].table.arn,
+        "${module.table[table_name].table.arn}/*",
       ]
     },
-  ]
+  ] if contains(lookup(var.table_permission_names, table_name, {
+    add_partition_permission_names = [] 
+    query_permission_names = [] 
+  }).query_permission_names, role_name)
+  ])])
+}
+
+resource "random_id" "addpart_role_ids" {
+  for_each = local.per_role_add_partition_policy_map
+  byte_length = 2
+}
+
+module glue_table_add_partition_permissions {
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
+  for_each = local.per_role_add_partition_policy_map
+  policy_name = "${each.key}-${random_id.addpart_role_ids[each.key].b64_url}"
+  role_names = [each.key]
+  policy_statements = each.value
+}
+
+resource "random_id" "query_role_ids" {
+  for_each = local.per_role_query_policy_map
+  byte_length = 2
+}
+
+module glue_table_query_permissions {
+  source = "github.com/RLuckom/terraform_modules//aws/iam/add_policy_to_roles"
+  for_each = local.per_role_query_policy_map
+  policy_name = "${each.key}-${random_id.query_role_ids[each.key].b64_url}"
+  role_names = [each.key]
+  policy_statements = each.value
 }
