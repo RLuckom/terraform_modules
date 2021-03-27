@@ -22,18 +22,8 @@ output replication_function_permissions_needed {
   value = local.replication_function_permissions_needed
 }
 
-output lambda_logging_prefix_role_map {
-  value = zipmap(
-    [
-      var.replication_function_logging_config.prefix,
-    ],
-    [
-      {
-        permission_type = "put_object"
-        role_arns = flatten([
-          module.replication_lambda.*.role.arn,
-        ])
-      },
-    ]
-  )
+output lambda_logging_roles {
+  value = flatten([
+    module.replication_lambda.*.role.arn,
+  ])
 }

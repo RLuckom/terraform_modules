@@ -385,10 +385,7 @@ output visibility_lifecycle_rules {
 }
 
 variable scoped_logging_functions {
-  type = map(map(map(object({
-    permission_type = string
-    role_arns = list(string)
-  }))))
+  type = map(map(list(string)))
   default = {}
 }
 
@@ -418,25 +415,15 @@ variable scoped_archive_notifications {
 locals {
   visibility_prefix_object_permissions = flatten([
     for security_scope, subsystem_map in var.scoped_logging_functions : [
-      for subsystem_name, prefix_map in subsystem_map : [
-        for prefix in [
-        local.lambda_log_configs[security_scope][subsystem_name].log_prefix,
-      ] : {
-        prefix = prefix
-        arns = lookup(prefix_map, prefix, {
-          permission_type = ""
-          role_arns = []
-        }).role_arns 
-        permission_type = lookup(prefix_map, prefix, {
-          permission_type = ""
-          role_arns = []
-        }).permission_type 
-      } if lookup(prefix_map, prefix, {
-        permission_type = ""
-        role_arns = []
-      }).permission_type != ""
+      for subsystem_name, arns in subsystem_map : [
+        {
+          prefix = local.lambda_log_configs[security_scope][subsystem_name].log_prefix,
+          arns = arns
+          permission_type = "put_object"
+        }
+      ]
     ]
-  ]])
+  ])
   archive_function_visibility_prefix_athena_query_permissions = [
     for k, config in local.serverless_site_configs : {
       result_prefix = config.cloudfront_result_prefix
