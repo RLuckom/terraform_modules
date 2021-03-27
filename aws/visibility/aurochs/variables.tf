@@ -352,6 +352,14 @@ locals {
       [for subsystem_name in system_id.subsystem_names : {
         log_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
         log_bucket = local.visibility_data_bucket
+        config = {
+          prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
+          bucket = local.visibility_data_bucket
+        }
+        system_id = {
+          security_scope = system_id.security_scope
+          subsystem_name = subsystem_name
+        }
         source_bucket = var.lambda_source_bucket
         security_scope = system_id.security_scope
         subsystem_name = subsystem_name
