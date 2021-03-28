@@ -23,13 +23,15 @@ locals {
     jpg = "image/jpeg"
     jpeg = "image/jpeg"
   }
+  filtered_files = [for file_path in fileset(var.asset_directory_root, "**") : file_path if substr(split("/", file_path)[length(split("/", file_path)) - 1],  0, 1) != "."]
   file_hash = zipmap(
-    fileset(var.asset_directory_root, "**"),
-    [for file_path in fileset(var.asset_directory_root, "**") : {
+    local.filtered_files,
+    [for file_path in local.filtered_files : {
       asset_path = "${var.s3_asset_prefix}${file_path}"
       abspath = "${var.asset_directory_root}/${file_path}"
       extension = split(".", file_path)[length(split(".", file_path)) - 1]
-    }]
+    }
+  ]
   )
   file_configs = [ for path, config in local.file_hash : {
     key = config.asset_path

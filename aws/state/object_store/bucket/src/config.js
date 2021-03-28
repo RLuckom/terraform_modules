@@ -16,7 +16,6 @@ function getDestinationFromHighestMatchingRule({key, tags}) {
       }, true)
     )
   })
-  console.log(rule)
   if (rule) {
     return {
       bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
