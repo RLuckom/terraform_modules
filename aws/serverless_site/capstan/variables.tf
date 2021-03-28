@@ -178,6 +178,15 @@ variable default_cloudfront_ttls {
   }
 }
 
+variable website_bucket_prefix_object_permissions {
+  type = list(object({
+    permission_type = string
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable asset_path {
   type = string
   default = ""

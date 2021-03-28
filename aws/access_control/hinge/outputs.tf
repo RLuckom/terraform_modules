@@ -1,4 +1,4 @@
-output "authenticated_role" {
+output authenticated_role {
   value = module.authenticated_role.role
 }
 
