@@ -2,7 +2,7 @@ output "bucket" {
   value = aws_s3_bucket.bucket
 }
 
-output replication_role_arn {
+output auto_replication_service_role_arn {
   value = local.auto_replication_role_arn
 }
 
