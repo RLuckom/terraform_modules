@@ -194,6 +194,23 @@ variable site_title {
   default = "Test Site"
 }
 
+variable website_bucket_prefix_object_permissions {
+  type = list(object({
+    permission_type = string
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
+variable website_bucket_bucket_permissions {
+  type = list(object({
+    permission_type = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable maintainer {
   type = object({
     name = string

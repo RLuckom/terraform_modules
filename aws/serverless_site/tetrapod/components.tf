@@ -354,6 +354,8 @@ module website_bucket {
   name = local.site_bucket
   force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts
+  prefix_object_permissions = var.website_bucket_prefix_object_permissions
+  bucket_permissions = var.website_bucket_bucket_permissions
   additional_allowed_origins = var.additional_allowed_origins
   website_access_principals = local.website_access_principals
   lambda_notifications = local.website_bucket_lambda_notifications
