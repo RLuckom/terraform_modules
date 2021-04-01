@@ -64,7 +64,9 @@ module website_bucket {
   force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts
   additional_allowed_origins = var.additional_allowed_origins
+  replication_time_limit = var.replication_time_limit
   prefix_object_permissions = var.website_bucket_prefix_object_permissions
+  bucket_permissions = var.website_bucket_bucket_permissions
   website_access_principals = local.website_access_principals
   lambda_notifications = local.website_bucket_lambda_notifications
 }

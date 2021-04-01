@@ -12,6 +12,11 @@ variable force_destroy {
   default = false
 }
 
+variable replication_time_limit {
+  type = number
+  default = 10
+}
+
 variable bucket_logging_config {
   type = object({
     target_bucket = string

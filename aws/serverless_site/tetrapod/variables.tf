@@ -13,6 +13,11 @@ variable coordinator_data {
   }
 }
 
+variable replication_time_limit {
+  type = number
+  default = 10
+}
+
 variable access_control_function_qualified_arns {
   type = list(object({
     refresh_auth = string

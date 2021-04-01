@@ -15,6 +15,11 @@ variable force_destroy {
   default = false
 }
 
+variable replication_time_limit {
+  type = number
+  default = 10
+}
+
 variable allow_direct_access {
   type = bool
   default = false

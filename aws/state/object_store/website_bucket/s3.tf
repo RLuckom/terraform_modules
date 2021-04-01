@@ -12,6 +12,7 @@ module bucket {
   force_destroy = var.force_destroy
   lifecycle_rules = var.lifecycle_rules
   lambda_notifications = var.lambda_notifications
+  replication_time_limit = var.replication_time_limit
   prefix_object_permissions = var.prefix_object_permissions
   bucket_permissions = var.bucket_permissions
   principal_prefix_object_permissions = length(local.website_access_principals) > 0 ? [{

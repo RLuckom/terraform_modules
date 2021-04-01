@@ -99,6 +99,11 @@ variable no_cache_s3_path_patterns {
   default = []
 }
 
+variable replication_time_limit {
+  type = number
+  default = 10
+}
+
 variable website_bucket_lambda_notifications {
   type = list(object({
     lambda_arn = string
@@ -182,6 +187,14 @@ variable website_bucket_prefix_object_permissions {
   type = list(object({
     permission_type = string
     prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
+variable website_bucket_bucket_permissions {
+  type = list(object({
+    permission_type = string
     arns = list(string)
   }))
   default = []

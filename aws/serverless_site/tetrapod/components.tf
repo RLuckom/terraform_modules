@@ -354,6 +354,7 @@ module website_bucket {
   name = local.site_bucket
   force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts
+  replication_time_limit = var.replication_time_limit
   prefix_object_permissions = var.website_bucket_prefix_object_permissions
   bucket_permissions = var.website_bucket_bucket_permissions
   additional_allowed_origins = var.additional_allowed_origins
