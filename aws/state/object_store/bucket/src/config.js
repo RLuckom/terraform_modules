@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const rules = _.sortBy(${rules}, 'priority')
 
-function getDestinationFromHighestMatchingRule({key, tags}) {
+function getDestinationFromHighestMatchingRule({key, tags, eventType}) {
   const tagObject = _.reduce(tags, (acc, v, k) => {
     acc[v.Key] = v.Value
     return acc
@@ -17,10 +17,19 @@ function getDestinationFromHighestMatchingRule({key, tags}) {
     )
   })
   if (rule) {
-    return {
-      bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
-      copySource: '/${bucket}/' + key,
-      key: (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")
+    if (_.startsWith(eventType, "s3:ObjectCreated")) {
+      return {
+        copy: true,
+        bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
+        copySource: '/${bucket}/' + key,
+        key: (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")
+      }
+    } else if (_.startsWith(eventType, "s3:ObjectRemoved") && rule.replicate_delete) {
+      return {
+        delete: true,
+        bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
+        key: (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")
+      }
     }
   }
 }
@@ -48,32 +57,46 @@ module.exports = {
         }
       },
     },
-    copy: {
+    process: {
       index: 1,
       transformers: {
-        copyConfig: {
+        actionConfig: {
           helper: getDestinationFromHighestMatchingRule,
           params: {
             tags: {ref: 'tags.results.getTags.TagSet'}, 
             key: {ref: 'tags.vars.key'},
+            eventType: {ref: 'event.Records[0].eventName'},
           },
         },
       },
       dependencies: {
         copy: {
-          condition: {ref: 'stage.copyConfig'},
+          condition: {ref: 'stage.actionConfig.copy'},
           action: 'exploranda',
           params: {
             accessSchema: {value: 'dataSources.AWS.s3.copyObject'},
             params: {
               explorandaParams: {
-                CopySource: {ref: 'stage.copyConfig.copySource'},
-                Bucket:  {ref: 'stage.copyConfig.bucket' },
-                Key: { ref: 'stage.copyConfig.key' },
+                CopySource: {ref: 'stage.actionConfig.copySource'},
+                Bucket:  {ref: 'stage.actionConfig.bucket' },
+                Key: { ref: 'stage.actionConfig.key' },
               }
             }
           },
-        }
+        },
+        delete: {
+          condition: {ref: 'stage.actionConfig.delete'},
+          action: 'exploranda',
+          params: {
+            accessSchema: {value: 'dataSources.AWS.s3.deleteObject'},
+            params: {
+              explorandaParams: {
+                Bucket:  {ref: 'stage.actionConfig.bucket' },
+                Key: { ref: 'stage.actionConfig.key' },
+              }
+            }
+          },
+        },
       },
     },
   },

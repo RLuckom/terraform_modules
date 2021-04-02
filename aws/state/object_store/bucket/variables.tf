@@ -150,6 +150,7 @@ variable replication_configuration {
         tags = map(string)
       })
       enabled = bool
+      replicate_delete = bool
       destination = object({
         bucket = string
         prefix = string
@@ -194,7 +195,7 @@ variable replication_function_logging_config {
 
 locals {
   auto_replication_rules = [for rule in var.replication_configuration.rules : rule if (rule.destination.prefix == "" && !rule.destination.manual && rule.filter.suffix == "")]
-  manual_replication_rules = [for rule in var.replication_configuration.rules : rule if (rule.enabled && (rule.destination.prefix != "" || rule.destination.manual || rule.filter.suffix != "" || rule.destination.bucket == var.name || rule.destination.bucket == ""))]
+  manual_replication_rules = [for rule in var.replication_configuration.rules : rule if (rule.enabled && (rule.destination.prefix != "" || rule.destination.manual || rule.filter.suffix != "" || rule.destination.bucket == var.name || rule.destination.bucket == "" || rule.replicate_delete))]
   // we only need to create a role if there are autoreplication rules, because we automatically
   // assign a role to the lambda we create already. So if the lambda gets created so will a role.
   need_replication_role = var.replication_configuration.role_arn == "" && length(local.auto_replication_rules) > 0
@@ -219,15 +220,28 @@ locals {
       arns = [module.replication_lambda[0].role.arn]
     } if rule.destination.bucket == var.name || rule.destination.bucket == ""
   ]
-  replication_function_prefix_permissions = concat(local.replication_function_prefix_read_permissions, local.replication_function_prefix_write_permissions)
+  replication_function_prefix_delete_permissions = [ for rule in local.manual_replication_rules : {
+      prefix = rule.destination.prefix
+      permission_type = "delete_object"
+      arns = [module.replication_lambda[0].role.arn]
+    } if rule.replicate_delete && (rule.destination.bucket == var.name || rule.destination.bucket == "")
+  ]
+  replication_function_prefix_permissions = concat(local.replication_function_prefix_read_permissions, local.replication_function_prefix_write_permissions, local.replication_function_prefix_delete_permissions)
   replication_function_external_buckets = [for rule in local.manual_replication_rules: rule.destination.bucket if rule.destination.bucket != var.name]
   replication_function_permissions_needed = zipmap(
     local.replication_function_external_buckets,
-    [for bucket in local.replication_function_external_buckets: concat([ for rule in local.manual_replication_rules : {
+    [for bucket in local.replication_function_external_buckets: concat(
+      [ for rule in local.manual_replication_rules : {
       prefix = rule.destination.prefix 
       permission_type = "put_object"
       arns = [module.replication_lambda[0].role.arn]
-    } if rule.destination.bucket == bucket], var.replication_function_logging_config.bucket == bucket ? [{
+    } if rule.destination.bucket == bucket], 
+      [ for rule in local.manual_replication_rules : {
+      prefix = rule.destination.prefix 
+      permission_type = "delete_object"
+      arns = [module.replication_lambda[0].role.arn]
+    } if rule.destination.bucket == bucket && rule.replicate_delete], 
+    var.replication_function_logging_config.bucket == bucket ? [{
       prefix = var.replication_function_logging_config.prefix 
       permission_type = "put_object"
       arns = [module.replication_lambda[0].role.arn]
