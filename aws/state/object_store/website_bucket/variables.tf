@@ -56,6 +56,22 @@ variable lambda_notifications {
   default = []
 }
 
+variable cors_rules {
+  type = list(object({
+    allowed_headers = list(string)
+    allowed_methods = list(string)
+    allowed_origins = list(string)
+    expose_headers = list(string)
+    max_age_seconds = number
+  }))
+  default = []
+}
+
+variable use_default_cors {
+  type = bool
+  default = true
+}
+
 variable lifecycle_rules {
   type = list(object({
     prefix = string
