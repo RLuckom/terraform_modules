@@ -17,14 +17,14 @@ function getDestinationFromHighestMatchingRule({key, tags, eventType}) {
     )
   })
   if (rule) {
-    if (_.startsWith(eventType, "s3:ObjectCreated")) {
+    if (_.startsWith(eventType, "ObjectCreated")) {
       return {
         copy: true,
         bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
         copySource: '/${bucket}/' + key,
         key: (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")
       }
-    } else if (_.startsWith(eventType, "s3:ObjectRemoved") && rule.replicate_delete) {
+    } else if (_.startsWith(eventType, "ObjectRemoved") && rule.replicate_delete) {
       return {
         delete: true,
         bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
