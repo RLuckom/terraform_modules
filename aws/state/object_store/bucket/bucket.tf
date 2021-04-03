@@ -198,9 +198,9 @@ locals {
   ]
 
   put_object_actions = [
-      "s3:PutObject",
-      "s3:AbortMultipartUpload",
-      "s3:ListMultipartUploadParts"
+    "s3:PutObject",
+    "s3:AbortMultipartUpload",
+    "s3:ListMultipartUploadParts"
   ]
 
   read_known_object_actions = [
@@ -210,11 +210,11 @@ locals {
   ]
 
   tag_known_object_actions = [
-      "s3:PutObjectTagging",
+    "s3:PutObjectTagging",
   ]
 
   delete_known_object_actions = [
-      "s3:DeleteObject",
+    "s3:DeleteObject",
   ]
 
   move_known_object_out_actions = concat(

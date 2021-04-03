@@ -204,7 +204,7 @@ locals {
   lambda_notifications = concat(var.lambda_notifications, [for rule in local.manual_replication_rules : {
     lambda_arn = module.replication_lambda[0].lambda.arn
     lambda_name = module.replication_lambda[0].lambda.function_name
-    events = ["s3:ObjectCreated:*"]
+    events = rule.replicate_delete ? ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"] : ["s3:ObjectCreated:*"]
     filter_prefix = rule.filter.prefix == "" ? null : rule.filter.prefix
     filter_suffix = rule.filter.suffix == "" ? null : rule.filter.suffix
   }])
