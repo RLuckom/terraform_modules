@@ -45,6 +45,12 @@ module.exports = {
       dependencies: {
         getTags: {
           action: 'exploranda',
+          condition: {
+            helper: ({eventType}) => _.startsWith(eventType, 'ObjectCreated'),
+            params: {
+              eventType: {ref: 'event.Records[0].eventName'},
+            },
+          },
           params: {
             accessSchema: {value: 'dataSources.AWS.s3.getObjectTagging'},
             params: {
