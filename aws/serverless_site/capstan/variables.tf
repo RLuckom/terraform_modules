@@ -15,6 +15,11 @@ variable routing {
   })
 }
 
+variable forbidden_website_paths {
+  type = list(string)
+  default = []
+}
+
 variable coordinator_data {
   type = object({
     lambda_log_delivery_prefix = string
