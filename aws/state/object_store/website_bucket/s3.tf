@@ -28,6 +28,11 @@ module bucket {
     permission_type = "read_known_objects"
     principals = local.website_access_principals
   }] : []
+  principal_prefix_object_denials = [for prefix in var.forbidden_website_paths : {
+    prefix = prefix
+    permission_type = "read_known_objects"
+    principals = local.website_access_principals
+  }]
 
   principal_bucket_permissions = length(local.website_access_principals) > 0 ? [{
     permission_type = "list_bucket"

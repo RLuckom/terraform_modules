@@ -33,6 +33,11 @@ variable website_access_principals {
   default = []
 }
 
+variable forbidden_website_paths {
+  type = list(string)
+  default = []
+}
+
 locals {
   website_access_principals = concat(
     var.website_access_principals,

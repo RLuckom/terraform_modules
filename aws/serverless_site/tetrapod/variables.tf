@@ -18,6 +18,11 @@ variable replication_time_limit {
   default = 10
 }
 
+variable forbidden_website_paths {
+  type = list(string)
+  default = []
+}
+
 variable access_control_function_qualified_arns {
   type = list(object({
     refresh_auth = string
