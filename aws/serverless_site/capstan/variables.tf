@@ -172,7 +172,7 @@ variable subject_alternative_names {
 
 locals {
   subject_alternative_names = var.subject_alternative_names == null ? ["www.${local.routing.domain}"] : var.subject_alternative_names
-  site_bucket = var.site_bucket == null ? local.routing.domain : var.site_bucket
+  site_bucket = var.site_bucket == null ? replace(local.routing.domain, ".", "-") : var.site_bucket
 }
 
 variable default_cloudfront_ttls {
