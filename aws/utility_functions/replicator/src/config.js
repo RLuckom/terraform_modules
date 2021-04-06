@@ -2,12 +2,12 @@ const _ = require('lodash')
 
 const rules = _.sortBy(${rules}, 'priority')
 
-function getDestinationFromHighestMatchingRule({key, tags, eventType}) {
+function getDestinationsFromMatchingRules({key, tags, eventType}) {
   const tagObject = _.reduce(tags, (acc, v, k) => {
     acc[v.Key] = v.Value
     return acc
   }, {})
-  const rule = _.find(rules, (rule) => {
+  const applicableRules = _.filter(rules, (rule) => {
     return (
       _.startsWith(key, rule.filter.prefix || "") &&
       _.endsWith(key, rule.filter.suffix || "") &&
@@ -16,19 +16,20 @@ function getDestinationFromHighestMatchingRule({key, tags, eventType}) {
       }, true)
     )
   })
-  if (rule) {
+  if (applicableRules.length) {
     if (_.startsWith(eventType, "ObjectCreated")) {
       return {
-        copy: true,
-        bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
-        copySource: '/${bucket}/' + key,
-        key: (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")
+        copy: _.map(applicableRules, () => true),
+        storageClass: _.map(applicableRules, (rule) => _.get(rule, 'destination.storage_class') || 'STANDARD'),
+        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket),
+        copySource: _.map(applicableRules, () => '/${bucket}/' + key),
+        key: _.map(applicableRules, (rule) => (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")),
       }
     } else if (_.startsWith(eventType, "ObjectRemoved") && rule.replicate_delete) {
       return {
-        delete: true,
-        bucket: rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket,
-        key: (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")
+        delete: _.map(applicableRules, () => true),
+        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket),
+        key: _.map(applicableRules, (rule) => (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")),
       }
     }
   }
@@ -67,7 +68,7 @@ module.exports = {
       index: 1,
       transformers: {
         actionConfig: {
-          helper: getDestinationFromHighestMatchingRule,
+          helper: getDestinationsFromMatchingRules,
           params: {
             tags: {ref: 'tags.results.getTags.TagSet'}, 
             key: {ref: 'tags.vars.key'},
@@ -83,8 +84,9 @@ module.exports = {
             accessSchema: {value: 'dataSources.AWS.s3.copyObject'},
             params: {
               explorandaParams: {
-                CopySource: {ref: 'stage.actionConfig.copySource'},
-                Bucket:  {ref: 'stage.actionConfig.bucket' },
+                CopySource: { ref: 'stage.actionConfig.copySource'},
+                StorageClass: { ref: 'stage.actionConfig.storageClass'},
+                Bucket: { ref: 'stage.actionConfig.bucket' },
                 Key: { ref: 'stage.actionConfig.key' },
               }
             }
