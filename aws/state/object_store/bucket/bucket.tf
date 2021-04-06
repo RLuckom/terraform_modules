@@ -1,7 +1,7 @@
 module "replication_role" {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_role"
   count = local.need_replication_role ? 1 : 0
-  role_name = "replicator-${var.scope}"
+  role_name = "replicator-${var.security_scope}"
   role_policy = []
   principals = [{
     type = "Service"
@@ -15,6 +15,7 @@ module replication_lambda {
   lambda_event_configs = var.replication_lambda_event_configs
   security_scope = var.security_scope
   default_destination_bucket_name = var.name
+  default_source_bucket_name = var.name
   replication_configuration = {
     role_arn = ""
     donut_days_layer = var.replication_configuration.donut_days_layer
