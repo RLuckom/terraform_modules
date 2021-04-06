@@ -113,6 +113,8 @@ locals {
     [for bucket in local.source_buckets : [for rule in var.replication_configuration.rules : {
     lambda_arn = module.replication_lambda[0].lambda.arn
     lambda_name = module.replication_lambda[0].lambda.function_name
+    lambda_role_arn = module.replication_lambda[0].role.arn
+    permission_type = "read_known_objects"
     events = rule.replicate_delete ? ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"] : ["s3:ObjectCreated:*"]
     filter_prefix = rule.filter.prefix == "" ? null : rule.filter.prefix
     filter_suffix = rule.filter.suffix == "" ? null : rule.filter.suffix
