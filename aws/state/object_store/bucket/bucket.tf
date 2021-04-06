@@ -1,3 +1,14 @@
+module "replication_role" {
+  source = "github.com/RLuckom/terraform_modules//aws/permissioned_role"
+  count = local.need_replication_role ? 1 : 0
+  role_name = "replicator-${var.scope}"
+  role_policy = []
+  principals = [{
+    type = "Service"
+    identifiers = ["s3.amazonaws.com"]
+  }]
+}
+
 module replication_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator?ref=deep-archive"
   logging_config = var.replication_function_logging_config
@@ -9,6 +20,10 @@ module replication_lambda {
     donut_days_layer = var.replication_configuration.donut_days_layer
     rules = local.manual_replication_rules
   }
+}
+
+locals {
+  auto_replication_role_arn = local.need_replication_role ? module.replication_role[0].role.arn : var.replication_configuration.role_arn
 }
 
 resource "aws_s3_bucket" "bucket" {
