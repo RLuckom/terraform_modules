@@ -175,6 +175,7 @@ variable replication_configuration {
       destination = object({
         bucket = string
         prefix = string
+        storage_class = string
         manual = bool
       })
     }))
