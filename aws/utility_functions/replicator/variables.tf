@@ -3,6 +3,11 @@ variable action_name {
   default = "replication"
 }
 
+variable default_destination_bucket_name {
+  type = string
+  default = ""
+}
+
 variable logging_config {
   type = object({
     bucket = string
@@ -54,11 +59,6 @@ variable lambda_event_configs {
   default = []
 }
 
-variable default_bucket_name {
-  type = string
-  default = ""
-}
-
 variable replication_configuration {
   type = object({
     role_arn = string
@@ -96,10 +96,4 @@ locals {
   manual_replication_rules = [for rule in var.replication_configuration.rules : rule if (rule.enabled && (rule.destination.prefix != "" || rule.destination.manual || rule.filter.suffix != "" || rule.destination.bucket == var.name || rule.destination.bucket == "" || rule.replicate_delete))]
   need_donut_days_layer = length(local.manual_replication_rules) > 0 && var.replication_configuration.donut_days_layer.present == false
   need_replication_lambda = length(local.manual_replication_rules) > 0
-  lambda_notifications = concat(var.lambda_notifications, [for rule in local.manual_replication_rules : {
-    lambda_arn = module.replication_lambda[0].lambda.arn
-    lambda_name = module.replication_lambda[0].lambda.function_name
-    events = rule.replicate_delete ? ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"] : ["s3:ObjectCreated:*"]
-    filter_prefix = rule.filter.prefix == "" ? null : rule.filter.prefix
-    filter_suffix = rule.filter.suffix == "" ? null : rule.filter.suffix
-  }])
+}

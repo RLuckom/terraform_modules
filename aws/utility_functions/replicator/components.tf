@@ -22,7 +22,7 @@ module replication_lambda {
   config_contents = templatefile("${path.module}/src/config.js",
   {
     rules = jsonencode(local.manual_replication_rules)
-    bucket = var.default_bucket_name
+    default_destination_bucket = var.default_destination_bucket_name
   })
   logging_config = var.logging_config
   lambda_event_configs = var.event_configs

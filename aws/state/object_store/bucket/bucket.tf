@@ -3,7 +3,7 @@ module replication_lambda {
   logging_config = var.replication_function_logging_config
   lambda_event_configs = var.replication_lambda_event_configs
   security_scope = var.security_scope
-  default_bucket_name = var.name
+  default_destination_bucket_name = var.name
   replication_configuration = {
     role_arn = ""
     donut_days_layer = var.replication_configuration.donut_days_layer

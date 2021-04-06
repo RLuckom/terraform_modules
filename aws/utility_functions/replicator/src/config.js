@@ -2,7 +2,7 @@ const _ = require('lodash')
 
 const rules = _.sortBy(${rules}, 'priority')
 
-function getDestinationsFromMatchingRules({key, tags, eventType}) {
+function getDestinationsFromMatchingRules({bucket, key, tags, eventType}) {
   const tagObject = _.reduce(tags, (acc, v, k) => {
     acc[v.Key] = v.Value
     return acc
@@ -21,14 +21,14 @@ function getDestinationsFromMatchingRules({key, tags, eventType}) {
       return {
         copy: _.map(applicableRules, () => true),
         storageClass: _.map(applicableRules, (rule) => _.get(rule, 'destination.storage_class') || 'STANDARD'),
-        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket),
-        copySource: _.map(applicableRules, () => '/${bucket}/' + key),
+        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${default_destination_bucket}" : rule.destination.bucket),
+        copySource: _.map(applicableRules, () => '/' + bucket + '/' + key),
         key: _.map(applicableRules, (rule) => (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")),
       }
     } else if (_.startsWith(eventType, "ObjectRemoved") && rule.replicate_delete) {
       return {
         delete: _.map(applicableRules, () => true),
-        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${bucket}" : rule.destination.bucket),
+        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${default_destination_bucket}" : rule.destination.bucket),
         key: _.map(applicableRules, (rule) => (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")),
       }
     }
@@ -72,6 +72,7 @@ module.exports = {
           params: {
             tags: {ref: 'tags.results.getTags.TagSet'}, 
             key: {ref: 'tags.vars.key'},
+            bucket: {ref: 'event.Records[0].s3.bucket.name'},
             eventType: {ref: 'event.Records[0].eventName'},
           },
         },
