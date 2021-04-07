@@ -77,12 +77,17 @@ locals {
     filter_suffix = notif.filter_suffix == null ? "" : notif.filter_suffix
     permission_type = notif.permission_type
   }]
-  need_lambda = anytrue([for notif in local.notifications: 
-  alltrue([for comp in local.notifications : (
+  notification_filters = [ for notif in local.notifications : {
+    events = notif.events
+    filter_prefix = notif.filter_prefix
+    filter_suffix = notif.filter_suffix
+  }]
+  need_lambda = anytrue([for notif in local.notification_filters: 
+  length([for b in [for comp in local.notification_filters : (
     (length(notif.filter_prefix) <= length(comp.filter_prefix) && substr(comp.filter_prefix, 0, length(notif.filter_prefix)) == notif.filter_prefix) &&
     (length(notif.filter_suffix) <= length(comp.filter_suffix) && substr(comp.filter_suffix, 0, length(notif.filter_suffix)) == notif.filter_suffix) &&
     anytrue([ for event in notif.events : contains(comp.events, event)])
-  )])])
+  )] : b if b == true]) > 1])
   all_prefixes = distinct([for notif in local.notifications : notif.filter_prefix])
   notifications_prefixes = [for prefix in local.all_prefixes : prefix if !contains([for comp in local.all_prefixes: length(comp) < length(prefix) && substr(prefix, 0, length(comp)) == comp], true)]
   events = setunion((length(var.notifications) > 0 ? [for notif in var.notifications : notif.events] : [[], []])...)
