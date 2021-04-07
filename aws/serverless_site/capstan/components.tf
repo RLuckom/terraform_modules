@@ -59,7 +59,7 @@ locals {
 }
 
 module website_bucket {
-  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket?ref=deep-archive"
   name = local.site_bucket
   force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts

@@ -190,7 +190,7 @@ variable replication_configuration {
   }
 }
 
-variable replication_lambda_event_configs {
+variable utility_function_event_configs {
   type = list(object({
     maximum_event_age_in_seconds = number
     maximum_retry_attempts = number
@@ -204,7 +204,7 @@ variable replication_lambda_event_configs {
   default = []
 }
 
-variable replication_function_logging_config {
+variable utility_function_logging_config {
   type = object({
     bucket = string
     prefix = string
@@ -230,6 +230,8 @@ locals {
     filter_prefix = rule.filter.prefix == "" ? null : rule.filter.prefix
     filter_suffix = rule.filter.suffix == "" ? null : rule.filter.suffix
   }])
+  effective_notifications = module.splitter_lambda.manual_notifications ? module.splitter_lambda.bucket_notifications : local.lambda_notifications
+  lambda_invoke_permissions_needed = distinct([for notif in local.effective_notifications : notif.lambda_name])
   replication_function_prefix_read_permissions = [ for rule in local.manual_replication_rules : {
       prefix = rule.filter.prefix
       permission_type = "read_known_objects"
@@ -263,8 +265,8 @@ locals {
       permission_type = "delete_object"
       arns = [module.replication_lambda[0].role.arn]
     } if rule.destination.bucket == bucket && rule.replicate_delete], 
-    var.replication_function_logging_config.bucket == bucket ? [{
-      prefix = var.replication_function_logging_config.prefix 
+    var.utility_function_logging_config.bucket == bucket ? [{
+      prefix = var.utility_function_logging_config.prefix 
       permission_type = "put_object"
       arns = [module.replication_lambda[0].role.arn]
     }] : [])
