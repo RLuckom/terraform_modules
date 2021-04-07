@@ -78,7 +78,7 @@ locals {
     permission_type = notif.permission_type
   }]
   need_lambda = anytrue([for notif in local.notifications: 
-  anytrue([for comp in local.notifications : (
+  alltrue([for comp in local.notifications : (
     (length(notif.filter_prefix) <= length(comp.filter_prefix) && substr(comp.filter_prefix, 0, length(notif.filter_prefix)) == notif.filter_prefix) &&
     (length(notif.filter_suffix) <= length(comp.filter_suffix) && substr(comp.filter_suffix, 0, length(notif.filter_suffix)) == notif.filter_suffix) &&
     anytrue([ for event in notif.events : contains(comp.events, event)])
