@@ -10,7 +10,7 @@ module "replication_role" {
 }
 
 module replication_lambda {
-  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator?ref=deep-archive"
+  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator"
   action_name = "repl-${var.name}"
   logging_config = var.utility_function_logging_config
   lambda_event_configs = var.utility_function_event_configs
@@ -25,7 +25,7 @@ module replication_lambda {
 }
 
 module splitter_lambda {
-  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/event_splitter?ref=deep-archive"
+  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/event_splitter"
   action_name = "split-${var.name}"
   logging_config = var.utility_function_logging_config
   lambda_event_configs = var.utility_function_event_configs

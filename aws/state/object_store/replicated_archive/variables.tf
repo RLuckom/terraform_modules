@@ -92,7 +92,7 @@ locals {
 }
 
 module replication_lambda {
-  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator?ref=deep-archive"
+  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator"
   logging_config = var.replication_function_logging_config
   lambda_event_configs = var.replication_lambda_event_configs
   security_scope = var.security_scope
@@ -104,7 +104,7 @@ module replication_lambda {
 }
 
 module replica_bucket_1 {
-  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket?ref=deep-archive"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[0]
   versioning = [{
     enabled = true
@@ -116,7 +116,7 @@ module replica_bucket_1 {
 }
 
 module replica_bucket_2 {
-  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket?ref=deep-archive"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[1]
   versioning = [{
     enabled = true
@@ -128,7 +128,7 @@ module replica_bucket_2 {
 }
 
 module replica_bucket_3 {
-  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket?ref=deep-archive"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[2]
   prefix_object_permissions = module.replication_lambda.replication_function_permissions_needed[local.buckets[2]]
   versioning = [{
