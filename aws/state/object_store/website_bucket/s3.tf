@@ -15,6 +15,7 @@ locals {
 module bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket?ref=deep-archive"
   name = var.name == "" ? "${var.domain_parts.controlled_domain_part}.${var.domain_parts.top_level_domain}" : var.name
+  security_scope = var.security_scope
   acl    = var.allow_direct_access ? "public-read" : "private"
   force_destroy = var.force_destroy
   cors_rules = local.cors_rules

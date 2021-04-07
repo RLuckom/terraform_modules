@@ -11,6 +11,7 @@ module "replication_role" {
 
 module replication_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator?ref=deep-archive"
+  action_name = "repl-${var.name}"
   logging_config = var.utility_function_logging_config
   lambda_event_configs = var.utility_function_event_configs
   security_scope = var.security_scope
@@ -25,6 +26,7 @@ module replication_lambda {
 
 module splitter_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/event_splitter?ref=deep-archive"
+  action_name = "split-${var.name}"
   logging_config = var.utility_function_logging_config
   lambda_event_configs = var.utility_function_event_configs
   security_scope = var.security_scope
@@ -112,7 +114,7 @@ resource "aws_s3_bucket" "bucket" {
 resource "aws_lambda_permission" "allow_caller" {
   count = length(local.lambda_invoke_permissions_needed)
   action        = "lambda:InvokeFunction"
-  function_name = local.lambda_invoke_permissions_needed[count.index].lambda_name
+  function_name = local.lambda_invoke_permissions_needed[count.index]
   principal     = "s3.amazonaws.com"
   source_arn = aws_s3_bucket.bucket.arn
 }

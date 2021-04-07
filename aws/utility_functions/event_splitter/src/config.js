@@ -12,11 +12,12 @@ function compareEvent(event, requested) {
 }
 
 function getNotifiablesForEvent({bucket, key, eventType, payload}) {
+  const jsonPayload = JSON.stringify(payload)
   return _.reduce(notifications, (acc, v) => {
     if (_.find(v.events, (e) => compareEvent(eventType, e))) {
       if (_.startsWith(key, v.filter_prefix) && _.endsWith(key, v.filter_suffix)) {
        acc.functionName.push(v.lambda_name)
-       acc.payload.push(payload)
+       acc.payload.push(jsonPayload)
        acc.invocationType.push("Event")
       }
     }

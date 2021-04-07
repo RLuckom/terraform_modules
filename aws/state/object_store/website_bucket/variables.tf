@@ -5,6 +5,11 @@ variable domain_parts {
   })
 }
 
+variable security_scope {
+  type = string
+  default = ""
+}
+
 variable name {
   type = string
   default = ""

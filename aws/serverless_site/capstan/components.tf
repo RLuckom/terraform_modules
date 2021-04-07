@@ -62,6 +62,7 @@ module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket?ref=deep-archive"
   name = local.site_bucket
   force_destroy = var.force_destroy
+  security_scope = var.system_id.security_scope
   domain_parts = local.routing.domain_parts
   cors_rules = var.website_bucket_cors_rules
   forbidden_website_paths = var.forbidden_website_paths
