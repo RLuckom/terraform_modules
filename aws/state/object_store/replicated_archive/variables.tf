@@ -24,7 +24,11 @@ variable replication_sources {
     bucket = string
     prefix = string
     suffix = string
-    tags = map(string)
+    filter_tags = map(string)
+    completion_tags = list(object({
+      Key = string
+      Value = string
+    }))
     storage_class = string
   }))
   default = []
@@ -78,8 +82,9 @@ locals {
     filter = {
       prefix = source.prefix
       suffix = source.suffix
-      tags = source.tags
+      tags = source.filter_tags
     }
+    completion_tags = source.completion_tags
     enabled = true
     replicate_delete = false
     destination = {
@@ -94,6 +99,8 @@ locals {
 module replication_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator"
   logging_config = var.replication_function_logging_config
+  replication_time_limit = 15
+  replication_memory_size = 256
   lambda_event_configs = var.replication_lambda_event_configs
   security_scope = var.security_scope
   replication_configuration = {

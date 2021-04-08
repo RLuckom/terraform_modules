@@ -171,6 +171,10 @@ variable replication_configuration {
         tags = map(string)
       })
       enabled = bool
+      completion_tags = list(object({
+        Key = string
+        Value = string
+      }))
       replicate_delete = bool
       destination = object({
         bucket = string

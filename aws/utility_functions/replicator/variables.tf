@@ -81,6 +81,10 @@ variable replication_configuration {
       })
       enabled = bool
       replicate_delete = bool
+      completion_tags = list(object({
+        Key = string
+        Value = string
+      }))
       destination = object({
         bucket = string
         prefix = string
@@ -102,6 +106,7 @@ variable replication_configuration {
 locals {
   distinct_sources = distinct([for rule in var.replication_configuration.rules : {
     bucket = rule.source_bucket == "" ? var.default_source_bucket_name : rule.source_bucket
+    completion_tags = distinct(flatten([for out_rule in var.replication_configuration.rules : out_rule.completion_tags if out_rule.filter.prefix == rule.filter.prefix]))
     prefix = rule.filter.prefix
     suffix = rule.filter.suffix
     tags = rule.filter.tags
@@ -126,7 +131,7 @@ locals {
     lambda_arn = module.replication_lambda[0].lambda.arn
     lambda_name = module.replication_lambda[0].lambda.function_name
     lambda_role_arn = module.replication_lambda[0].role.arn
-    permission_type = "read_known_objects"
+    permission_type = length(source.completion_tags) > 0 ? "read_and_tag" : "read_known_objects"
     events = source.replicate_delete ? ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"] : ["s3:ObjectCreated:*"]
     filter_prefix = source.prefix == "" ? null : source.prefix
     filter_suffix = source.suffix == "" ? null : source.suffix
