@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   is_ipv6_enabled     = true
   default_root_object = "index.html"
   aliases = concat([local.routing.domain], var.subject_alternative_names)
-  price_class = "PriceClass_100"
+  price_class = var.cloudfront_priceclass
 
   restrictions {
     geo_restriction {

@@ -41,6 +41,11 @@ variable "subject_alternative_names" {
   type = list(string)
 }
 
+variable "cloudfront_priceclass" {
+  type = string
+  default = "PriceClass_All"
+}
+
 variable "allowed_origins" {
   type = list(string)
   default = []
