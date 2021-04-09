@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-const rules = _.sortBy([{"completion_tags":[{"Key":"Archived","Value":"true"}],"destination":{"bucket":"test-human-attention-replica1","manual":true,"prefix":"admin-raphaelluckom-com/uploads/","storage_class":"GLACIER"},"enabled":true,"filter":{"prefix":"uploads/","suffix":"","tags":{}},"priority":0,"replicate_delete":false,"source_bucket":"admin-raphaelluckom-com"},{"completion_tags":[{"Key":"Archived","Value":"true"}],"destination":{"bucket":"test-human-attention-replica2","manual":true,"prefix":"admin-raphaelluckom-com/uploads/","storage_class":"GLACIER"},"enabled":true,"filter":{"prefix":"uploads/","suffix":"","tags":{}},"priority":0,"replicate_delete":false,"source_bucket":"admin-raphaelluckom-com"},{"completion_tags":[{"Key":"Archived","Value":"true"}],"destination":{"bucket":"test-human-attention-replica3","manual":true,"prefix":"admin-raphaelluckom-com/uploads/","storage_class":"GLACIER"},"enabled":true,"filter":{"prefix":"uploads/","suffix":"","tags":{}},"priority":0,"replicate_delete":false,"source_bucket":"admin-raphaelluckom-com"}], 'priority')
+const rules = _.sortBy(${rules}, 'priority')
 
 function getDestinationsFromMatchingRules({bucket, key, tags, eventType}) {
   const tagObject = _.reduce(tags, (acc, v, k) => {
@@ -24,14 +24,14 @@ function getDestinationsFromMatchingRules({bucket, key, tags, eventType}) {
         copy: _.map(applicableRules, () => true),
         storageClass: _.map(applicableRules, (rule) => _.get(rule, 'destination.storage_class') || 'STANDARD'),
         completionTags: completionTags.length ? {TagSet: completionTags} : null,
-        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "" : rule.destination.bucket),
+        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${default_destination_bucket}" : rule.destination.bucket),
         copySource: _.map(applicableRules, () => '/' + bucket + '/' + key),
         key: _.map(applicableRules, (rule) => (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")),
       }
     } else if (_.startsWith(eventType, "ObjectRemoved")) {
       return {
         delete: _.map(applicableRules, () => true),
-        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "" : rule.destination.bucket),
+        bucket: _.map(applicableRules, (rule) => rule.destination.bucket === "" ? "${default_destination_bucket}" : rule.destination.bucket),
         key: _.map(applicableRules, (rule) => (rule.destination.prefix || "") + _.replace(key, rule.filter.prefix, "")),
       }
     }
