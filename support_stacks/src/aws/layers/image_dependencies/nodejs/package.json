@@ -9,7 +9,8 @@
   "author": "Raphael Luckom",
   "license": "MIT",
   "dependencies": {
-    "exifreader": "^3.12.3",
+    "exifreader": "^2.6.0",
+    "file-type": "^16.3.0",
     "sharp": "^0.26.2"
   }
 }
