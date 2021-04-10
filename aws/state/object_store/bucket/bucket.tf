@@ -217,6 +217,7 @@ locals {
   put_object_actions = [
     "s3:PutObject",
     "s3:AbortMultipartUpload",
+    "s3:PutObjectTagging",
     "s3:ListMultipartUploadParts"
   ]
 
