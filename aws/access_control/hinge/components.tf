@@ -12,14 +12,13 @@ resource aws_cognito_identity_pool id_pool {
 resource "aws_cognito_identity_pool_roles_attachment" "main" {
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 
-  roles = {
-    "authenticated" = module.authenticated_role.role.arn
-  }
+  roles = local.plugin_role_map
 }
 
 module authenticated_role {
+  for_each = var.authenticated_policy_statements
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
-  role_name = "${local.name}-auth"
-  role_policy = var.authenticated_policy_statements
+  role_name = "${local.name}-${each.key}-auth"
+  role_policy = each.value
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }

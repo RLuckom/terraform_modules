@@ -14,37 +14,61 @@ locals {
 const AWS = require('aws-sdk')
 const { parse } = require("cookie")
 
+const pluginNameRegex = /^\/${var.plugin_root}\/([^\/]*)/
+
+const pluginRoleMap = ${jsonencode(var.plugin_role_map)}
+
+function getPluginRole(referer) {
+  const match = referer.match(pluginNameRegex)
+  if (match) {
+    return pluginRoleMap[match[1]]
+  }
+}
+
 function handler(event, context, callback) {
   const cognitoidentity = new AWS.CognitoIdentity({region: 'us-east-1'});
   const idToken = parse(event.headers['Cookie'])['ID-TOKEN']
-  const params = {
-    IdentityPoolId: '${var.identity_pool_id}',
-    Logins: {
-      '${var.user_pool_endpoint}': idToken,
+  const pluginRole = getPluginName(event.headers['Referer'])
+  if (!pluginRole) {
+    const response = {
+      statusCode: "403",
+      "headers": {
+        "Content-Type": "text/plain"
+      },
+      body: "no role found for plugin"
+    };
+    return callback(null, response)
+  } else {
+    const params = {
+      IdentityPoolId: '${var.identity_pool_id}',
+      CustomRoleArn: pluginRole,
+      Logins: {
+        '${var.user_pool_endpoint}': idToken,
+      }
     }
-  }
-  cognitoidentity.getId(params, function(err, data) {
-    if (err) {
-      return callback(err)
-    }
-    cognitoidentity.getCredentialsForIdentity({
-      IdentityId: data.IdentityId,
-      Logins: params.Logins 
-    }, (e, d) => {
-      if (e) {
+    cognitoidentity.getId(params, function(err, data) {
+      if (err) {
         return callback(err)
       }
-      const response = {
-        statusCode: "200",
-        cookies: [],
-        "headers": {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(d)
-      };
-      return callback(null, response)
-    })
-  });
+      cognitoidentity.getCredentialsForIdentity({
+        IdentityId: data.IdentityId,
+        Logins: params.Logins 
+      }, (e, d) => {
+        if (e) {
+          return callback(err)
+        }
+        const response = {
+          statusCode: "200",
+          cookies: [],
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(d)
+        };
+        return callback(null, response)
+      })
+    });
+  }
 }
 
 module.exports = {
