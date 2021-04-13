@@ -12,7 +12,26 @@ resource aws_cognito_identity_pool id_pool {
 resource "aws_cognito_identity_pool_roles_attachment" "main" {
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 
-  roles = local.plugin_role_map
+
+  role_mapping {
+    identity_provider         = "${var.provider_endpoint}:${var.client_id}"
+    ambiguous_role_resolution = "Deny"
+    type                      = "Rules"
+
+    dynamic "mapping_rule" {
+      for_each = var.authenticated_policy_statements
+      content {
+        claim      = "cognito:groups"
+        match_type = "Contains"
+        role_arn   = module.authenticated_role[mapping_rule.key].role.arn
+        value      = var.required_group
+      }
+    }
+  }
+
+  roles = {
+    "authenticated" = module.default_authenticated_role.role.arn
+  }
 }
 
 module authenticated_role {
@@ -20,5 +39,15 @@ module authenticated_role {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
   role_name = "${local.name}-${each.key}-auth"
   role_policy = each.value
+  identity_pool_id = aws_cognito_identity_pool.id_pool.id
+}
+
+module default_authenticated_role {
+  source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
+  role_name = "${local.name}-default-auth"
+  role_policy = [{ 
+    actions = ["iam:PassRole"],
+    resources = [ for k, v in var.authenticated_policy_statements : module.authenticated_role[k].role.arn]
+  }]
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }

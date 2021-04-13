@@ -50,7 +50,7 @@ output lambda_origins {
       # probably best left to empty list; that way headers used for
       # auth can't be leaked by insecure functions. If there's
       # a reason to want certain headers, go ahead.
-      headers = []
+      headers = ["Referer"]
       cookie_names = [var.id_token_name]
     }
     lambda = {

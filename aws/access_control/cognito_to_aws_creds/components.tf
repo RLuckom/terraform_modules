@@ -14,7 +14,7 @@ locals {
 const AWS = require('aws-sdk')
 const { parse } = require("cookie")
 
-const pluginNameRegex = /^\/${var.plugin_root}\/([^\/]*)/
+const pluginNameRegex = /^\/${trim(var.plugin_root, "/")}\/([^\/]*)/
 
 const pluginRoleMap = ${jsonencode(var.plugin_role_map)}
 
@@ -28,7 +28,7 @@ function getPluginRole(referer) {
 function handler(event, context, callback) {
   const cognitoidentity = new AWS.CognitoIdentity({region: 'us-east-1'});
   const idToken = parse(event.headers['Cookie'])['ID-TOKEN']
-  const pluginRole = getPluginName(event.headers['Referer'])
+  const pluginRole = getPluginRole(new URL(event.headers['referer']).pathname)
   if (!pluginRole) {
     const response = {
       statusCode: "403",
@@ -41,7 +41,6 @@ function handler(event, context, callback) {
   } else {
     const params = {
       IdentityPoolId: '${var.identity_pool_id}',
-      CustomRoleArn: pluginRole,
       Logins: {
         '${var.user_pool_endpoint}': idToken,
       }
@@ -52,6 +51,7 @@ function handler(event, context, callback) {
       }
       cognitoidentity.getCredentialsForIdentity({
         IdentityId: data.IdentityId,
+        CustomRoleArn: pluginRole,
         Logins: params.Logins 
       }, (e, d) => {
         if (e) {
