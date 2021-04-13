@@ -18,6 +18,13 @@ resource "aws_cognito_identity_pool_roles_attachment" "main" {
     ambiguous_role_resolution = "Deny"
     type                      = "Rules"
 
+    mapping_rule {
+      claim      = "aud"
+      match_type = "Equals"
+      role_arn   = module.empty_authenticated_role.role.arn
+      value      = var.client_id
+    }
+
     dynamic "mapping_rule" {
       for_each = var.authenticated_policy_statements
       content {
@@ -30,7 +37,7 @@ resource "aws_cognito_identity_pool_roles_attachment" "main" {
   }
 
   roles = {
-    "authenticated" = module.default_authenticated_role.role.arn
+    "authenticated" = module.parent_authenticated_role.role.arn
   }
 }
 
@@ -42,12 +49,18 @@ module authenticated_role {
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }
 
-module default_authenticated_role {
+module parent_authenticated_role {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
-  role_name = "${local.name}-default-auth"
+  role_name = "${local.name}-parent-auth"
   role_policy = [{ 
     actions = ["iam:PassRole"],
-    resources = [ for k, v in var.authenticated_policy_statements : module.authenticated_role[k].role.arn]
+    resources = concat([module.empty_authenticated_role.role.arn], [ for k, v in var.authenticated_policy_statements : module.authenticated_role[k].role.arn])
   }]
+  identity_pool_id = aws_cognito_identity_pool.id_pool.id
+}
+
+module empty_authenticated_role {
+  source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
+  role_name = "${local.name}-empty-auth"
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }

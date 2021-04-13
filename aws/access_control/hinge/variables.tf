@@ -39,7 +39,7 @@ variable plugin_role_name_map {
 locals {
   plugin_role_map = zipmap(
     keys(var.plugin_role_name_map),
-    [for k, v in var.plugin_role_name_map : v == "default" ? module.default_authenticated_role.role.arn : module.authenticated_role[v].role.arn]
+    [for k, v in var.plugin_role_name_map : module.authenticated_role[v].role.arn]
   )
 }
 
