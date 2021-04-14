@@ -1,29 +1,3 @@
-module "replication_role" {
-  source = "github.com/RLuckom/terraform_modules//aws/permissioned_role"
-  count = local.need_replication_role ? 1 : 0
-  role_name = "replicator-${var.security_scope}"
-  role_policy = []
-  principals = [{
-    type = "Service"
-    identifiers = ["s3.amazonaws.com"]
-  }]
-}
-
-module replication_lambda {
-  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator"
-  action_name = "repl-${var.name}"
-  logging_config = var.utility_function_logging_config
-  lambda_event_configs = var.utility_function_event_configs
-  security_scope = var.security_scope
-  default_destination_bucket_name = var.name
-  default_source_bucket_name = var.name
-  replication_configuration = {
-    role_arn = ""
-    donut_days_layer = var.replication_configuration.donut_days_layer
-    rules = local.manual_replication_rules
-  }
-}
-
 module splitter_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/event_splitter"
   action_name = "split-${var.name}"
@@ -31,10 +5,6 @@ module splitter_lambda {
   lambda_event_configs = var.utility_function_event_configs
   security_scope = var.security_scope
   notifications = local.lambda_notifications
-}
-
-locals {
-  auto_replication_role_arn = local.need_replication_role ? module.replication_role[0].role.arn : var.replication_configuration.role_arn
 }
 
 resource "aws_s3_bucket" "bucket" {
@@ -85,27 +55,6 @@ resource "aws_s3_bucket" "bucket" {
       enabled = lifecycle_rule.value.enabled
       expiration {
         days = lifecycle_rule.value.expiration_days
-      }
-    }
-  }
-
-  dynamic "replication_configuration" {
-    for_each = length(local.auto_replication_rules) > 0 ? [1] : []
-    content {
-      role = local.auto_replication_role
-      dynamic "rules" {
-        for_each = local.auto_replication_rules
-        content {
-          priority = rules.value.priority
-          status = rules.value.enabled ? "Enabled" : "Disabled"
-          destination {
-            bucket = rules.value.destination.bucket
-          }
-          filter {
-            prefix = rules.value.filter.prefix == "" ? null : rules.value.filter.prefix
-            tags = length(values(rules.value.filter.tags)) > 0 ? rules.value.filter.tags : null
-          }
-        }
       }
     }
   }
@@ -272,7 +221,6 @@ locals {
 locals {
   prefix_object_permissions = concat(
     var.prefix_object_permissions,
-    local.replication_function_prefix_permissions,
     concat(
       [ for prefix_config in var.prefix_athena_query_permissions : {
         prefix = prefix_config.log_storage_prefix
