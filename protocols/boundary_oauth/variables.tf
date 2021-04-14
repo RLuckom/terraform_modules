@@ -92,20 +92,20 @@ variable http_header_values_by_plugin {
 locals {
   cloudfront_header_values = zipmap(
     [for k in keys(var.http_header_values) : lower(k)],
-    [for k, v in var.http_header_values : {
+    [for k, v in var.http_header_values : [{
       key = k
       value = v
-    }]
+    }]]
   )
   cloudfront_plugin_header_values = zipmap(
     keys(var.http_header_values_by_plugin),
     [for plugin_name, headers in var.http_header_values_by_plugin :
     zipmap(
       [for k in keys(headers) : lower(k)],
-      [for k, v in headers : {
+      [for k, v in headers : [{
         key = k
         value = v
-      }]
+      }]]
     )]
   )
   set_headers_config = {
