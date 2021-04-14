@@ -1,0 +1,19 @@
+{
+  "name": "support",
+  "version": "1.0.0",
+  "description": "",
+  "main": "generateTestKeys.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jasmine": "^3.7.0",
+    "jose": "^3.11.5",
+    "lodash": "^4.17.21",
+    "nyc": "^15.1.0",
+    "rewire": "^5.0.0",
+    "set-cookie-parser": "^2.4.8"
+  }
+}

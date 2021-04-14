@@ -71,7 +71,7 @@ const handler = async (event) => {
               )}; ${CONFIG.cookieSettings.nonce}`,
             },
           ],
-          ...CONFIG.cloudFrontHeaders,
+          ...CONFIG.defaultCloudfrontHeaders,
         },
       };
       CONFIG.logger.debug("Returning response:\n", response);
@@ -146,7 +146,7 @@ const handler = async (event) => {
             }`,
           },
         ],
-        ...CONFIG.cloudFrontHeaders,
+        ...CONFIG.defaultCloudfrontHeaders,
       },
     };
     CONFIG.logger.debug(`Returning response: ${JSON.stringify(response)}`);

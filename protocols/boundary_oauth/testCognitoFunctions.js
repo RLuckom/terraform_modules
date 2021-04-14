@@ -5,7 +5,7 @@ const path = require('path')
 
 const jasminePath = 'tests/support/node_modules/jasmine/bin/jasmine.js'
 const nycPath = 'tests/support/node_modules/nyc/bin/nyc.js'
-const tests = `${__dirname}/tests/*.spec.js`
+const tests = `${__dirname}/tests/**.spec.js`
 
 
 const env = {

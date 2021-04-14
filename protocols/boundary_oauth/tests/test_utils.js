@@ -446,6 +446,8 @@ let defaultConfig = {
   "clientId": "hhhhhhhhhhhhhhhhhhhhhhhhhh",
   "clientSecret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "authDomain": "http://localhost:8000",
+  "protectedDomain": "example.com",
+  "pluginRoot": "plugins",
   "cookieSettings": {
     "accessToken": null,
     "idToken": null,
@@ -459,6 +461,60 @@ let defaultConfig = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
     "X-XSS-Protection": "1; mode=block"
+  },
+  defaultCloudfrontHeaders: {
+    'content-security-policy': [{
+      key: "Content-Security-Policy",
+      value: "default-src 'none'; img-src 'self'; script-src 'self' https://code.jquery.com https://stackpath.bootstrapcdn.com; style-src 'self' 'unsafe-inline' https://stackpath.bootstrapcdn.com; object-src 'none'; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com",
+    }],
+    'referrer-policy': [{
+      key: "Referrer-Policy",
+      value: "same-origin",
+    }],
+    'strict-transport-security': [{
+      key: "Strict-Transport-Security",
+      value: "max-age=31536000; includeSubdomains; preload",
+    }],
+    'x-content-type-options': [{
+      key: "X-Content-Type-Options",
+      value: "nosniff",
+    }],
+    'x-frame-options': [{
+      key: "X-Frame-Options",
+      value: "DENY",
+    }],
+    'x-xss-protection': [{
+      key: "X-XSS-Protection",
+      value: "1; mode=block",
+    }],
+  },
+  cloudfrontPluginHeaders: {
+    "visibility": {
+      'content-security-policy': [{
+        key: "Content-Security-Policy",
+        value: "default-src 'self';"
+      }],
+      'referrer-policy': [{
+        key: "Referrer-Policy",
+        value: "same-origin",
+      }],
+      'strict-transport-security': [{
+        key: "Strict-Transport-Security",
+        value: "max-age=31536000; includeSubdomains; preload",
+      }],
+      'x-content-type-options': [{
+        key: "X-Content-Type-Options",
+        value: "nosniff",
+      }],
+      'x-frame-options': [{
+        key: "X-Frame-Options",
+        value: "DENY",
+      }],
+      'x-xss-protection': [{
+        key: "X-XSS-Protection",
+        value: "1; mode=block",
+      }],
+    }
   },
   "logLevel": "DEBUG",
   "mode": "StaticSiteMode",
@@ -494,7 +550,7 @@ function getConfigJson() {
       asyncOutput: false
     })
   }}
-  config.cloudFrontHeaders = shared.asCloudFrontHeaders(config.httpHeaders)
+  config.pluginNameRegex = new RegExp('^/' + config.pluginRoot + '/([^/]*)')
   return config
 }
 

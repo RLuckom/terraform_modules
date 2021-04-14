@@ -33,7 +33,7 @@ const handler = async (event) => {
       }),
       status: "200",
       headers: {
-        ...CONFIG.cloudFrontHeaders,
+        ...CONFIG.defaultCloudfrontHeaders,
         "content-type": [
           {
             key: "Content-Type",
@@ -73,7 +73,7 @@ const handler = async (event) => {
         domainName,
         ...CONFIG,
       }),
-      ...CONFIG.cloudFrontHeaders,
+      ...CONFIG.defaultCloudfrontHeaders,
     },
   };
   CONFIG.logger.debug("Returning response:\n", response);

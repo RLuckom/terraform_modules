@@ -24,8 +24,25 @@ function getConfigJson() {
     component: config.component,
     asyncOutput: false
   })
-  config.cloudFrontHeaders = asCloudFrontHeaders(config.httpHeaders)
+  config.pluginNameRegex = new RegExp('^/' + config.pluginRoot + '/([^/]*)')
   return config
+}
+
+function getResponseHeaders(event, config) {
+  const request = event.Records[0].cf.request;
+  let referer = ""
+  const refererHeader = request.headers["referer"];
+  if (refererHeader && refererHeader.length) {
+    const refererUrl = new URL(refererHeader[0].value)
+    if (refererUrl.host === config.protectedDomain) {
+      referer = refererUrl.pathname
+    }
+  }
+  const match = referer.match(config.pluginNameRegex)
+  if (match) {
+    return config.cloudfrontPluginHeaders[match[1]] || config.defaultCloudfrontHeaders
+  }
+  return config.defaultCloudfrontHeaders
 }
 
 function getDefaultCookieSettings() {
@@ -362,6 +379,7 @@ function randomChoiceFromIndexable(indexable) {
 module.exports = {
   MissingRequiredGroupError,
   timestampInSeconds,
+  getResponseHeaders,
   generatePkceVerifier,
   generateNonce,
   randomChoiceFromIndexable,

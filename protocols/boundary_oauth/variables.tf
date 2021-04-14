@@ -33,6 +33,10 @@ variable auth_domain {
   type = string
 }
 
+variable protected_domain {
+  type = string
+}
+
 variable user_group_name {
   type = string
 }
@@ -63,6 +67,11 @@ variable sign_out_path {
   default = "/"
 }
 
+variable plugin_root {
+  type = string
+  default = "/plugins/"
+}
+
 variable http_header_values {
   type = map(string)
   default = {
@@ -75,19 +84,43 @@ variable http_header_values {
   }
 }
 
+variable http_header_values_by_plugin {
+  type = map(map(string))
+  default = {}
+}
+
 locals {
-  http_header_values = var.http_header_values
+  cloudfront_header_values = zipmap(
+    [for k in keys(var.http_header_values) : lower(k)],
+    [for k, v in var.http_header_values : {
+      key = k
+      value = v
+    }]
+  )
+  cloudfront_plugin_header_values = zipmap(
+    keys(var.http_header_values_by_plugin),
+    [for plugin_name, headers in var.http_header_values_by_plugin :
+    zipmap(
+      [for k in keys(headers) : lower(k)],
+      [for k, v in headers : {
+        key = k
+        value = v
+      }]
+    )]
+  )
   set_headers_config = {
     httpHeaders = local.http_header_values
     logLevel = var.log_level
   }
   full_config_json = {
+    protectedDomain = var.protected_domain
     source = var.log_source
     sourceInstance = var.log_source_instance
     component = var.component
     tokenIssuer = var.token_issuer
     tokenJwksUri = "${var.token_issuer}/.well-known/jwks.json"
     clientId = var.client_id
+    pluginRoot = trim(var.plugin_root, "/")
     clientSecret = var.client_secret
     oauthScopes = ["phone", "email", "profile", "openid", "aws.cognito.signin.user.admin"]
     authDomain = var.auth_domain
@@ -100,7 +133,9 @@ locals {
       refreshToken = null
       nonce = null
     }
-    httpHeaders = local.http_header_values
+    defaultHttpHeaders = var.http_header_values
+    defaultCloudfrontHeaders = local.cloudfront_header_values
+    cloudfrontPluginHeaders = local.cloudfront_plugin_header_values
     logLevel = var.log_level
     nonceSigningSecret = var.nonce_signing_secret
     additionalCookies = {}
