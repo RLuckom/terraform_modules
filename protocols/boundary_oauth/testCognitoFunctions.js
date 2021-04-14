@@ -7,7 +7,6 @@ const jasminePath = 'tests/support/node_modules/jasmine/bin/jasmine.js'
 const nycPath = 'tests/support/node_modules/nyc/bin/nyc.js'
 const tests = `${__dirname}/tests/**.spec.js`
 
-
 const env = {
   NODE_PATH: `${__dirname}/nodejs/node_modules:${__dirname}/tests/support/node_modules/`,
   PATH: process.env.PATH,

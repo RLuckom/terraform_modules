@@ -72,3 +72,13 @@ variable http_header_values {
   type = map(string)
   default = null
 }
+
+variable plugin_root {
+  type = string
+  default = null
+}
+
+variable http_header_values_by_plugin {
+  type = map(map(string))
+  default = null
+}

@@ -12,10 +12,13 @@ module cognito_fn_template {
   source = "github.com/RLuckom/terraform_modules//protocols/boundary_oauth"
   token_issuer = var.token_issuer
   http_header_values = var.http_header_values
+  plugin_root = var.plugin_root
+  http_header_values_by_plugin = var.http_header_values_by_plugin
   client_id = var.client_id
   client_secret = var.client_secret
   nonce_signing_secret = var.nonce_signing_secret
   auth_domain = local.auth_domain
+  protected_domain = local.protected_site_domain
   user_group_name = var.user_group_name
   log_source = var.log_source
   log_source_instance = var.log_source_instance
