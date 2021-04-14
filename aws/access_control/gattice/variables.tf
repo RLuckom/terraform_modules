@@ -70,15 +70,22 @@ variable log_level {
 
 variable http_header_values {
   type = map(string)
-  default = null
+  default = {
+    "Content-Security-Policy" = "default-src 'self'"
+    "Strict-Transport-Security" = "max-age=31536000; includeSubdomains; preload"
+    "Referrer-Policy" = "same-origin"
+    "X-XSS-Protection" = "1; mode=block"
+    "X-Frame-Options" = "DENY"
+    "X-Content-Type-Options" = "nosniff"
+  }
 }
 
 variable plugin_root {
   type = string
-  default = null
+  default = "/plugins/"
 }
 
 variable http_header_values_by_plugin {
   type = map(map(string))
-  default = null
+  default = {}
 }
