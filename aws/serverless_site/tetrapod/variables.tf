@@ -13,11 +13,6 @@ variable coordinator_data {
   }
 }
 
-variable replication_time_limit {
-  type = number
-  default = 10
-}
-
 variable forbidden_website_paths {
   type = list(string)
   default = []

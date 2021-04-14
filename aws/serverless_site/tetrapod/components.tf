@@ -355,7 +355,6 @@ module website_bucket {
   force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts
   cors_rules = var.website_bucket_cors_rules
-  replication_time_limit = var.replication_time_limit
   prefix_object_permissions = var.website_bucket_prefix_object_permissions
   forbidden_website_paths = var.forbidden_website_paths
   bucket_permissions = var.website_bucket_bucket_permissions

@@ -104,11 +104,6 @@ variable no_cache_s3_path_patterns {
   default = []
 }
 
-variable replication_time_limit {
-  type = number
-  default = 10
-}
-
 variable website_bucket_lambda_notifications {
   type = list(object({
     lambda_arn = string
