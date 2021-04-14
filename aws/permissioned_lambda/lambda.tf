@@ -136,18 +136,9 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 	retention_in_days = var.log_retention_period
 }
 
-data "aws_s3_bucket" "trigger_bucket" {
-  count = length(var.bucket_notifications)
-  bucket = var.bucket_notifications[count.index].bucket
-}
-
 locals {
   callers = concat(
     var.invoking_principals,
-    [ for i, notification in var.bucket_notifications: {
-      service = "s3.amazonaws.com"
-      source_arn = data.aws_s3_bucket.trigger_bucket[i].arn
-    }],
     [ for i, notification in var.cron_notifications: {
       service = "events.amazonaws.com"
       source_arn = aws_cloudwatch_event_rule.lambda_schedule[i].arn
@@ -165,18 +156,6 @@ resource "aws_lambda_permission" "allow_caller" {
   function_name = aws_lambda_function.lambda.function_name
   principal     = local.callers[count.index].service
   source_arn = local.callers[count.index].source_arn
-}
-
-resource "aws_s3_bucket_notification" "bucket_notification" {
-  count = length(var.bucket_notifications)
-  bucket = var.bucket_notifications[count.index].bucket
-
-  lambda_function {
-    lambda_function_arn = aws_lambda_function.lambda.arn
-    events              = var.bucket_notifications[count.index].events
-    filter_prefix       = var.bucket_notifications[count.index].filter_prefix
-    filter_suffix       = var.bucket_notifications[count.index].filter_suffix
-  }
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_schedule" {
