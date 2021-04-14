@@ -109,11 +109,13 @@ locals {
     )]
   )
   set_headers_config = {
-    httpHeaders = local.http_header_values
+    defaultCloudfrontHeaders = local.cloudfront_header_values
+    cloudfrontPluginHeaders = local.cloudfront_plugin_header_values
+    pluginRoot = trim(var.plugin_root, "/")
+    protectedDomain = var.protected_domain
     logLevel = var.log_level
   }
   full_config_json = {
-    protectedDomain = var.protected_domain
     source = var.log_source
     sourceInstance = var.log_source_instance
     component = var.component
@@ -124,6 +126,7 @@ locals {
     clientSecret = var.client_secret
     oauthScopes = ["phone", "email", "profile", "openid", "aws.cognito.signin.user.admin"]
     authDomain = var.auth_domain
+    protectedDomain = var.protected_domain
     redirectPathSignIn = "/parseauth"
     redirectPathSignOut = var.sign_out_path
     redirectPathAuthRefresh = "/refreshauth"
@@ -133,7 +136,6 @@ locals {
       refreshToken = null
       nonce = null
     }
-    defaultHttpHeaders = var.http_header_values
     defaultCloudfrontHeaders = local.cloudfront_header_values
     cloudfrontPluginHeaders = local.cloudfront_plugin_header_values
     logLevel = var.log_level
