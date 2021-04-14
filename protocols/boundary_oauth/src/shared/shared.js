@@ -30,15 +30,13 @@ function getConfigJson() {
 
 function getResponseHeaders(event, config) {
   const request = event.Records[0].cf.request;
-  let referer = ""
-  const refererHeader = request.headers["referer"];
-  if (refererHeader && refererHeader.length) {
-    const refererUrl = new URL(refererHeader[0].value)
-    if (refererUrl.host === config.protectedDomain) {
-      referer = refererUrl.pathname
-    }
-  }
-  const match = referer.match(config.pluginNameRegex)
+  let requestPath = ""
+  const requestUri = new URL(
+    request.uri, 
+    `https://${config.protectedDomain}`
+  )
+  requestPath = requestUri.pathname
+  const match = requestPath.match(config.pluginNameRegex)
   if (match) {
     return config.cloudfrontPluginHeaders[match[1]] || config.defaultCloudfrontHeaders
   }

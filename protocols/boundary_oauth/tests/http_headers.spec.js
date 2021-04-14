@@ -60,7 +60,7 @@ const modifyResponseHeaderEventForPlugin = {
           "distributionId": "EXAMPLE"
         },
         "request": {
-          "uri": "/test",
+          "uri": "/plugins/blog/index.html",
           "method": "GET",
           "querystring": 'foo=bar',
           "headers": {
@@ -69,12 +69,6 @@ const modifyResponseHeaderEventForPlugin = {
                 "key": "Host",
                 "value": "example.com"
               },
-            ],
-            "referer": [
-              {
-                "key": "Referer",
-                "value": "https://example.com/plugins/blog/index.html"
-              }
             ],
             "cookie": []
           }
@@ -116,7 +110,7 @@ const modifyResponseHeaderEventForPluginWithHeaders = {
           "distributionId": "EXAMPLE"
         },
         "request": {
-          "uri": "/test",
+          "uri": "/plugins/visibility/index.html",
           "method": "GET",
           "querystring": 'foo=bar',
           "headers": {
@@ -125,12 +119,6 @@ const modifyResponseHeaderEventForPluginWithHeaders = {
                 "key": "Host",
                 "value": "example.com"
               },
-            ],
-            "referer": [
-              {
-                "key": "Referer",
-                "value": "https://example.com/plugins/visibility/index.html"
-              }
             ],
             "cookie": []
           }
