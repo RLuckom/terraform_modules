@@ -57,7 +57,6 @@ module function {
     local.additional_helpers,
   )
   lambda_event_configs = var.lambda_event_configs
-  bucket_notifications = var.bucket_notifications
   cron_notifications = var.cron_notifications
   queue_event_sources = var.queue_event_sources
   deny_cloudwatch = var.logging_config.bucket == "" ? false : false

@@ -116,16 +116,6 @@ variable "self_invoke" {
   }
 }
 
-variable "bucket_notifications" {
-  type = list(object({
-    bucket = string
-    events = list(string)
-    filter_prefix = string
-    filter_suffix = string
-  }))
-  default = []
-}
-
 variable "cron_notifications" {
   type = list(object({
     period_expression = string
