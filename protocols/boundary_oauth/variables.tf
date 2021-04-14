@@ -143,7 +143,7 @@ locals {
     additionalCookies = {}
     requiredGroup = var.user_group_name
   }
-  hash_suffix = substr(sha256(jsonencode(local.full_config_json)), 0, 4)
+  hash_suffix = substr(local.source_hash, 0, 4)
   function_defaults = {
     mem_mb = 128
     timeout_secs = 3
@@ -309,8 +309,7 @@ locals {
 resource null_resource uploaded_objects {
   count = var.bucket_config.supplied ? 1 : 0
   triggers = {
-    config = jsonencode(local.full_config_json)
-    version = local.version
+    source = local.source_hash
   }
 
   provisioner "local-exec" {
@@ -330,6 +329,16 @@ resource null_resource uploaded_objects {
   }
 }
 
-output config_hash {
-  value = sha256(jsonencode(local.full_config_json))
+locals {
+  source_hash = sha256(jsonencode({
+    config = local.full_config_json
+    code = [
+      local.http_headers.source_contents,
+      local.check_auth.source_contents,
+      local.refresh_auth.source_contents,
+      local.parse_auth.source_contents,
+      local.sign_out.source_contents,
+      local.function_defaults
+    ]
+  }))
 }
