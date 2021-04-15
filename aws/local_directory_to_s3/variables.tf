@@ -5,3 +5,8 @@ variable asset_directory_root {
 variable bucket_name {
   type = string
 }
+
+variable s3_asset_prefix {
+  type = string
+  default = ""
+}

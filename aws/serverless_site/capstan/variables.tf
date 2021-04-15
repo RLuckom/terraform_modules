@@ -211,7 +211,10 @@ variable website_bucket_cors_rules {
   default = []
 }
 
-variable asset_path {
-  type = string
-  default = ""
+variable asset_paths {
+  type = list(object({
+    local_path = string
+    s3_prefix = string
+  }))
+  default = []
 }

@@ -75,10 +75,9 @@ variable plugin_root {
 variable http_header_values {
   type = map(string)
   default = {
-    "Content-Security-Policy" = "default-src 'self'"
+    "Content-Security-Policy" = "default-src 'none';"
     "Strict-Transport-Security" = "max-age=31536000; includeSubdomains; preload"
     "Referrer-Policy" = "same-origin"
-    "X-XSS-Protection" = "1; mode=block"
     "X-Frame-Options" = "DENY"
     "X-Content-Type-Options" = "nosniff"
   }

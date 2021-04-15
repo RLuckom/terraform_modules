@@ -11,10 +11,11 @@ locals {
 }
 
 module site_static_assets {
-  count = var.asset_path == "" ? 0 : 1
+  count = length(var.asset_paths)
   source = "github.com/RLuckom/terraform_modules//aws/local_directory_to_s3"
   bucket_name = local.site_bucket
-  asset_directory_root = var.asset_path
+  asset_directory_root = var.asset_paths[count.index].local_path
+  s3_asset_prefix = var.asset_paths[count.index].s3_prefix
   depends_on = [module.website_bucket]
 }
 
