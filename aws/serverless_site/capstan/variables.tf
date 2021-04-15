@@ -218,3 +218,13 @@ variable asset_paths {
   }))
   default = []
 }
+
+variable file_configs {
+  type = list(object({
+    content_type = string
+    key = string
+    file_path = string
+    file_contents = string
+  }))
+  default = []
+}

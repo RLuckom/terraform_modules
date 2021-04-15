@@ -19,6 +19,15 @@ module site_static_assets {
   depends_on = [module.website_bucket]
 }
 
+resource "aws_s3_bucket_object" "assets" {
+  count = length(var.file_configs)
+  bucket = local.site_bucket
+  key    = var.file_configs[count.index].key
+  content_type = var.file_configs[count.index].content_type
+  content = var.file_configs[count.index].file_contents
+  source = var.file_configs[count.index].file_contents != null ? null : var.file_configs[count.index].file_path
+}
+
 locals {
   cloudfront_delivery_prefixes = [
     var.coordinator_data.cloudfront_log_delivery_prefix
