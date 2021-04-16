@@ -32,11 +32,14 @@ variable table_configs {
 }
 
 variable table_permission_names {
-  type = map(object({
+  type = object({
     add_partition_permission_names = list(string)
     query_permission_names = list(string)
-  }))
-  default = {}
+  })
+  default = {
+    add_partition_permission_names = []
+    query_permission_names = []
+  }
 }
 
 resource aws_glue_catalog_database database {
@@ -63,10 +66,10 @@ data "aws_caller_identity" "current" {}
 locals {
   default_catalog = "arn:aws:glue:us-east-1:${data.aws_caller_identity.current.account_id}:catalog"
   default_db = "arn:aws:glue:us-east-1:${data.aws_caller_identity.current.account_id}:database/default"
-  roles_with_add_partition_permissions = distinct(flatten(values(var.table_permission_names).*.add_partition_permission_names))
+  roles_with_add_partition_permissions = distinct(var.table_permission_names.add_partition_permission_names)
   per_role_add_partition_policy_map = zipmap(
     local.roles_with_add_partition_permissions,
-    [for role_name in local.roles_with_add_partition_permissions : flatten([for table_name, config in var.table_configs: [
+    [for role_name in local.roles_with_add_partition_permissions : [
     {
       actions   =  [
         "athena:StartQueryExecution",
@@ -94,22 +97,19 @@ locals {
         "glue:GetTable",
         "glue:BatchCreatePartition"
       ]
-      resources = [
+      resources = flatten([
         aws_glue_catalog_database.database.arn,
         local.default_catalog,
-        module.table[table_name].table.arn,
-        "${module.table[table_name].table.arn}/*",
-      ]
+        [for table_name in keys(var.table_configs) : module.table[table_name].table.arn],
+        [for table_name in keys(var.table_configs) : "${module.table[table_name].table.arn}/*"],
+      ])
     },
-  ] if contains(lookup(var.table_permission_names, table_name, {
-    add_partition_permission_names = [] 
-    query_permission_names = [] 
-  }).add_partition_permission_names, role_name)
-  ])])
-  roles_with_query_permissions = distinct(flatten(values(var.table_permission_names).*.query_permission_names))
+  ] if contains(var.table_permission_names.add_partition_permission_names, role_name)
+  ])
+  roles_with_query_permissions = distinct(var.table_permission_names.query_permission_names)
   per_role_query_policy_map = zipmap(
     local.roles_with_query_permissions,
-    [for role_name in local.roles_with_query_permissions : flatten([for table_name, config in var.table_configs: [
+    [for role_name in local.roles_with_query_permissions : [
     {
       actions   =  [
         "athena:StartQueryExecution",
@@ -126,19 +126,16 @@ locals {
         "glue:GetPartitions",
         "glue:GetTable"
       ]
-      resources = [
+      resources = flatten([
         local.default_db,
         local.default_catalog,
         aws_glue_catalog_database.database.arn,
-        module.table[table_name].table.arn,
-        "${module.table[table_name].table.arn}/*",
-      ]
+        [for table_name in keys(var.table_configs) : module.table[table_name].table.arn],
+        [for table_name in keys(var.table_configs) : "${module.table[table_name].table.arn}/*"],
+      ])
     },
-  ] if contains(lookup(var.table_permission_names, table_name, {
-    add_partition_permission_names = [] 
-    query_permission_names = [] 
-  }).query_permission_names, role_name)
-  ])])
+  ] if contains(var.table_permission_names.query_permission_names, role_name)
+  ])
 }
 
 resource "random_id" "addpart_role_ids" {

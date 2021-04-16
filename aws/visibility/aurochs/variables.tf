@@ -31,26 +31,62 @@ variable visibility_system_id {
   }
 }
 
-variable supported_systems {
-  type = list(object({
-    security_scope = string
-    subsystem_names = list(string)
-  }))
-  default = []
-}
-
-variable serverless_site_configs {
+// The distinction between supported_system_definitions and supported_system_clients
+// is entirely about breaking cycles. They must mirror each other to some extent, but
+// the definitions are used to build the names of things, which are later depended on
+// (outside of this module) to create the client resources listed in supported_system_clients.
+// If these were combined into a single struct, it would create cycles between the system names
+// and the client resources.
+variable supported_system_definitions {
   type = map(object({
-    domain_parts = object({
-      top_level_domain = string
-      controlled_domain_part = string
-    })
-    system_id = object({
-      security_scope = string
-      subsystem_name = string
-    })
+    subsystems = map(object({
+      serverless_site_configs = map(object({
+        domain_parts = object({
+          top_level_domain = string
+          controlled_domain_part = string
+        })
+      }))
+    }))
   }))
   default = {}
+}
+
+variable supported_system_clients {
+  type = map(object({
+    subsystems = map(object({
+      glue_permission_name_map = object({
+        add_partition_permission_names = list(string)
+        add_partition_permission_arns = list(string)
+        query_permission_names = list(string)
+        query_permission_arns = list(string)
+      })
+      scoped_logging_functions = list(string)
+      serverless_site_configs = map(object({
+      }))
+    }))
+  }))
+  default = {}
+}
+
+locals {
+  systems_with_subsystems = [ for sys_name, sys_config in var.supported_system_definitions : {
+    security_scope = sys_name
+    subsystem_names = keys(sys_config.subsystems)
+  }]
+  serverless_site_config_map = merge(flatten(
+    [for security_scope, scope_config in var.supported_system_definitions :
+      [ for subsystem_name, subsystem_config in scope_config.subsystems : zipmap(
+        keys(subsystem_config.serverless_site_configs),
+        [ for site_name, site_config in subsystem_config.serverless_site_configs : {
+          domain_parts = site_config.domain_parts
+          system_id = {
+            security_scope = security_scope
+            subsystem_name = subsystem_name
+          }
+        }])
+      ]
+    ]
+  )...)
 }
 
 variable log_level {
@@ -80,7 +116,7 @@ locals {
   system_ids = concat([{
     subsystem_names = [var.visibility_system_id.subsystem_name]
     security_scope = var.visibility_system_id.security_scope
-  }], var.supported_systems)
+  }], local.systems_with_subsystems)
   cloudfront_delivery_bucket = var.cloudfront_delivery_bucket
   visibility_data_bucket = var.visibility_data_bucket
   athena_results_bucket = var.athena_results_bucket == "" ? var.visibility_data_bucket : var.athena_results_bucket
@@ -184,7 +220,7 @@ locals {
 }
 
 locals {
-  cloudfront_log_path_lifecycle_rules = [ for k, v in var.serverless_site_configs : {
+  cloudfront_log_path_lifecycle_rules = [ for k, v in local.serverless_site_config_map : {
     prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
     tags = {}
     enabled = var.expire_cloudfront_logs.enabled
@@ -270,9 +306,12 @@ locals {
       }]
     )]
   )
+  empty_system_client = {
+    subsystems = {}
+  }
   serverless_site_configs = zipmap(
-    keys(var.serverless_site_configs),
-    [ for k, v in var.serverless_site_configs : {
+    keys(local.serverless_site_config_map),
+    [ for k, v in local.serverless_site_config_map : {
       domain = "${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
       cloudfront_log_delivery_prefix = "${local.cloudfront_delivery_prefix}/${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
       cloudfront_log_storage_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
@@ -324,11 +363,12 @@ locals {
         }]
       ),
       zipmap(
-        [ for k, v in var.serverless_site_configs : replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_") if v.system_id.security_scope == system_id.security_scope],
-        [ for k, v in var.serverless_site_configs : 
+        [ for k, v in local.serverless_site_config_map : replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_") if v.system_id.security_scope == system_id.security_scope],
+        [ for k, v in local.serverless_site_config_map : 
         {
           bucket_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
           result_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
+          subsystem_name = v.system_id.subsystem_name
           skip_header_line_count = 2
           ser_de_info = {
             name                  = "cf_logs"
@@ -384,21 +424,6 @@ output visibility_lifecycle_rules {
   )
 }
 
-variable scoped_logging_functions {
-  type = map(map(list(string)))
-  default = {}
-}
-
-variable glue_permission_name_map {
-  type = map(map(object({
-    add_partition_permission_names = list(string)
-    query_permission_names = list(string)
-    add_partition_permission_arns = list(string)
-    query_permission_arns = list(string)
-  })))
-  default = {}
-}
-
 variable scoped_archive_notifications {
   type = map(map(object({
       lambda_arn = string
@@ -412,13 +437,23 @@ variable scoped_archive_notifications {
   default = {}
 }
 
+variable glue_permission_name_map {
+  type = map(map(object({
+    add_partition_permission_names = list(string)
+    query_permission_names = list(string)
+    add_partition_permission_arns = list(string)
+    query_permission_arns = list(string)
+  })))
+  default = {}
+}
+
 locals {
   visibility_prefix_object_permissions = flatten([
-    for security_scope, subsystem_map in var.scoped_logging_functions : [
-      for subsystem_name, arns in subsystem_map : [
+    for security_scope, system_config in var.supported_system_clients : [
+      for subsystem_name, subsystem_config in system_config.subsystems : [
         {
           prefix = local.lambda_log_configs[security_scope][subsystem_name].log_prefix,
-          arns = arns
+          arns = subsystem_config.scoped_logging_functions
           permission_type = "put_object"
         }
       ]
@@ -432,13 +467,15 @@ locals {
     } 
   ]
   visibility_prefix_athena_query_permissions = flatten([
-    for system_id in local.system_ids : [
-      for table, permission_map in lookup(var.glue_permission_name_map, system_id.security_scope, {}) : 
-      [ for table_name, table_map in local.data_warehouse_configs[system_id.security_scope].glue_table_configs: {
-        log_storage_prefix = table_map.bucket_prefix
-        result_prefix = table_map.result_prefix
-        arns = concat(permission_map.add_partition_permission_arns, permission_map.query_permission_arns)
-      } if table == table_name]
+    for security_scope, system_config in var.supported_system_clients : [
+      for subsystem_name, subsystem_config in system_config.subsystems : [
+        for table_name, table_map in local.data_warehouse_configs[security_scope].glue_table_configs: {
+          log_storage_prefix = table_map.bucket_prefix
+          result_prefix = table_map.result_prefix
+          arns = concat(subsystem_config.glue_permission_name_map.add_partition_permission_arns, subsystem_config.glue_permission_name_map.query_permission_arns)
+        }
+        if length(concat(subsystem_config.glue_permission_name_map.add_partition_permission_arns, subsystem_config.glue_permission_name_map.query_permission_arns)) > 0
+      ]
     ]
   ])
 }

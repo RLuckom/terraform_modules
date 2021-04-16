@@ -39,31 +39,35 @@ module data_warehouse {
   scope = each.value.security_scope
   database_name = each.value.glue_database_name
   table_configs = each.value.glue_table_configs
-  table_permission_names = zipmap(
-    keys(each.value.glue_table_configs),
-    [for k in keys(each.value.glue_table_configs) : {
-      add_partition_permission_names = concat(
-        [module.archive_function.role.name],
-        lookup(lookup(var.glue_permission_name_map, each.value.security_scope, {}), k, 
-        {
+  table_permission_names = {
+    query_permission_names = distinct(
+      flatten([for k, table_config in each.value.glue_table_configs : 
+      lookup(lookup(var.supported_system_clients, each.value.security_scope, {subsystems = {}}).subsystems, table_config.subsystem_name, {
+        glue_permission_name_map = {
           add_partition_permission_names = []
-          query_permission_names = [] 
           add_partition_permission_arns = []
-          query_permission_arns = [] 
+          query_permission_names = []
+          query_permission_arns = []
         }
-      ).add_partition_permission_names 
-
-      )
-      query_permission_names = lookup(lookup(var.glue_permission_name_map, each.value.security_scope, {}), k, 
-        { 
+        serverless_site_configs = {}
+        scoped_logging_functions = []
+      }).glue_permission_name_map.query_permission_names
+    ]))
+    add_partition_permission_names = distinct(concat(
+      [module.archive_function.role.name],
+      flatten([for k, table_config in each.value.glue_table_configs : 
+      lookup(lookup(var.supported_system_clients, each.value.security_scope, {subsystems = {}}).subsystems, table_config.subsystem_name, {
+        glue_permission_name_map = {
           add_partition_permission_names = []
-          query_permission_names = [] 
           add_partition_permission_arns = []
-          query_permission_arns = [] 
+          query_permission_names = []
+          query_permission_arns = []
         }
-      ).query_permission_names 
-    }]
-  )
+        serverless_site_configs = {}
+        scoped_logging_functions = []
+      }).glue_permission_name_map.add_partition_permission_names
+    ])))
+  }
 }
 
 module archive_function {
