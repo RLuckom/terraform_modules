@@ -2,11 +2,11 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 locals {
-  system_id = var.system_id
+  system_id = var.coordinator_data.system_id
   routing = {
-    domain_parts = var.routing.domain_parts
-    route53_zone_name = var.routing.route53_zone_name
-    domain = "${trimsuffix(var.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.routing.domain_parts.top_level_domain, ".")}"
+    domain_parts = var.coordinator_data.routing.domain_parts
+    route53_zone_name = var.coordinator_data.routing.route53_zone_name
+    domain = "${trimsuffix(var.coordinator_data.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.coordinator_data.routing.domain_parts.top_level_domain, ".")}"
   }
   render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.system_id.security_scope}"
   render_name = "site_render-${local.system_id.security_scope}"

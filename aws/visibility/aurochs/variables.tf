@@ -41,6 +41,7 @@ variable supported_system_definitions {
   type = map(object({
     subsystems = map(object({
       serverless_site_configs = map(object({
+        route53_zone_name = string
         domain_parts = object({
           top_level_domain = string
           controlled_domain_part = string
@@ -77,6 +78,7 @@ locals {
         keys(subsystem_config.serverless_site_configs),
         [ for site_name, site_config in subsystem_config.serverless_site_configs : {
           domain_parts = site_config.domain_parts
+          route53_zone_name = site_config.route53_zone_name
           system_id = {
             security_scope = security_scope
             subsystem_name = subsystem_name
@@ -328,7 +330,11 @@ locals {
       athena_region = var.athena_region
       glue_table_name = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
       glue_database_name = replace("${v.system_id.security_scope}-${local.visibility_data_bucket}", "-", "_")
-      domain_parts = v.domain_parts
+      routing = {
+        domain_parts = v.domain_parts
+        route53_zone_name = v.route53_zone_name
+      }
+      system_id = v.system_id
       security_scope = v.system_id.security_scope
       subsystem_name = v.system_id.subsystem_name
     }]

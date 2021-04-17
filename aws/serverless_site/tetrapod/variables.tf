@@ -1,16 +1,22 @@
 variable coordinator_data {
   type = object({
+    system_id = object({
+      security_scope = string
+      subsystem_name = string
+    })
+    routing = object({
+      domain_parts = object({
+        top_level_domain = string
+        controlled_domain_part = string
+      })
+      route53_zone_name = string
+    })
+    // these can be set to "" if NA
     lambda_log_delivery_prefix = string
     lambda_log_delivery_bucket = string
     cloudfront_log_delivery_prefix = string
     cloudfront_log_delivery_bucket = string
   })
-  default = {
-    lambda_log_delivery_prefix = ""
-    lambda_log_delivery_bucket = ""
-    cloudfront_log_delivery_prefix = ""
-    cloudfront_log_delivery_bucket = ""
-  }
 }
 
 variable forbidden_website_paths {
@@ -55,23 +61,6 @@ variable force_destroy {
   default = false
 }
 
-variable system_id {
-  type = object({
-    security_scope = string
-    subsystem_name = string
-  })
-}
-
-variable routing {
-  type = object({
-    domain_parts = object({
-      top_level_domain = string
-      controlled_domain_part = string
-    })
-    route53_zone_name = string
-  })
-}
-
 variable additional_allowed_origins {
   type = list(string)
   default = []
@@ -103,7 +92,7 @@ variable trails_table_name {
 }
 
 locals {
-  trails_table_name = var.trails_table_name == null ? "${var.system_id.security_scope}-${var.system_id.subsystem_name}-trails_table" : var.trails_table_name
+  trails_table_name = var.trails_table_name == null ? "${var.coordinator_data.system_id.security_scope}-${var.coordinator_data.system_id.subsystem_name}-trails_table" : var.trails_table_name
 }
 
 // configuration vars

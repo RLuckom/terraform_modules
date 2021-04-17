@@ -1,38 +1,27 @@
-variable system_id {
+variable coordinator_data {
   type = object({
-    security_scope = string
-    subsystem_name = string
-  })
-}
-
-variable routing {
-  type = object({
-    domain_parts = object({
-      top_level_domain = string
-      controlled_domain_part = string
+    system_id = object({
+      security_scope = string
+      subsystem_name = string
     })
-    route53_zone_name = string
+    routing = object({
+      domain_parts = object({
+        top_level_domain = string
+        controlled_domain_part = string
+      })
+      route53_zone_name = string
+    })
+    // these can be set to "" if NA
+    lambda_log_delivery_prefix = string
+    lambda_log_delivery_bucket = string
+    cloudfront_log_delivery_prefix = string
+    cloudfront_log_delivery_bucket = string
   })
 }
 
 variable forbidden_website_paths {
   type = list(string)
   default = []
-}
-
-variable coordinator_data {
-  type = object({
-    lambda_log_delivery_prefix = string
-    lambda_log_delivery_bucket = string
-    cloudfront_log_delivery_prefix = string
-    cloudfront_log_delivery_bucket = string
-  })
-  default = {
-    lambda_log_delivery_prefix = ""
-    lambda_log_delivery_bucket = ""
-    cloudfront_log_delivery_prefix = ""
-    cloudfront_log_delivery_bucket = ""
-  }
 }
 
 variable lambda_authorizers {

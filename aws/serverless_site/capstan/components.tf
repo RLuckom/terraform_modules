@@ -2,11 +2,11 @@ data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
 locals {
-  system_id = var.system_id
+  system_id = var.coordinator_data.system_id
   routing = {
-    domain_parts = var.routing.domain_parts
-    route53_zone_name = var.routing.route53_zone_name
-    domain = "${trimsuffix(var.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.routing.domain_parts.top_level_domain, ".")}"
+    domain_parts = var.coordinator_data.routing.domain_parts
+    route53_zone_name = var.coordinator_data.routing.route53_zone_name
+    domain = "${trimsuffix(var.coordinator_data.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.coordinator_data.routing.domain_parts.top_level_domain, ".")}"
   }
 }
 
@@ -72,7 +72,7 @@ module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
   name = local.site_bucket
   force_destroy = var.force_destroy
-  security_scope = var.system_id.security_scope
+  security_scope = var.coordinator_data.system_id.security_scope
   domain_parts = local.routing.domain_parts
   cors_rules = var.website_bucket_cors_rules
   forbidden_website_paths = var.forbidden_website_paths
