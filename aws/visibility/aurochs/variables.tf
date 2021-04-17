@@ -61,8 +61,6 @@ variable supported_system_clients {
         query_permission_arns = list(string)
       })
       scoped_logging_functions = list(string)
-      serverless_site_configs = map(object({
-      }))
     }))
   }))
   default = {}
