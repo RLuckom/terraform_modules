@@ -39,7 +39,7 @@ resource "aws_cognito_identity_pool_roles_attachment" "main" {
     }
 
     dynamic "mapping_rule" {
-      for_each = var.authenticated_policy_statements
+      for_each = var.plugin_configs
       content {
         claim      = "cognito:groups"
         match_type = "Contains"
@@ -55,10 +55,10 @@ resource "aws_cognito_identity_pool_roles_attachment" "main" {
 }
 
 module authenticated_role {
-  for_each = var.authenticated_policy_statements
+  for_each = var.plugin_configs
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
-  role_name = "${local.name}-${each.key}-auth"
-  role_policy = each.value
+  role_name = "${local.name}-${each.value.role_name_stem}-auth"
+  role_policy = each.value.policy_statements
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }
 
@@ -67,7 +67,7 @@ module parent_authenticated_role {
   role_name = "${local.name}-parent-auth"
   role_policy = [{ 
     actions = ["iam:PassRole"],
-    resources = concat([module.empty_authenticated_role.role.arn], [ for k, v in var.authenticated_policy_statements : module.authenticated_role[k].role.arn])
+    resources = concat([module.empty_authenticated_role.role.arn], [ for k, v in var.plugin_configs : module.authenticated_role[k].role.arn])
   }]
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }

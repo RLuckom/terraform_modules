@@ -31,22 +31,20 @@ variable server_side_token_check {
   default = true
 }
 
-variable plugin_role_name_map {
-  type = map(string)
+variable plugin_configs {
+  type = map(object({
+    role_name_stem = string
+    policy_statements = list(object({
+      actions = list(string)
+      resources = list(string)
+    }))
+  }))
   default = {}
 }
 
 locals {
   plugin_role_map = zipmap(
-    keys(var.plugin_role_name_map),
-    [for k, v in var.plugin_role_name_map : module.authenticated_role[v].role.arn]
+    keys(var.plugin_configs),
+    [for k, v in var.plugin_configs : module.authenticated_role[k].role.arn]
   )
-}
-
-variable authenticated_policy_statements {
-  type = map(list(object({
-    actions = list(string)
-    resources = list(string)
-  })))
-  default = {}
 }

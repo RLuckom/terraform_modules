@@ -24,12 +24,13 @@ variable protected_domain_routing {
       top_level_domain = string
       controlled_domain_part = string
     })
+    domain = string
     route53_zone_name = string
   })
 }
 
 locals {
-  protected_site_domain = "${var.protected_domain_routing.domain_parts.controlled_domain_part}.${var.protected_domain_routing.domain_parts.top_level_domain}"
+  protected_site_domain = var.protected_domain_routing.domain
   auth_domain = "https://${var.auth_domain_prefix}.${local.protected_site_domain}"
 }
 
