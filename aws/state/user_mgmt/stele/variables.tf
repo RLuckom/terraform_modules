@@ -12,6 +12,7 @@ variable protected_domain_routing {
       controlled_domain_part = string
     })
     route53_zone_name = string
+    domain = string
   })
 }
 
@@ -34,7 +35,7 @@ variable additional_protected_domains {
 }
 
 locals {
-  protected_site_domain = "${var.protected_domain_routing.domain_parts.controlled_domain_part}.${var.protected_domain_routing.domain_parts.top_level_domain}"
+  protected_site_domain = var.protected_domain_routing.domain
   bucket_domain_parts = var.protected_domain_routing.domain_parts
   cognito_domain = "auth.${local.protected_site_domain}"
   callback_urls = concat([
