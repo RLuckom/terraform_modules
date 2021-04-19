@@ -312,7 +312,6 @@ locals {
   serverless_site_configs = zipmap(
     keys(local.serverless_site_config_map),
     [ for k, v in local.serverless_site_config_map : {
-      domain = "${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
       cloudfront_log_delivery_prefix = "${local.cloudfront_delivery_prefix}/${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
       cloudfront_log_storage_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
       cloudfront_result_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
@@ -331,6 +330,7 @@ locals {
       glue_table_name = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
       glue_database_name = replace("${v.system_id.security_scope}-${local.visibility_data_bucket}", "-", "_")
       routing = {
+        domain = "${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
         domain_parts = v.domain_parts
         route53_zone_name = v.route53_zone_name
       }
