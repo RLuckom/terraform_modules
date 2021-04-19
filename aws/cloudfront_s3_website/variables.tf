@@ -4,6 +4,7 @@ variable routing {
       top_level_domain = string
       controlled_domain_part = string
     })
+    domain = string
     route53_zone_name = string
   })
 }
@@ -167,9 +168,5 @@ locals {
 }
 
 locals {
-  routing = {
-    domain_parts = var.routing.domain_parts
-    route53_zone_name = var.routing.route53_zone_name
-    domain = "${trimsuffix(var.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.routing.domain_parts.top_level_domain, ".")}"
-  }
+  routing = var.routing
 }

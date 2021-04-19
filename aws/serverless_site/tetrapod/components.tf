@@ -3,11 +3,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   system_id = var.coordinator_data.system_id
-  routing = {
-    domain_parts = var.coordinator_data.routing.domain_parts
-    route53_zone_name = var.coordinator_data.routing.route53_zone_name
-    domain = "${trimsuffix(var.coordinator_data.routing.domain_parts.controlled_domain_part, ".")}.${trimprefix(var.coordinator_data.routing.domain_parts.top_level_domain, ".")}"
-  }
+  routing = var.coordinator_data.routing
   render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.system_id.security_scope}"
   render_name = "site_render-${local.system_id.security_scope}"
   deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${local.system_id.security_scope}"

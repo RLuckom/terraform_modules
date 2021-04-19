@@ -9,6 +9,7 @@ variable coordinator_data {
         top_level_domain = string
         controlled_domain_part = string
       })
+      domain = string
       route53_zone_name = string
     })
     // these can be set to "" if NA
