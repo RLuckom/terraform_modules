@@ -1,8 +1,14 @@
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
 output "role" {
   value = {
-    arn = aws_iam_role.role.arn
-    id = aws_iam_role.role.id
-    name = aws_iam_role.role.name
-    unique_id = aws_iam_role.role.unique_id
+    arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.role_name}"
+    id = var.role_name
+    name = var.role_name
   }
+}
+
+output unique_id {
+  value = aws_iam_role.role.unique_id
 }
