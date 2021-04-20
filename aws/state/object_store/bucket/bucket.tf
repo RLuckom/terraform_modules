@@ -84,7 +84,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 }
 
 data aws_iam_policy_document bucket_policy_document {
-  count = local.need_policy ? 1 : 0
+  count = length(var.lambda_notifications) > 0 || length(local.prefix_object_denial_sets) > 0 || length(local.prefix_object_permission_sets) > 0 || length(local.bucket_permission_sets) > 0 ? 1 : 0
   dynamic "statement" {
     for_each = local.prefix_object_permission_sets
     content {
@@ -151,7 +151,7 @@ data aws_iam_policy_document bucket_policy_document {
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  count = local.need_policy ? 1 : 0
+  count = length(var.lambda_notifications) > 0 || length(local.prefix_object_denial_sets) > 0 || length(local.prefix_object_permission_sets) > 0 || length(local.bucket_permission_sets) > 0 ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
   policy = data.aws_iam_policy_document.bucket_policy_document[0].json
 }
@@ -295,5 +295,4 @@ locals {
       principals = bucket_config.principals
     } if length(bucket_config.principals) > 0],
   )
-  need_policy = (length(local.prefix_object_permission_sets) + length(local.bucket_permission_sets) + length(var.lambda_notifications)) > 0
 }
