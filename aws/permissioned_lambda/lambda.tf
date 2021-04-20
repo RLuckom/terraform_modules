@@ -128,7 +128,7 @@ resource "aws_lambda_function" "lambda" {
       variables = var.environment_var_map
     }
   }
-  depends_on = [aws_s3_bucket_object.deployment_package_zip]
+  depends_on = [aws_s3_bucket_object.deployment_package_zip, module.lambda_role]
 }
 
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
