@@ -58,7 +58,7 @@ module authenticated_role {
   for_each = var.plugin_configs
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
   role_name = "${local.name}-${each.value.role_name_stem}-auth"
-  role_policy = each.value.policy_statements
+  role_policy = []
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }
 

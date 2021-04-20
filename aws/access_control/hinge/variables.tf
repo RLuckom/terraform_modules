@@ -34,10 +34,6 @@ variable server_side_token_check {
 variable plugin_configs {
   type = map(object({
     role_name_stem = string
-    policy_statements = list(object({
-      actions = list(string)
-      resources = list(string)
-    }))
   }))
   default = {}
 }
