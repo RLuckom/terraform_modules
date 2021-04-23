@@ -17,8 +17,16 @@ const { parse } = require("cookie")
 const pluginNameRegex = /^\/${trim(var.plugin_root, "/")}\/([^\/]*)/
 
 const pluginRoleMap = ${jsonencode(var.plugin_role_map)}
+const routeToFunctionNameMap = ${jsonencode(var.route_to_function_name_map)}
 
 function getPluginRole(referer) {
+  const match = referer.match(pluginNameRegex)
+  if (match) {
+    return pluginRoleMap[match[1]]
+  }
+}
+
+function getIntendedFunctionName(route) {
   const match = referer.match(pluginNameRegex)
   if (match) {
     return pluginRoleMap[match[1]]
@@ -28,6 +36,8 @@ function getPluginRole(referer) {
 function handler(event, context, callback) {
   const cognitoidentity = new AWS.CognitoIdentity({region: 'us-east-1'});
   const idToken = parse(event.headers['Cookie'])['ID-TOKEN']
+  delete event.headers['Cookie']
+  delete event.headers['cookie']
   const pluginRole = getPluginRole(new URL(event.headers['referer']).pathname)
   if (!pluginRole) {
     const response = {
@@ -39,35 +49,20 @@ function handler(event, context, callback) {
     };
     return callback(null, response)
   } else {
-    const params = {
-      IdentityPoolId: '${var.identity_pool_id}',
-      Logins: {
-        '${var.user_pool_endpoint}': idToken,
-      }
-    }
-    cognitoidentity.getId(params, function(err, data) {
-      if (err) {
-        return callback(err)
-      }
-      cognitoidentity.getCredentialsForIdentity({
-        IdentityId: data.IdentityId,
-        CustomRoleArn: pluginRole,
-        Logins: params.Logins 
-      }, (e, d) => {
-        if (e) {
-          return callback(err)
-        }
-        const response = {
-          statusCode: "200",
-          cookies: [],
-          "headers": {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(d)
-        };
-        return callback(null, response)
+    const lambda = new AWS.Lambda({
+      credentials: new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: '${var.identity_pool_id}',
+        RoleArn: pluginRole,
+        Logins: {
+          '${var.user_pool_endpoint}': idToken,
+        },
       })
-    });
+    })
+    lambda.invoke({
+      FunctionName: routeToFunctionNameMap[event.path],
+      InvocationType: 'RequestResponse',
+      Payload: JSON.stringify(event)
+    }, callback)
   }
 }
 
