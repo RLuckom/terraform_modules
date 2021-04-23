@@ -86,6 +86,11 @@ variable "invoking_principals" {
   default = []
 }
 
+variable invoking_roles {
+  type = list(string)
+  default = []
+}
+
 variable "environment_var_map" {
   type = map(string)
   default = {}

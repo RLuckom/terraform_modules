@@ -10,7 +10,7 @@ module aws_sdk_layer {
 
 locals {
   aws_sdk_layer_config = concat(module.aws_sdk_layer.*.layer_config, [var.aws_sdk_layer])[0]
-  get_access_creds_function = <<EOF
+  apigateway_dispatcher_function = <<EOF
 const AWS = require('aws-sdk')
 const { parse } = require("cookie")
 
@@ -72,18 +72,18 @@ module.exports = {
 EOF
 }
 
-module get_access_creds {
+module apigateway_dispatcher {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   timeout_secs = 2
   mem_mb = 128
   source_contents = [
     {
       file_name = "index.js"
-      file_contents = local.get_access_creds_function
+      file_contents = local.apigateway_dispatcher_function
     },
   ]
   lambda_details = {
-    action_name = "get_access_creds"
+    action_name = "apigateway_dispatcher"
     scope_name = "test"
     policy_statements = []
   }

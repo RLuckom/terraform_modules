@@ -55,6 +55,11 @@ variable invoking_principals {
   default = []
 }
 
+variable invoking_roles {
+  type = list(string)
+  default = []
+}
+
 variable lambda_event_configs {
   type = list(object({
     maximum_event_age_in_seconds = number

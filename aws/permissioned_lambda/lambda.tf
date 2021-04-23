@@ -158,6 +158,13 @@ resource "aws_lambda_permission" "allow_caller" {
   source_arn = local.callers[count.index].source_arn
 }
 
+resource "aws_lambda_permission" "allow_roles" {
+  count = length(var.invoking_roles)
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda.function_name
+  principal     = var.invoking_roles[count.index]
+}
+
 resource "aws_cloudwatch_event_rule" "lambda_schedule" {
   count = length(var.cron_notifications)
   schedule_expression = var.cron_notifications[count.index].period_expression

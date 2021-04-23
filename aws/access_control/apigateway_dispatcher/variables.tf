@@ -36,21 +36,6 @@ variable route_to_function_name_map {
   default = {}
 }
 
-variable api_path {
-  type = string
-  default = ""
-}
-
-variable gateway_name_stem {
-  type = string
-  default = ""
-}
-
-variable authorizer_name {
-  type = string
-  default = "default"
-}
-
 variable id_token_name {
   type = string
   default = "ID-TOKEN"

@@ -50,6 +50,7 @@ module function {
     SCOPE = var.scope_name
   }, var.environment_var_map)
   invoking_principals = var.invoking_principals
+  invoking_roles = var.invoking_roles
   self_invoke = var.self_invoke
   source_contents = concat(
     local.base_source,
