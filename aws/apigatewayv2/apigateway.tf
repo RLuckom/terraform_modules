@@ -59,18 +59,6 @@ resource "aws_apigatewayv2_api" "api" {
   }
 }
 
-resource "aws_apigatewayv2_deployment" "api" {
-  api_id      = aws_apigatewayv2_api.api.id
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  triggers = {
-    redeployment = local.configuration_sha
-  }
-}
-
 resource "aws_cloudwatch_log_group" "apigateway_log_group" {
 	name              = "/aws/apigateway/${aws_apigatewayv2_api.api.id}/${local.stage_name}"
 	retention_in_days = var.log_retention_period
@@ -79,7 +67,7 @@ resource "aws_cloudwatch_log_group" "apigateway_log_group" {
 resource "aws_apigatewayv2_stage" "stage" {
   api_id = aws_apigatewayv2_api.api.id
   name   = local.stage_name
-  deployment_id = aws_apigatewayv2_deployment.api.id
+  auto_deploy = true
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.apigateway_log_group.arn
     format = local.log_format

@@ -6,13 +6,6 @@ output stage_name {
   value = local.stage_name
 }
 
-output "api_deployment" {
-  value = {
-    id = aws_apigatewayv2_deployment.api.id
-    api_id = aws_apigatewayv2_deployment.api.api_id
-  }
-}
-
 output "api_stage" {
   value = {
     id = aws_apigatewayv2_stage.stage.id
