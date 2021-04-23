@@ -35,7 +35,7 @@ function handler(event, context, callback) {
   const pluginRole = getPluginRole(event.path)
   if (!pluginRole) {
     const response = {
-      statusCode: "403",
+      statusCode: 403,
       "headers": {
         "Content-Type": "text/plain"
       },
@@ -52,7 +52,7 @@ function handler(event, context, callback) {
     cognitoidentity.getId(params, function(err, data) {
       if (err) {
         const response = {
-          statusCode: "500",
+          statusCode: 500,
           "headers": {
             "Content-Type": "text/plain"
           },
@@ -67,7 +67,7 @@ function handler(event, context, callback) {
       }, (e, d) => {
         if (e) {
           const response = {
-            statusCode: "500",
+            statusCode: 500,
             "headers": {
               "Content-Type": "text/plain"
             },
@@ -87,7 +87,7 @@ function handler(event, context, callback) {
         }, (e, r) => {
           if (e) {
             const response = {
-              statusCode: "500",
+              statusCode: 500,
               "headers": {
                 "Content-Type": "text/plain"
               },
@@ -95,15 +95,17 @@ function handler(event, context, callback) {
             };
             return callback(response)
           }
-          const response = {
-            statusCode: "200",
-            cookies: [],
-            "headers": {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(r)
-          };
-          return callback(null, response)
+          if (r.errorType || r.errorMessage) {
+            const response = {
+              statusCode: 500,
+              "headers": {
+                "Content-Type": "text/plain"
+              },
+              body: JSON.stringify(r)
+            };
+            return callback(response)
+          }
+          return callback(null, JSON.parse(r.Payload))
         })
       });
     });
