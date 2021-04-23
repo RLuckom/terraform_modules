@@ -172,7 +172,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   dynamic "ordered_cache_behavior" {
     for_each = var.lambda_origins
     content {
-      path_pattern = ordered_cache_behavior.value.site_path
+      path_pattern = ordered_cache_behavior.value.path
       target_origin_id = ordered_cache_behavior.value.gateway_name_stem
       allowed_methods = ordered_cache_behavior.value.allowed_methods
       cached_methods = ordered_cache_behavior.value.cached_methods

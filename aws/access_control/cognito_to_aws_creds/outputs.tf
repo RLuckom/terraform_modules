@@ -22,12 +22,6 @@ output lambda_origins {
     # unitary path denoting the function's endpoint, e.g.
     # "/meta/relations/trails"
     path = var.api_path
-    # cloudfront routing pattern e.g.
-    # "/meta/relations/trails*"
-    site_path = var.api_path
-    # apigateway path expression e.g.
-    # "/meta/relations/trails/{trail+}"
-    apigateway_path = var.api_path
     # Usually all lambdas in a dist should share one gateway, so the gway
     # name stems should be the same across all lambda endpoints.
     # But if you wanted multiple apigateways within a single dist., you
