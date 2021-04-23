@@ -14,7 +14,8 @@ locals {
 const AWS = require('aws-sdk')
 const { parse } = require("cookie")
 
-const pluginNameRegex = /^\/${trim(var.plugin_root, "/")}\/([^\/]*)/
+const pluginNameRegex = /^\/[^/]*\/${trim(var.plugin_root, "/")}\/([^\/]*)/
+const pathRegex = /^\/[^/]*(\/${trim(var.plugin_root, "/")}\/.*)/
 
 const pluginRoleMap = ${jsonencode(var.plugin_role_map)}
 const routeToFunctionNameMap = ${jsonencode(var.route_to_function_name_map)}
@@ -26,19 +27,12 @@ function getPluginRole(referer) {
   }
 }
 
-function getIntendedFunctionName(route) {
-  const match = referer.match(pluginNameRegex)
-  if (match) {
-    return pluginRoleMap[match[1]]
-  }
-}
-
 function handler(event, context, callback) {
   const cognitoidentity = new AWS.CognitoIdentity({region: 'us-east-1'});
   const idToken = parse(event.headers['Cookie'])['ID-TOKEN']
   delete event.headers['Cookie']
   delete event.headers['cookie']
-  const pluginRole = getPluginRole(new URL(event.headers['referer']).pathname)
+  const pluginRole = getPluginRole(event.path)
   if (!pluginRole) {
     const response = {
       statusCode: "403",
@@ -49,20 +43,70 @@ function handler(event, context, callback) {
     };
     return callback(null, response)
   } else {
-    const lambda = new AWS.Lambda({
-      credentials: new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: '${var.identity_pool_id}',
-        RoleArn: pluginRole,
-        Logins: {
-          '${var.user_pool_endpoint}': idToken,
-        },
-      })
-    })
-    lambda.invoke({
-      FunctionName: routeToFunctionNameMap[event.path],
-      InvocationType: 'RequestResponse',
-      Payload: JSON.stringify(event)
-    }, callback)
+    const params = {
+      IdentityPoolId: '${var.identity_pool_id}',
+      Logins: {
+        '${var.user_pool_endpoint}': idToken,
+      }
+    }
+    cognitoidentity.getId(params, function(err, data) {
+      if (err) {
+        const response = {
+          statusCode: "500",
+          "headers": {
+            "Content-Type": "text/plain"
+          },
+          body: err.toString()
+        };
+        return callback(response)
+      }
+      cognitoidentity.getCredentialsForIdentity({
+        IdentityId: data.IdentityId,
+        CustomRoleArn: pluginRole,
+        Logins: params.Logins 
+      }, (e, d) => {
+        if (e) {
+          const response = {
+            statusCode: "500",
+            "headers": {
+              "Content-Type": "text/plain"
+            },
+            body: e.toString()
+          };
+          return callback(response)
+        }
+        const lambda = new AWS.Lambda({
+          accessKeyId: d.Credentials.AccessKeyId,
+          secretAccessKey: d.Credentials.SecretKey,
+          sessionToken: d.Credentials.SessionToken
+        })
+        lambda.invoke({
+          FunctionName: routeToFunctionNameMap[event.path.match(pathRegex)[1]],
+          InvocationType: 'RequestResponse',
+          Payload: JSON.stringify(event)
+        }, (e, r) => {
+          if (e) {
+            const response = {
+              statusCode: "500",
+              "headers": {
+                "Content-Type": "text/plain"
+              },
+              body: e.toString()
+            };
+            return callback(response)
+          }
+          const response = {
+            statusCode: "200",
+            cookies: [],
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(r)
+          };
+          return callback(null, response)
+        })
+      });
+    });
   }
 }
 
@@ -74,7 +118,7 @@ EOF
 
 module apigateway_dispatcher {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
-  timeout_secs = 2
+  timeout_secs = 5
   mem_mb = 128
   source_contents = [
     {
