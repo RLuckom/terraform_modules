@@ -247,7 +247,6 @@ module site {
   logging_config = local.cloudfront_logging_config
   lambda_authorizers = var.lambda_authorizer.name == "NONE" ? {} : map(var.lambda_authorizer.name, var.lambda_authorizer)
   lambda_origins = [{
-    id = "trails"
     path = "/meta/relations/trails"
     authorizer = var.lambda_authorizer.name
     gateway_name_stem = "trails"

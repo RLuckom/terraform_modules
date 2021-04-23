@@ -37,9 +37,6 @@ variable lambda_authorizers {
 
 variable lambda_origins {
   type = list(object({
-    # This is going to be the origin_id in cloudfront. Should be a string
-    # that suggests the function's purpose
-    id = string
     # This should only be set to true if the access_control_function_qualified_arns
     # above are set AND you want the function access-controlled
     authorizer = string

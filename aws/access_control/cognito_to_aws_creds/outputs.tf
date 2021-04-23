@@ -15,9 +15,6 @@ output lambda_authorizer_config {
 
 output lambda_origins {
   value = [{
-    # This is going to be the origin_id in cloudfront. Should be a string
-    # that suggests the function's purpose
-    id = "get_access_tokens"
     authorizer = var.authorizer_name
     # unitary path denoting the function's endpoint, e.g.
     # "/meta/relations/trails"
