@@ -216,7 +216,7 @@ module trails_updater {
 module trails_resolver {
   count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
-  timeout_secs = 40
+  timeout_secs = 5
   mem_mb = 128
   logging_config = local.lambda_logging_config
   log_level =var.log_level
