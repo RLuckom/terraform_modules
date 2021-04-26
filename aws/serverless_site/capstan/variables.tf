@@ -181,6 +181,14 @@ variable website_bucket_bucket_permissions {
   default = []
 }
 
+variable website_bucket_prefix_list_permissions {
+  type = list(object({
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable website_bucket_cors_rules {
   type = list(object({
     allowed_headers = list(string)

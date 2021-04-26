@@ -74,6 +74,7 @@ module website_bucket {
   forbidden_website_paths = var.forbidden_website_paths
   additional_allowed_origins = var.additional_allowed_origins
   prefix_object_permissions = var.website_bucket_prefix_object_permissions
+  prefix_list_permissions = var.website_bucket_prefix_list_permissions
   bucket_permissions = var.website_bucket_bucket_permissions
   website_access_principals = local.website_access_principals
   lambda_notifications = local.website_bucket_lambda_notifications

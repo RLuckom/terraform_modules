@@ -33,6 +33,14 @@ variable website_access_principals {
   default = []
 }
 
+variable prefix_list_permissions {
+  type = list(object({
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable forbidden_website_paths {
   type = list(string)
   default = []

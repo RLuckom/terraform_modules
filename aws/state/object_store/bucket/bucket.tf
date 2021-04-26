@@ -132,6 +132,29 @@ data aws_iam_policy_document bucket_policy_document {
   }
 
   dynamic "statement" {
+    for_each = local.conditioned_bucket_permission_sets
+    content {
+      actions   = statement.value.actions
+      resources   = [aws_s3_bucket.bucket.arn]
+      dynamic "principals" {
+        for_each = statement.value.principals
+        content {
+          type = principals.value.type
+          identifiers = principals.value.identifiers
+        }
+      }
+      dynamic "condition" {
+        for_each = statement.value.conditions
+        content {
+          test = condition.value.test
+          variable = condition.value.variable
+          values = condition.value.values
+        }
+      }
+    }
+  }
+
+  dynamic "statement" {
     for_each = var.lambda_notifications
     content {
       actions   = concat(
@@ -161,6 +184,15 @@ locals {
     "s3:ListBucket",
     "s3:GetBucketAcl",
     "s3:GetBucketLocation"
+  ]
+
+  list_prefix_bucket_actions = [
+    "s3:GetBucketAcl",
+    "s3:GetBucketLocation"
+  ]
+
+  list_bucket_action = [
+    "s3:ListBucket",
   ]
 
   put_object_actions = [
@@ -201,6 +233,8 @@ locals {
 
   bucket_permission_set_actions = {
     list_bucket = local.list_bucket_actions
+    list_bucket_prefix = local.list_prefix_bucket_actions
+    list_bucket_action = local.list_bucket_action
     athena_query_execution = local.list_bucket_actions
   }
 
@@ -242,6 +276,36 @@ locals {
       permission_type = "athena_query_execution"
       arns = prefix_config.arns
     } if length(prefix_config.arns) > 0],
+    [ for prefix_config in var.prefix_list_permissions : {
+      permission_type = "list_bucket_prefix"
+      arns = prefix_config.arns
+    } if length(prefix_config.arns) > 0],
+  )
+  conditioned_bucket_permissions = concat(
+    [ for prefix_config in var.prefix_list_permissions : {
+      permission_type = "list_bucket_action"
+      conditions = [{
+        test     = "StringEquals"
+        variable = "s3:prefix"
+
+        values = [
+          prefix_config.prefix
+        ]
+      }]
+      arns = prefix_config.arns
+    } if length(prefix_config.arns) > 0],
+    [ for prefix_config in var.prefix_list_permissions : {
+      permission_type = "list_bucket_action"
+      conditions = [{
+        test     = "StringLike"
+        variable = "s3:prefix"
+
+        values = [
+          "${prefix_config.prefix}/*"
+        ]
+      }]
+      arns = prefix_config.arns
+    } if length(prefix_config.arns) > 0]
   )
 }
 
@@ -294,5 +358,19 @@ locals {
       actions = local.bucket_permission_set_actions[bucket_config.permission_type]
       principals = bucket_config.principals
     } if length(bucket_config.principals) > 0],
+  )
+
+  conditioned_bucket_permission_sets = concat(
+    [ for bucket_config in local.conditioned_bucket_permissions : {
+      actions = local.bucket_permission_set_actions[bucket_config.permission_type]
+      principals = [
+        {
+          type = "AWS"
+          identifiers = bucket_config.arns 
+        }
+      ]
+      conditions = bucket_config.conditions
+    } if length(bucket_config.arns) > 0],
+    []
   )
 }

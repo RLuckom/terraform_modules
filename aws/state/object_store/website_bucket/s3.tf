@@ -18,6 +18,7 @@ module bucket {
   security_scope = var.security_scope
   acl    = var.allow_direct_access ? "public-read" : "private"
   force_destroy = var.force_destroy
+  prefix_list_permissions = var.prefix_list_permissions
   cors_rules = local.cors_rules
   lifecycle_rules = var.lifecycle_rules
   lambda_notifications = var.lambda_notifications

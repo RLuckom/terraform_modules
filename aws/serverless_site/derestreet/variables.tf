@@ -51,6 +51,10 @@ variable plugin_configs {
       role_arn = string
       permission_type = string
     }))
+    plugin_relative_bucket_list_permissions_needed = list(object({
+      plugin_relative_key = string
+      role_arn = string
+    }))
     plugin_relative_bucket_host_permissions_needed = list(object({
       plugin_relative_key = string
       role_arn = string
@@ -169,6 +173,21 @@ locals {
   asset_hosting_root = trim(var.asset_hosting_root, "/")
   need_aws_sdk_layer = var.aws_sdk_layer.present == false
   aws_sdk_layer_config = local.need_aws_sdk_layer ? module.aws_sdk[0].layer_config : var.aws_sdk_layer
+  plugin_bucket_list_permissions_needed = zipmap(
+    [for k in keys(var.plugin_configs) : replace(k, "/", "")],
+    [for name, config in var.plugin_configs : 
+        flatten([for permission in config.plugin_relative_bucket_list_permissions_needed : [
+          {
+            prefix = trimsuffix("${local.upload_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(permission.plugin_relative_key, "/")}", "/")
+            arns = permission.role_arn == null ? [module.cognito_identity_management.authenticated_role[name].arn] : [permission.role_arn]
+          },
+          {
+            prefix = trimsuffix("${local.asset_hosting_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(permission.plugin_relative_key, "/")}", "/")
+            arns = permission.role_arn == null ? [module.cognito_identity_management.authenticated_role[name].arn] : [permission.role_arn]
+          },
+        ]
+      ])
+  ])
   plugin_bucket_permissions_needed = zipmap(
     [for k in keys(var.plugin_configs) : replace(k, "/", "")],
     [for name, config in var.plugin_configs : 

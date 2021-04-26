@@ -32,6 +32,14 @@ variable prefix_athena_query_permissions {
   default = []
 }
 
+variable prefix_list_permissions {
+  type = list(object({
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable lambda_notifications {
   type = list(object({
     lambda_arn = string

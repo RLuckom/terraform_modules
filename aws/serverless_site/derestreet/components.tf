@@ -77,6 +77,7 @@ module admin_site {
     flatten(values(local.plugin_bucket_permissions_needed)),
     var.archive_system.bucket_permissions_needed
   )
+  website_bucket_prefix_list_permissions = flatten(values(local.plugin_bucket_list_permissions_needed))
   website_bucket_lambda_notifications = concat(
     flatten(values(local.plugin_configs).*.upload_path_lambda_notifications),
     flatten(values(local.plugin_configs).*.storage_path_lambda_notifications),
