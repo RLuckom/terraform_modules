@@ -21,9 +21,9 @@ variable aws_sdk_layer {
   }
 }
 
-variable plugin_root {
+variable plugin_api_root {
   type = string
-  default = "/plugins/"
+  default = "/api/plugins/"
 }
 
 variable plugin_role_map {

@@ -9,13 +9,15 @@ module aws_sdk_layer {
 }
 
 locals {
+  plugin_api_root = trim(var.plugin_api_root, "/")
+  plugin_api_root_regex_safe = replace(local.plugin_api_root, "/", "\\/")
   aws_sdk_layer_config = concat(module.aws_sdk_layer.*.layer_config, [var.aws_sdk_layer])[0]
   apigateway_dispatcher_function = <<EOF
 const AWS = require('aws-sdk')
 const { parse } = require("cookie")
 
-const pluginNameRegex = /^\/[^/]*\/${trim(var.plugin_root, "/")}\/([^\/]*)/
-const pathRegex = /^\/[^/]*(\/${trim(var.plugin_root, "/")}\/.*)/
+const pluginNameRegex = /^\/[^/]*\/${local.plugin_api_root_regex_safe}\/([^\/]*)/
+const pathRegex = /^\/[^/]*(\/${local.plugin_api_root_regex_safe}\/.*)/
 
 const pluginRoleMap = ${jsonencode(var.plugin_role_map)}
 const routeToFunctionNameMap = ${jsonencode(var.route_to_function_name_map)}

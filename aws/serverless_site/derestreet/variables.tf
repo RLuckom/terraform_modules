@@ -141,6 +141,11 @@ variable plugin_root {
   default = "/plugins/"
 }
 
+variable api_root {
+  type = string
+  default = "/api/"
+}
+
 variable upload_root {
   type = string
   default = "/uploads/"
@@ -169,6 +174,7 @@ module aws_sdk {
 locals {
   gateway_name_stem = "default"
   plugin_root = trim(var.plugin_root, "/")
+  api_root = trim(var.api_root, "/")
   upload_root = trim(var.upload_root, "/")
   asset_hosting_root = trim(var.asset_hosting_root, "/")
   need_aws_sdk_layer = var.aws_sdk_layer.present == false
@@ -201,7 +207,7 @@ locals {
     )
   ])
   route_to_function_names = flatten([for name, config in var.plugin_configs : [ for origin in config.plugin_relative_lambda_origins : {
-    path = "/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"
+    path = "/${local.api_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"
     name = origin.lambda.name
   }]])
   route_to_function_name_map = zipmap(
@@ -229,7 +235,7 @@ locals {
       upload_prefix = "${local.upload_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       asset_hosting_prefix = "${local.asset_hosting_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       lambda_origins = [ for origin in config.plugin_relative_lambda_origins : {
-        path = "/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"
+        path = "/${local.api_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"
         authorizer = "default"
         gateway_name_stem = local.gateway_name_stem
         allowed_methods = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]

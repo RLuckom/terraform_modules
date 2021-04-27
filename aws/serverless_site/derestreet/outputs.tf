@@ -24,6 +24,7 @@ output plugin_config {
     domain = module.admin_site.routing.domain
     authenticated_role = module.cognito_identity_management.authenticated_role[replace(k, "/", "")]
     source_root = "${local.plugin_root}/${replace(k, "/", "")}/"
+    api_root = "${local.api_root}/${local.plugin_root}/${replace(k, "/", "")}/"
     upload_root = "${local.upload_root}/${local.plugin_root}/${replace(k, "/", "")}/"
     hosting_root = "${local.asset_hosting_root}/${local.plugin_root}/${replace(k, "/", "")}/"
   }])
