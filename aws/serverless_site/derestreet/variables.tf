@@ -178,10 +178,6 @@ locals {
     [for name, config in var.plugin_configs : 
         flatten([for permission in config.plugin_relative_bucket_list_permissions_needed : [
           {
-            prefix = trimsuffix("${local.upload_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(permission.plugin_relative_key, "/")}", "/")
-            arns = permission.role_arn == null ? [module.cognito_identity_management.authenticated_role[name].arn] : [permission.role_arn]
-          },
-          {
             prefix = trimsuffix("${local.asset_hosting_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(permission.plugin_relative_key, "/")}", "/")
             arns = permission.role_arn == null ? [module.cognito_identity_management.authenticated_role[name].arn] : [permission.role_arn]
           },
