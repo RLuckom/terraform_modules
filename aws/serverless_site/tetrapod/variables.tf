@@ -198,6 +198,15 @@ variable website_bucket_prefix_object_permissions {
   default = []
 }
 
+variable website_bucket_suffix_object_denials {
+  type = list(object({
+    permission_type = string
+    suffix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable website_bucket_bucket_permissions {
   type = list(object({
     permission_type = string

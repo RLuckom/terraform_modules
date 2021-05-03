@@ -117,6 +117,22 @@ data aws_iam_policy_document bucket_policy_document {
   }
 
   dynamic "statement" {
+    for_each = local.suffix_object_denial_sets
+    content {
+      actions   = statement.value.actions
+      effect = "Deny"
+      resources   = ["${aws_s3_bucket.bucket.arn}/*${statement.value.suffix}"]
+      dynamic "principals" {
+        for_each = statement.value.principals
+        content {
+          type = principals.value.type
+          identifiers = principals.value.identifiers
+        }
+      }
+    }
+  }
+
+  dynamic "statement" {
     for_each = local.bucket_permission_sets
     content {
       actions   = statement.value.actions
@@ -270,6 +286,7 @@ locals {
   ])
   )
   prefix_object_denials = var.prefix_object_denials
+  suffix_object_denials = var.suffix_object_denials
   bucket_permissions = concat(
     var.bucket_permissions,
     [ for prefix_config in var.prefix_athena_query_permissions : {
@@ -343,6 +360,23 @@ locals {
       actions = local.object_permission_set_actions[prefix_config.permission_type]
       principals = prefix_config.principals
     } if length(prefix_config.principals) > 0],
+  )
+  suffix_object_denial_sets = concat(
+    [ for suffix_config in local.suffix_object_denials : {
+      suffix = suffix_config.suffix
+      actions = local.object_permission_set_actions[suffix_config.permission_type]
+      principals = [
+        {
+          type = "AWS"
+          identifiers = suffix_config.arns 
+        }
+      ]
+    } if length(suffix_config.arns) > 0],
+    [ for suffix_config in var.principal_suffix_object_denials : {
+      suffix = suffix_config.suffix
+      actions = local.object_permission_set_actions[suffix_config.permission_type]
+      principals = suffix_config.principals
+    } if length(suffix_config.principals) > 0],
   )
   bucket_permission_sets = concat(
     [ for bucket_config in local.bucket_permissions : {

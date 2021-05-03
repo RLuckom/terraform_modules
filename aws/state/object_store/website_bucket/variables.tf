@@ -104,6 +104,24 @@ variable prefix_object_permissions {
   default = []
 }
 
+variable prefix_object_denials {
+  type = list(object({
+    permission_type = string
+    prefix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
+variable suffix_object_denials {
+  type = list(object({
+    permission_type = string
+    suffix = string
+    arns = list(string)
+  }))
+  default = []
+}
+
 variable bucket_permissions {
   type = list(object({
     permission_type = string

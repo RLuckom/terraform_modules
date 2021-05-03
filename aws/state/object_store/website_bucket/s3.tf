@@ -23,6 +23,8 @@ module bucket {
   lifecycle_rules = var.lifecycle_rules
   lambda_notifications = var.lambda_notifications
   prefix_object_permissions = var.prefix_object_permissions
+  prefix_object_denials = var.prefix_object_denials
+  suffix_object_denials = var.suffix_object_denials
   bucket_permissions = var.bucket_permissions
   principal_prefix_object_permissions = length(local.website_access_principals) > 0 ? [{
     prefix = ""

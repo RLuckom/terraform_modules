@@ -304,6 +304,13 @@ locals {
       filter_suffix       = ".md"
     }
   ] : []
+  website_bucket_suffix_object_denials = concat(var.website_bucket_suffix_object_denials, [{
+    permission_type = "put_object"
+    suffix = ".md"
+    arns = [
+      module.site_render[0].role.arn
+    ]
+  }])
   glue_table_permission_names = {}
   website_access_principals = local.cloudfront_origin_access_principals
 }
@@ -349,6 +356,7 @@ module website_bucket {
   domain_parts = local.routing.domain_parts
   cors_rules = var.website_bucket_cors_rules
   prefix_object_permissions = var.website_bucket_prefix_object_permissions
+  suffix_object_denials = local.website_bucket_suffix_object_denials
   forbidden_website_paths = var.forbidden_website_paths
   bucket_permissions = var.website_bucket_bucket_permissions
   additional_allowed_origins = var.additional_allowed_origins
