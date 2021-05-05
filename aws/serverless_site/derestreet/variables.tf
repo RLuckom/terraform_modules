@@ -220,7 +220,6 @@ locals {
       role_name_stem = var.plugin_static_configs[name].role_name_stem
       slug = var.plugin_static_configs[name].slug
       additional_connect_sources = concat(
-        [ "https://${module.cognito_user_management.auth_domain_name}"],
         config.additional_connect_sources,
         [ for origin in config.plugin_relative_lambda_origins :
           "https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"
@@ -229,7 +228,7 @@ locals {
       policy_statements = config.policy_statements
       http_header_values = merge(
         {
-          "Content-Security-Policy" = "default-src 'none'; style-src 'self'; script-src https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/assets/js/; object-src 'none'; connect-src 'self' ${join(" ", concat([ "https://${module.cognito_user_management.auth_domain_name}"], config.additional_connect_sources, [ for origin in config.plugin_relative_lambda_origins : "https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}" ]))}; img-src 'self' data:;"
+          "Content-Security-Policy" = "default-src 'none'; style-src 'self'; script-src https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/assets/js/; object-src 'none'; connect-src 'self' ${join(" ", concat(config.additional_connect_sources, [ for origin in config.plugin_relative_lambda_origins : "https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}" ]))}; img-src 'self' data:;"
         },
         var.default_static_headers
       )
