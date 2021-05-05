@@ -205,15 +205,6 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       dynamic "lambda_function_association" {
         for_each = ordered_cache_behavior.value.authorizer != "NONE" ? [1] : []
         content {
-          event_type   = "viewer-request"
-          lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
-          include_body = false
-        }
-      }
-
-      dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.authorizer != "NONE" ? [1] : []
-        content {
           event_type   = "origin-request"
           lambda_arn   = var.access_control_function_qualified_arns[0].move_cookie_to_auth_header
           include_body = false
