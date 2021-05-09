@@ -50,26 +50,26 @@ function exifMeta(img) {
   return ret
 }
 
+function parseImageId(key) {
+  const keySegments = key.split('/')
+  const idSegments = keySegments.slice(keySegments.length - ${io_config.key_length})
+  const [id, ext] = '/'.join(idSegments).split('.')
+  return {
+    id,
+    ext
+  }
+}
+
 module.exports = {
   stages: {
     file: {
       index: 0,
       transformers: {
         mediaId: {
-          or: [
-            {ref: 'event.mediaId'},
-            { 
-              helper: 'transform',
-              params: {
-                func: {value: ({key}) => key.split('/').pop()},
-                  arg: {
-                  all: {
-                    key: { ref: 'event.Records[0].s3.object.key'}
-                  }
-                }
-              }
-            },
-          ]
+          helper: ({key}) => parseImageId(key),
+            params: {
+            key: { ref: 'event.Records[0].s3.object.key'}
+          }
         },
         widths: { value: [50, 500] },
         bucket: {
@@ -241,7 +241,7 @@ module.exports = {
                 helper: ({widths, ext, mediaId}) => _.map(widths, (w) => "${trim(io_config.output_path, "/")}/" + mediaId + "/" + w + "." + ext),
                 params: {
                   ext: { ref: 'imageType.vars.imageType.ext'},
-                  mediaId: { ref: 'file.vars.mediaId' },
+                  mediaId: { ref: 'file.vars.mediaId.id' },
                   widths: { ref: 'stage.widths' },
                 }
               }

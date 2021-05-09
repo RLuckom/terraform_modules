@@ -4,6 +4,7 @@ variable io_config {
     input_path = string
     output_bucket = string
     output_path = string
+    key_length = number
     tags = list(object({
       Key = string
       Value = string
