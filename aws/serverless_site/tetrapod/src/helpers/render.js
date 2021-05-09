@@ -62,7 +62,7 @@ function parsePost(s) {
       }
     }
     try {
-      const fm = yaml.safeLoad(frontMatter)
+      const fm = yaml.load(frontMatter)
       if (fm.date) {
         fm.date = moment(fm.date)
       }
