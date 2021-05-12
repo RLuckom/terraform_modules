@@ -53,7 +53,7 @@ function exifMeta(img) {
 function parseImageId(key) {
   const keySegments = key.split('/')
   const idSegments = keySegments.slice(keySegments.length - ${io_config.key_length})
-  const [id, ext] = '/'.join(idSegments).split('.')
+  const [id, ext] = idSegments.join('/').split('.')
   return {
     id,
     ext
