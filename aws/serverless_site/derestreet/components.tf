@@ -62,7 +62,7 @@ module apigateway_dispatcher {
 }
 
 module admin_site_frontpage {
-  source = "github.com/RLuckom/terraform_modules//themes/admin_site_ui?ref=web-manifest"
+  source = "github.com/RLuckom/terraform_modules//themes/admin_site_ui"
   plugin_configs = [for name, config in local.plugin_configs : {
     name = name
     slug = config.slug
