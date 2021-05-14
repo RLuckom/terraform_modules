@@ -61,6 +61,14 @@ module apigateway_dispatcher {
   route_to_function_name_map = local.route_to_function_name_map
 }
 
+module admin_site_frontpage {
+  source = "github.com/RLuckom/terraform_modules//themes/admin_site_ui?ref=web-manifest"
+  plugin_configs = [for name, config in local.plugin_configs : {
+    name = name
+    slug = config.slug
+  }]
+}
+
 module admin_site {
   source = "github.com/RLuckom/terraform_modules//aws/serverless_site/capstan"
   file_configs = concat(
@@ -95,12 +103,4 @@ module admin_site {
   access_control_function_qualified_arns = [module.access_control_functions.access_control_function_qualified_arns]
   coordinator_data = var.coordinator_data
   subject_alternative_names = var.subject_alternative_names
-}
-
-module admin_site_frontpage {
-  source = "github.com/RLuckom/terraform_modules//themes/admin_site_ui"
-  plugin_configs = [for name, config in local.plugin_configs : {
-    name = name
-    slug = config.slug
-  }]
 }

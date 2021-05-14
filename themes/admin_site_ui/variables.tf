@@ -11,10 +11,32 @@ variable plugin_configs {
   default = []
 }
 
+variable manifest_data {
+  type = map(string)
+  default = {
+    name = "my site"
+    start_url = "."
+    scope = "."
+    display = "standalone"
+    lang = "en-US"
+  }
+}
+
 locals {
   file_prefix = trim(var.file_prefix, "/")
   styles_path = "${local.file_prefix}/assets/styles/styles.css"
   files = [
+    {
+      key = "${local.file_prefix}/manifest.json",
+      file_path = ""
+      file_contents = jsonencode(merge(var.manifest_data, {
+        icons = [{
+          src = "./favicon.ico"
+          type = "image/x-icon" 
+        }]
+      }))
+      content_type = "application/manifest+json"
+    },
     {
       key = "${local.file_prefix}/index.html"
       file_path = ""
