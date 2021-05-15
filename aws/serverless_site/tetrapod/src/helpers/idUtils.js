@@ -8,7 +8,7 @@ function urlToPath(url, pathReString) {
   if (pathRe.test(resourcePath)) {
     resourcePath = pathRe.exec(resourcePath)[1]
   }
-  return resourcePath
+  return decodeURIComponent(resourcePath)
 }
 
 function identifyItem({resourcePath, siteDescription, selectionPath}) {
