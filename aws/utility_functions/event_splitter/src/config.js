@@ -37,7 +37,7 @@ module.exports = {
         notifications: {
           helper: getNotifiablesForEvent,
           params: {
-            key: {ref: 'event.Records[0].s3.object.key'},
+            key: {ref: 'event.Records[0].s3.object.decodedKey'},
             bucket: {ref: 'event.Records[0].s3.bucket.name'},
             eventType: {ref: 'event.Records[0].eventName'},
             payload: {ref: 'event'},

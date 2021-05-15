@@ -8,7 +8,7 @@ module.exports = {
       transformers: {
         key: {
           or: [
-            {ref: 'event.Records[0].s3.object.key'},
+            {ref: 'event.Records[0].s3.object.decodedKey'},
             {ref: 'event.item.memberUri'},
             {ref: 'event.item.uri'},
           ]

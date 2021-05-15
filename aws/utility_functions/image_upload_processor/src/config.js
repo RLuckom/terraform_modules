@@ -68,7 +68,7 @@ module.exports = {
         mediaId: {
           helper: ({key}) => parseImageId(key),
             params: {
-            key: { ref: 'event.Records[0].s3.object.key'}
+            key: { ref: 'event.Records[0].s3.object.decodedKey'}
           }
         },
         widths: { value: [50, 500] },
@@ -81,7 +81,7 @@ module.exports = {
         imageKey: {
           or: [
             {ref: 'event.imageKey'},
-            {ref: 'event.Records[0].s3.object.key'},
+            {ref: 'event.Records[0].s3.object.decodedKey'},
           ]
         },
       },
@@ -259,7 +259,7 @@ module.exports = {
             accessSchema: {value: 'dataSources.AWS.s3.putObjectTagging'},
             params: {
               explorandaParams: {
-                Key: {ref: 'event.Records[0].s3.object.key'},
+                Key: {ref: 'event.Records[0].s3.object.decodedKey'},
                 Bucket: {ref: 'event.Records[0].s3.bucket.name'},
                 Tagging: {value: {
                   TagSet: ${jsonencode(io_config.tags)}

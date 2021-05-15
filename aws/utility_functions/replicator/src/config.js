@@ -43,7 +43,7 @@ module.exports = {
     tags: {
       index: 0,
       transformers: {
-        key: {ref: 'event.Records[0].s3.object.key'},
+        key: {ref: 'event.Records[0].s3.object.decodedKey'},
         bucket: {ref: 'event.Records[0].s3.bucket.name'},
       },
       dependencies: {

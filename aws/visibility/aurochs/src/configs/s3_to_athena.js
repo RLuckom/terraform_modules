@@ -20,7 +20,7 @@ module.exports = {
                 athenaResultLocationsMap: {value: ${athena_destinations_map}},
                 glueDbMap: {value: ${glue_db_map}},
                 glueTableMap: {value: ${glue_table_map}},
-                objectKey: {ref: 'event.Records[0].s3.object.key'},
+                objectKey: {ref: 'event.Records[0].s3.object.decodedKey'},
               }
             },
             func: parseKey
@@ -122,7 +122,7 @@ module.exports = {
             arg: {
               all: {
                 bucket: {ref: 'event.Records[0].s3.bucket.name'},
-                key: {ref: 'event.Records[0].s3.object.key'},
+                key: {ref: 'event.Records[0].s3.object.decodedKey'},
               }
             },
             func: ({bucket, key}) => '/' + bucket + '/' + key
@@ -155,7 +155,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 Bucket: {ref: 'event.Records[0].s3.bucket.name'},
-                Key: {ref: 'event.Records[0].s3.object.key'},
+                Key: {ref: 'event.Records[0].s3.object.decodedKey'},
               },
             }
           }
