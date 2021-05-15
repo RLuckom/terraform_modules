@@ -33,6 +33,11 @@ function createDatedS3Key(prefix, scope, action, requestId, date) {
 
 function buildLogger(event, context, callback) {
   const logBucket = process.env.LOG_BUCKET
+  _.each(_.get(event, 'Records'), (rec) => {
+    if (_.get(rec, 's3.object.key')) {
+      rec.s3.object.decodedKey = decodeURIComponent(rec.s3.object.key.replace(/\+/g, ' '))
+    }
+  })
   if (!logBucket) {
     return {
       log: function(arg) {
