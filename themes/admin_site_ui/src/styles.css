@@ -59,7 +59,6 @@ header {
   background-color: powderblue;
   display: flex;
   align-items: center;
-  margin-bottom: 2em;
 }
 
 .header-block {
