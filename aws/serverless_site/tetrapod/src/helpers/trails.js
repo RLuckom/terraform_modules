@@ -36,7 +36,7 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
     neighbors: {}
   }
   const trailUriTemplate = urlTemplate.parse(_.get(siteDescription, 'relations.meta.trail.idTemplate'))
-  const trailsListId = trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: encodeURIComponent(TRAILS_TRAIL_NAME)}})
+  const trailsListId = trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: TRAILS_TRAIL_NAME}})
   _.each(existingMemberships, (trail) => {
     if (!_.find(trailNames, (name) => name === trail.trailName) && trail.trailName !== TRAILS_TRAIL_NAME) {
       updates.dynamoDeletes.push({
@@ -57,7 +57,7 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
     const trailUriTemplate = urlTemplate.parse(_.get(siteDescription, 'relations.meta.trail.idTemplate'))
     const newList = _.cloneDeep(members)
     const sortedNewList = sortTrailMembers(newList)
-    const trailUri = trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: encodeURIComponent(trailName)}})
+    const trailUri = trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: trailName}})
     const currentIndex = _.findIndex(members, (member) => {
       return member.memberKey === `${item.type}:${item.name}` && _.isEqual(member.memberMetadata, item.metadata)
     })

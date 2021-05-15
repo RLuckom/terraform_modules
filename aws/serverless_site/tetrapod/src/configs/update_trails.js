@@ -154,7 +154,7 @@ module.exports = {
                 func: ({deletes, siteDescription}) => {
                   const trailUriTemplate = urlTemplate.parse(_.get(siteDescription, '${self_type}.setTemplate'))
                   return _.map(deletes, ({trailName}) => {
-                    return trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: encodeURIComponent(trailName)}})
+                    return trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: trailName}})
                   })
                 }
               }

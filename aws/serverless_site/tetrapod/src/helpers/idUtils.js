@@ -72,21 +72,21 @@ function expandUrlTemplate({templateString, templateParams}) {
 function expandUrlTemplateWithNames({templateString, siteDetails, names}) {
   const template = urlTemplate.parse(templateString)
   return _.map(names, (v, k) => {
-    return template.expand({...siteDetails, ...{name: encodeURIComponent(v)}})
+    return template.expand({...siteDetails, ...{name: v}})
   })
 }
 
 function expandUrlTemplatesWithName({templateStrings, siteDetails, name}) {
   return _.map(templateStrings, (templateString, k) => {
     const template = urlTemplate.parse(templateString)
-    return template.expand({...siteDetails, ...{name: encodeURIComponent(name)}})
+    return template.expand({...siteDetails, ...{name: name}})
   })
 }
 
 function expandUrlTemplateWithName({templateString, siteDetails, name, type}) {
-  const params = {...siteDetails, ...{name: encodeURIComponent(name)}}
+  const params = {...siteDetails, ...{name: name}}
   if (type) {
-    params.type = encodeURIComponent(type)
+    params.type = type
   }
   return urlTemplate.parse(templateString).expand(params)
 }
