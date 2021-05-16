@@ -9,6 +9,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable coordinator_data {
   type = object({
     system_id = object({

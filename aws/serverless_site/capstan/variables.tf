@@ -24,6 +24,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable forbidden_website_paths {
   type = list(string)
   default = []

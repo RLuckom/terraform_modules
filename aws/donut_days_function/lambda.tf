@@ -42,6 +42,7 @@ module function {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   timeout_secs = var.timeout_secs
   account_id = var.account_id
+  region = var.region
   mem_mb = var.mem_mb
   environment_var_map = merge({
     DONUT_DAYS_DEBUG = var.log_level

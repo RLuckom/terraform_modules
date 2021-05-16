@@ -9,15 +9,13 @@ module "lambda_role" {
   }]
 }
 
-data "aws_region" "current" {}
-
 locals {
   lambda_invoke = concat([{
     actions   =  [
       "lambda:InvokeFunction"
     ]
     resources = [
-      "arn:aws:lambda:${data.aws_region.current.name}:${var.account_id}:function:${local.scoped_lambda_name}"
+      "arn:aws:lambda:${var.region}:${var.account_id}:function:${local.scoped_lambda_name}"
     ]
   }])
   lambda_destinations = concat(

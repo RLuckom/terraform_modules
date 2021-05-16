@@ -33,6 +33,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable replication_memory_size {
   type = number
   default = 128

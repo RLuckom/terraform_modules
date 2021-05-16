@@ -10,6 +10,7 @@ module cognito_user_management {
 module cognito_identity_management {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/hinge"
   account_id = var.account_id
+  region = var.region
   system_id = var.system_id
   required_group = var.user_group_name
   client_id               = module.cognito_user_management.user_pool_client.id
@@ -25,6 +26,7 @@ resource random_password nonce_signing_secret {
 module access_control_functions {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/gattice"
   account_id = var.account_id
+  region = var.region
   token_issuer = "https://${module.cognito_user_management.user_pool.endpoint}"
   client_id = module.cognito_user_management.user_pool_client.id
   security_scope = var.system_id.security_scope
@@ -45,6 +47,7 @@ module access_control_functions {
 module get_access_creds {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/cognito_to_aws_creds"
   account_id = var.account_id
+  region = var.region
   identity_pool_id = module.cognito_identity_management.identity_pool.id
   user_pool_endpoint = module.cognito_user_management.user_pool.endpoint
   api_path = var.get_access_creds_path_for_lambda_origin
@@ -57,6 +60,7 @@ module get_access_creds {
 module apigateway_dispatcher {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/apigateway_dispatcher"
   account_id = var.account_id
+  region = var.region
   identity_pool_id = module.cognito_identity_management.identity_pool.id
   user_pool_endpoint = module.cognito_user_management.user_pool.endpoint
   client_id = module.cognito_user_management.user_pool_client.id
@@ -76,6 +80,7 @@ module admin_site_frontpage {
 module admin_site {
   source = "github.com/RLuckom/terraform_modules//aws/serverless_site/capstan"
   account_id = var.account_id
+  region = var.region
   file_configs = concat(
     module.admin_site_frontpage.files,
     flatten(values(local.plugin_configs).*.file_configs)

@@ -11,6 +11,7 @@ module image_layer {
 module image_processing_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   account_id = var.account_id
+  region = var.region
   timeout_secs = var.function_time_limit
   mem_mb = var.function_memory_size
   config_contents = templatefile("${path.module}/src/config.js",

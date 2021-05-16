@@ -16,6 +16,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable bucket_logging_config {
   type = object({
     target_bucket = string

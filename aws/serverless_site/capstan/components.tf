@@ -1,6 +1,3 @@
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
-
 locals {
   system_id = var.coordinator_data.system_id
   routing = var.coordinator_data.routing
@@ -39,7 +36,7 @@ module site {
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
-    regional_domain_name = "${local.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
+    regional_domain_name = "${local.site_bucket}.s3.${var.region == "us-east-1" ? "" : "${var.region}."}amazonaws.com"
   }]
   routing = local.routing
   system_id = local.system_id
@@ -68,6 +65,7 @@ module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
   name = local.site_bucket
   account_id = var.account_id
+  region = var.region
   force_destroy = var.force_destroy
   security_scope = var.coordinator_data.system_id.security_scope
   domain_parts = local.routing.domain_parts

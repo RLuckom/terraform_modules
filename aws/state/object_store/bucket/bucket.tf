@@ -2,6 +2,7 @@ module splitter_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/event_splitter"
   action_name = "split-${var.name}"
   account_id = var.account_id
+  region = var.region
   logging_config = var.utility_function_logging_config
   lambda_event_configs = var.utility_function_event_configs
   security_scope = var.security_scope

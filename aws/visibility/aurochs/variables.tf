@@ -17,6 +17,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable lambda_source_bucket {
   type = string
   default = ""
@@ -207,8 +211,6 @@ variable lambda_event_configs {
   }))
   default = []
 }
-
-data aws_caller_identity current {}
 
 module column_schemas {
   source = "github.com/RLuckom/terraform_modules//aws/common_log_schemas"

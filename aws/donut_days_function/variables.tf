@@ -7,6 +7,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable action_name {
   type = string
 }

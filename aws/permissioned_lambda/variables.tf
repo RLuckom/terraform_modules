@@ -23,6 +23,10 @@ variable publish {
   default = false
 }
 
+variable region {
+  type = string
+}
+
 variable account_id {
   type = string
 }

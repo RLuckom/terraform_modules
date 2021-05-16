@@ -8,6 +8,7 @@ module lambda {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = var.time_limit
   account_id = var.account_id
+  region = var.region
   mem_mb = var.memory_size
   config_contents = templatefile("${path.module}/src/config.js",
   {

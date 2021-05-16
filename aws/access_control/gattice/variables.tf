@@ -6,6 +6,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable token_issuer {
   type = string
 }

@@ -23,6 +23,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable memory_size {
   type = number
   default = 128

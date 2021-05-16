@@ -13,6 +13,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable client_id {
   type = string
 }

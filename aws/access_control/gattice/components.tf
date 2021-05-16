@@ -35,6 +35,7 @@ module check_auth {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  region = var.region
   preuploaded_source = module.cognito_fn_template.s3_objects.check_auth
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -51,6 +52,7 @@ module move_cookie_to_auth_header {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  region = var.region
   preuploaded_source = module.cognito_fn_template.s3_objects.move_cookie_to_auth_header
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -67,6 +69,7 @@ module http_headers {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  region = var.region
   preuploaded_source = module.cognito_fn_template.s3_objects.http_headers
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -83,6 +86,7 @@ module sign_out {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  region = var.region
   preuploaded_source = module.cognito_fn_template.s3_objects.sign_out
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -99,6 +103,7 @@ module refresh_auth {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  region = var.region
   preuploaded_source = module.cognito_fn_template.s3_objects.refresh_auth
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -115,6 +120,7 @@ module parse_auth {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  region = var.region
   preuploaded_source = module.cognito_fn_template.s3_objects.parse_auth
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb

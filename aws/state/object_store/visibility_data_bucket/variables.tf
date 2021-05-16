@@ -6,6 +6,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable prefix_athena_query_permissions {
   type = list(object({
     log_storage_prefix = string

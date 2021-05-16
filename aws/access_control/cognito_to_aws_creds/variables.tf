@@ -6,6 +6,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable user_pool_endpoint {
   type = string
 }

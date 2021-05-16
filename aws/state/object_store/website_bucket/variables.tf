@@ -9,6 +9,10 @@ variable account_id {
   type = string
 }
 
+variable region {
+  type = string
+}
+
 variable security_scope {
   type = string
   default = ""
