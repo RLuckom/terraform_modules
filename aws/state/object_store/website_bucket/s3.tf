@@ -17,6 +17,7 @@ module bucket {
   name = var.name == "" ? "${var.domain_parts.controlled_domain_part}.${var.domain_parts.top_level_domain}" : var.name
   account_id = var.account_id
   region = var.region
+  need_policy_override = var.need_policy_override
   security_scope = var.security_scope
   acl    = var.allow_direct_access ? "public-read" : "private"
   force_destroy = var.force_destroy

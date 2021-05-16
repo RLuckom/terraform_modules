@@ -9,6 +9,11 @@ variable account_id {
   type = string
 }
 
+variable need_website_bucket_policy_override {
+  type = bool
+  default = true
+}
+
 variable region {
   type = string
 }

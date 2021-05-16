@@ -80,6 +80,7 @@ module admin_site_frontpage {
 module admin_site {
   source = "github.com/RLuckom/terraform_modules//aws/serverless_site/capstan"
   account_id = var.account_id
+  need_website_bucket_policy_override = var.need_website_bucket_policy_override
   region = var.region
   file_configs = concat(
     module.admin_site_frontpage.files,

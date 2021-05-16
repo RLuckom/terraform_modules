@@ -28,6 +28,11 @@ variable region {
   type = string
 }
 
+variable need_website_bucket_policy_override {
+  type = bool
+  default = false
+}
+
 variable forbidden_website_paths {
   type = list(string)
   default = []

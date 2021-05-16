@@ -17,6 +17,11 @@ variable region3 {
   default = "ca-central-1"
 }
 
+variable need_policy_override {
+  type = bool
+  default = true
+}
+
 provider "aws" {
   alias = "replica2"
 }
@@ -140,6 +145,7 @@ module replica_bucket_1 {
   name = local.buckets[0]
   account_id = var.account_id
   region = var.region1
+  need_policy_override = var.need_policy_override
   versioning = [{
     enabled = true
   }]
@@ -154,6 +160,7 @@ module replica_bucket_2 {
   name = local.buckets[1]
   account_id = var.account_id
   region = var.region2
+  need_policy_override = var.need_policy_override
   versioning = [{
     enabled = true
   }]
@@ -168,6 +175,7 @@ module replica_bucket_3 {
   name = local.buckets[2]
   account_id = var.account_id
   region = var.region3
+  need_policy_override = var.need_policy_override
   prefix_object_permissions = module.replication_lambda.replication_function_permissions_needed[local.buckets[2]]
   versioning = [{
     enabled = true

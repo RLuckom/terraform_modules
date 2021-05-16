@@ -13,6 +13,11 @@ variable region {
   type = string
 }
 
+variable need_policy_override {
+  type = bool
+  default = false
+}
+
 variable security_scope {
   type = string
   default = ""

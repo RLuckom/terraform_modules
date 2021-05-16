@@ -64,6 +64,7 @@ locals {
 module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
   name = local.site_bucket
+  need_policy_override = var.need_website_bucket_policy_override
   account_id = var.account_id
   region = var.region
   force_destroy = var.force_destroy

@@ -86,7 +86,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 }
 
 data aws_iam_policy_document bucket_policy_document {
-  count = length(var.lambda_notifications) > 0 || length(local.prefix_object_denial_sets) > 0 || length(local.prefix_object_permission_sets) > 0 || length(local.bucket_permission_sets) > 0 ? 1 : 0
+  count = local.need_policy
   dynamic "statement" {
     for_each = local.prefix_object_permission_sets
     content {
@@ -192,12 +192,13 @@ data aws_iam_policy_document bucket_policy_document {
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  count = length(var.lambda_notifications) > 0 || length(local.prefix_object_denial_sets) > 0 || length(local.prefix_object_permission_sets) > 0 || length(local.bucket_permission_sets) > 0 ? 1 : 0
+  count = local.need_policy
   bucket = aws_s3_bucket.bucket.id
   policy = data.aws_iam_policy_document.bucket_policy_document[0].json
 }
 
 locals {
+  need_policy = var.need_policy_override ? 1 : length(var.lambda_notifications) > 0 || length(local.prefix_object_denial_sets) > 0 || length(local.prefix_object_permission_sets) > 0 || length(local.bucket_permission_sets) > 0 ? 1 : 0
   list_bucket_actions = [
     "s3:ListBucket",
     "s3:GetBucketAcl",
