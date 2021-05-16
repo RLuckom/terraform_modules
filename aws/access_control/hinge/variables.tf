@@ -9,6 +9,10 @@ locals {
   name = "${var.system_id.security_scope}-${var.system_id.subsystem_name}"
 }
 
+variable account_id {
+  type = string
+}
+
 variable client_id {
   type = string
 }

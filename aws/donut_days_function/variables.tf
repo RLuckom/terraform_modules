@@ -3,6 +3,10 @@ variable source_bucket {
   default = ""
 }
 
+variable account_id {
+  type = string
+}
+
 variable action_name {
   type = string
 }

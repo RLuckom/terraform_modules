@@ -19,6 +19,10 @@ variable time_limit {
   default = 10
 }
 
+variable account_id {
+  type = string
+}
+
 variable memory_size {
   type = number
   default = 128

@@ -57,6 +57,7 @@ resource "aws_cognito_identity_pool_roles_attachment" "main" {
 module authenticated_role {
   for_each = var.plugin_configs
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
+  account_id = var.account_id
   role_name = "${local.name}-${each.value.role_name_stem}-auth"
   role_policy = []
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
@@ -64,6 +65,7 @@ module authenticated_role {
 
 module parent_authenticated_role {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
+  account_id = var.account_id
   role_name = "${local.name}-parent-auth"
   role_policy = [{ 
     actions = ["iam:PassRole"],
@@ -74,6 +76,7 @@ module parent_authenticated_role {
 
 module empty_authenticated_role {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_web_identity_role"
+  account_id = var.account_id
   role_name = "${local.name}-empty-auth"
   identity_pool_id = aws_cognito_identity_pool.id_pool.id
 }

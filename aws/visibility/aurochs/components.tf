@@ -4,6 +4,7 @@ The visibility bucket is where we keep query-able data like cloudfront and lambd
 module visibility_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/visibility_data_bucket"
   name = local.visibility_data_bucket
+  account_id = var.account_id
   // In the following list, the `prefix` of each record comes from the visibility data
   // coordinator. This protects us from cases where an error in the logging module
   // sets the log prefix incorrectly. By using the prefix from the coordinator, we
@@ -28,6 +29,7 @@ and moves them into the visibility bucket.
 */
 module log_delivery_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/logging_bucket"
+  account_id = var.account_id
   name = local.cloudfront_delivery_bucket
   lambda_notifications = local.archive_function_cloudfront_delivery_bucket_notifications
 }
@@ -74,6 +76,7 @@ module archive_function {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 15
   mem_mb = 128
+  account_id = var.account_id
   logging_config = local.lambda_logging_config
   log_level = var.log_level
   config_contents = templatefile("${path.module}/src/configs/s3_to_athena.js",

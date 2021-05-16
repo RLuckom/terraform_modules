@@ -5,6 +5,10 @@ variable domain_parts {
   })
 }
 
+variable account_id {
+  type = string
+}
+
 variable security_scope {
   type = string
   default = ""

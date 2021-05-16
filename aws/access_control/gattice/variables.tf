@@ -2,6 +2,10 @@ variable security_scope {
   type = string
 }
 
+variable account_id {
+  type = string
+}
+
 variable token_issuer {
   type = string
 }

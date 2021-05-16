@@ -1,19 +1,18 @@
 data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
 
 locals {
   system_id = var.coordinator_data.system_id
   routing = var.coordinator_data.routing
-  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.system_id.security_scope}"
+  render_arn = "arn:aws:lambda:${data.aws_region.current.name}:${var.account_id}:function:site_render-${local.system_id.security_scope}"
   render_name = "site_render-${local.system_id.security_scope}"
-  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:deletion_cleanup-${local.system_id.security_scope}"
+  deletion_cleanup_arn = "arn:aws:lambda:${data.aws_region.current.name}:${var.account_id}:function:deletion_cleanup-${local.system_id.security_scope}"
   deletion_cleanup_name = "deletion_cleanup-${local.system_id.security_scope}"
   render_invoke_permission = [{
     actions   =  [
       "lambda:InvokeFunction"
     ]
     resources = [
-      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:site_render-${local.system_id.security_scope}",
+      "arn:aws:lambda:${data.aws_region.current.name}:${var.account_id}:function:site_render-${local.system_id.security_scope}",
     ]
   }]
 }
@@ -112,6 +111,7 @@ module site_render {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 256
+  account_id = var.account_id
   log_level = var.log_level
   logging_config = local.lambda_logging_config
   config_contents = templatefile("${path.module}/src/configs/render_markdown_to_html.js",
@@ -148,6 +148,7 @@ module deletion_cleanup {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
   mem_mb = 128
+  account_id = var.account_id
   logging_config = local.lambda_logging_config
   log_level =var.log_level
   config_contents = templatefile("${path.module}/src/configs/deletion_cleanup.js",
@@ -179,6 +180,7 @@ module trails_updater {
   count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 40
+  account_id = var.account_id
   mem_mb = 192
   logging_config = local.lambda_logging_config
   log_level = var.log_level
@@ -217,9 +219,10 @@ module trails_resolver {
   count = var.enable ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = 5
+  account_id = var.account_id
   mem_mb = 128
   logging_config = local.lambda_logging_config
-  log_level =var.log_level
+  log_level = var.log_level
   config_contents = templatefile("${path.module}/src/configs/two_way_resolver.js",
   {
     table = local.trails_table_name
@@ -352,6 +355,7 @@ module trails_table {
 module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
   name = local.site_bucket
+  account_id = var.account_id
   force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts
   cors_rules = var.website_bucket_cors_rules

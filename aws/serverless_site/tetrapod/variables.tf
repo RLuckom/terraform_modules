@@ -25,6 +25,10 @@ variable forbidden_website_paths {
   default = []
 }
 
+variable account_id {
+  type = string
+}
+
 variable access_control_function_qualified_arns {
   type = list(object({
     refresh_auth = string

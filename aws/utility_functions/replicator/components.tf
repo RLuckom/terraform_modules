@@ -7,6 +7,7 @@ module replication_lambda {
   count = local.need_replication_lambda ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = var.replication_time_limit
+  account_id = var.account_id
   mem_mb = var.replication_memory_size
   config_contents = templatefile("${path.module}/src/config.js",
   {

@@ -20,6 +20,10 @@ variable coordinator_data {
   })
 }
 
+variable account_id {
+  type = string
+}
+
 variable forbidden_website_paths {
   type = list(string)
   default = []

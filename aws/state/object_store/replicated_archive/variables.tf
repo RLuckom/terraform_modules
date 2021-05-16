@@ -10,6 +10,10 @@ provider "aws" {
   alias = "replica3"
 }
 
+variable account_id {
+  type = string
+}
+
 variable bucket_prefix {
   type = string
 }
@@ -99,6 +103,7 @@ locals {
 module replication_lambda {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/replicator"
   logging_config = var.replication_function_logging_config
+  account_id = var.account_id
   replication_time_limit = 15
   replication_memory_size = 256
   lambda_event_configs = var.replication_lambda_event_configs
@@ -113,6 +118,7 @@ module replication_lambda {
 module replica_bucket_1 {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[0]
+  account_id = var.account_id
   versioning = [{
     enabled = true
   }]
@@ -125,6 +131,7 @@ module replica_bucket_1 {
 module replica_bucket_2 {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[1]
+  account_id = var.account_id
   versioning = [{
     enabled = true
   }]
@@ -137,6 +144,7 @@ module replica_bucket_2 {
 module replica_bucket_3 {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[2]
+  account_id = var.account_id
   prefix_object_permissions = module.replication_lambda.replication_function_permissions_needed[local.buckets[2]]
   versioning = [{
     enabled = true

@@ -79,6 +79,7 @@ EOF
 
 module get_access_creds {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
+  account_id = var.account_id
   timeout_secs = 2
   mem_mb = 128
   source_contents = [

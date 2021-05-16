@@ -2,6 +2,10 @@ variable role_name {
   type = string
 }
 
+variable account_id {
+  type = string
+}
+
 variable identity_pool_id {
   type = string
 }

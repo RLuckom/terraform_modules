@@ -12,6 +12,10 @@ variable force_destroy {
   default = false
 }
 
+variable account_id {
+  type = string
+}
+
 variable bucket_logging_config {
   type = object({
     target_bucket = string

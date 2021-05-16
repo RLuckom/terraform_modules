@@ -67,6 +67,7 @@ locals {
 module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
   name = local.site_bucket
+  account_id = var.account_id
   force_destroy = var.force_destroy
   security_scope = var.coordinator_data.system_id.security_scope
   domain_parts = local.routing.domain_parts

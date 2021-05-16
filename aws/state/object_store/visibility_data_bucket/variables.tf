@@ -2,6 +2,10 @@ variable name {
   type = string
 }
 
+variable account_id {
+  type = string
+}
+
 variable prefix_athena_query_permissions {
   type = list(object({
     log_storage_prefix = string

@@ -12,6 +12,10 @@ variable io_config {
   })
 }
 
+variable account_id {
+  type = string
+}
+
 variable image_layer {
   type = object({
     present = bool

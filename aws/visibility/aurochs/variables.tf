@@ -13,6 +13,10 @@ variable athena_results_bucket {
   default = ""
 }
 
+variable account_id {
+  type = string
+}
+
 variable lambda_source_bucket {
   type = string
   default = ""

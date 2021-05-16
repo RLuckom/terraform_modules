@@ -23,6 +23,10 @@ variable publish {
   default = false
 }
 
+variable account_id {
+  type = string
+}
+
 variable local_source_directory {
   type = string
   default = null

@@ -1,14 +1,13 @@
 module "lambda_role" {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_role"
   role_name = "${local.scoped_lambda_name}-lambda"
+  account_id = var.account_id
   role_policy = concat(local.lambda_destinations, var.self_invoke.allowed ? local.lambda_invoke : [], var.deny_cloudwatch ? [] : var.log_writer_policy, var.lambda_details.policy_statements)
   principals = [{
     type = "Service"
     identifiers = var.role_service_principal_ids
   }]
 }
-
-data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
@@ -18,7 +17,7 @@ locals {
       "lambda:InvokeFunction"
     ]
     resources = [
-      "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:${local.scoped_lambda_name}"
+      "arn:aws:lambda:${data.aws_region.current.name}:${var.account_id}:function:${local.scoped_lambda_name}"
     ]
   }])
   lambda_destinations = concat(

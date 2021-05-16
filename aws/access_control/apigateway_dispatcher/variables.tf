@@ -2,6 +2,10 @@ variable identity_pool_id {
   type = string
 }
 
+variable account_id {
+  type = string
+}
+
 variable user_pool_endpoint {
   type = string
 }

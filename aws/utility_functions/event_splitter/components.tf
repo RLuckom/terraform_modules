@@ -7,6 +7,7 @@ module lambda {
   count = local.need_lambda ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   timeout_secs = var.time_limit
+  account_id = var.account_id
   mem_mb = var.memory_size
   config_contents = templatefile("${path.module}/src/config.js",
   {
