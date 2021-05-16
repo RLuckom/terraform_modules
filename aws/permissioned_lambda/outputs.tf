@@ -19,13 +19,6 @@ output "permission_sets" {
 
 locals {
   permission_sets = {
-    invoke = [{
-      actions   =  [
-        "lambda:InvokeFunction"
-      ]
-      resources = [
-        aws_lambda_function.lambda.arn,
-      ]
-    }]
+    invoke = local.lambda_invoke
   }
 }
