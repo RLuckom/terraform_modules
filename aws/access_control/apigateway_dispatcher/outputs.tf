@@ -1,3 +1,3 @@
-output apigateway_dispatcher {
-  value = module.apigateway_dispatcher
+output apigateway_dispatcher_lambda {
+  value = module.apigateway_dispatcher.lambda
 }

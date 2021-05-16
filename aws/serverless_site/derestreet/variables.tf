@@ -257,8 +257,8 @@ locals {
           cookie_names = ["ID-TOKEN"]
         }
         lambda = {
-          arn = module.apigateway_dispatcher.apigateway_dispatcher.lambda.arn
-          name = module.apigateway_dispatcher.apigateway_dispatcher.lambda.function_name
+          arn = module.apigateway_dispatcher.apigateway_dispatcher_lambda.arn
+          name = module.apigateway_dispatcher.apigateway_dispatcher_lambda.function_name
         }
       }]
       upload_path_lambda_notifications = [for notification in config.upload_path_lambda_notifications : {
