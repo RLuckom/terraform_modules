@@ -2,6 +2,21 @@ provider "aws" {
   alias = "replica1"
 }
 
+variable region1 {
+  type = string
+  default = "eu-central-1"
+}
+
+variable region2 {
+  type = string
+  default = "ap-southeast-2"
+}
+
+variable region3 {
+  type = string
+  default = "ca-central-1"
+}
+
 provider "aws" {
   alias = "replica2"
 }
@@ -124,7 +139,7 @@ module replica_bucket_1 {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[0]
   account_id = var.account_id
-  region = var.region
+  region = var.region1
   versioning = [{
     enabled = true
   }]
@@ -138,7 +153,7 @@ module replica_bucket_2 {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[1]
   account_id = var.account_id
-  region = var.region
+  region = var.region2
   versioning = [{
     enabled = true
   }]
@@ -152,7 +167,7 @@ module replica_bucket_3 {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   name = local.buckets[2]
   account_id = var.account_id
-  region = var.region
+  region = var.region3
   prefix_object_permissions = module.replication_lambda.replication_function_permissions_needed[local.buckets[2]]
   versioning = [{
     enabled = true
