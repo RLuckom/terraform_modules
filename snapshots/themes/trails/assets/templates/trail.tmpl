@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<link rel="stylesheet" href="/assets/static/css/main.css">
+<link rel="stylesheet" href="/assets/static/css/highlight.css">
+  <head>
+    <title>
+         <%= item.name %>
+    </title>
+  </head>
+  <body>
+<section id="nav">
+<h1><%= siteDetails.title %></h1>
+<div class="nav-links">
+<% _.forEach(_.get(siteDetails, 'formats.html.nav.links'), function({name, target}) { 
+    %><div class="nav-link-ctr"><a class="nav-link" href="<%- target %>"><%- name  %></a></div><% 
+}); %>
+</div>
+</section>
+  <h1><%= item.name %> </h1>
+    <p class="subtitle">
+    </p>
+<section>
+<% _.forEach(meta.trails.members, function(member) { %><div class="trail-member"><h3><a href="<%- _.get(identifyUri(member.memberUri), 'browserUrl') %>"><%- _.get(member, 'memberMetadata.frontMatter.title') %></a></h3><p><%- _.get(member, 'memberMetadata.frontMatter.author') %></p><p><%- formatDate(_.get(member, 'memberMetadata.frontMatter.date')) %></p></div><% }); %>
+</section>
+  </body>
+</html>

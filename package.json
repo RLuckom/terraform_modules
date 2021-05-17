@@ -1,0 +1,23 @@
+{
+  "name": "terraform_modules",
+  "version": "1.0.0",
+  "description": "",
+  "main": "snapshot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RLuckom/terraform_modules.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RLuckom/terraform_modules/issues"
+  },
+  "homepage": "https://github.com/RLuckom/terraform_modules#readme",
+  "devDependencies": {
+    "async": "^3.2.0",
+    "lodash": "^4.17.21"
+  }
+}
