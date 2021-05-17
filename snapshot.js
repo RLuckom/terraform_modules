@@ -5,7 +5,7 @@ const asyncLib = require('async')
 
 function recursiveModuleRelativizingCopy({source, dest}, cb) {
   const srcRegex = new RegExp(`^${path.join(source, '')}`)
-  const modulePathRegex = new RegExp("github.com/RLuckom/terraform_modules//([^\"]*)\"", "g")
+  const modulePathRegex = new RegExp("github.com/RLuckom/terraform_modules//([^\"?]*)[^\"]*\"", "g")
   asyncLib.parallel(_.map(filterTree(source, _.constant(true)), (filepath) => {
     const destpath = path.join(dest, filepath)
     fs.mkdirSync(path.dirname(destpath), {recursive: true})

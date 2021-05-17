@@ -6,7 +6,7 @@ locals {
 }
 
 module bucket {
-  source = "../bucket?ref=f5ba570f905b"
+  source = "../bucket"
   name = var.name
   acl    = var.allow_direct_access ? "public-read" : "private"
   force_destroy = var.force_destroy

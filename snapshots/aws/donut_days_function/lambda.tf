@@ -34,12 +34,12 @@ resource "random_id" "layer_suffix" {
 
 module donut_days_layer {
   count = var.donut_days_layer.present ? 0 : 1
-  source= "../layers/donut_days?ref=f5ba570f905b"
+  source= "../layers/donut_days"
   layer_name = "donut_days_${random_id.layer_suffix[0].b64_url}"
 }
 
 module function {
-  source= "../permissioned_lambda?ref=f5ba570f905b"
+  source= "../permissioned_lambda"
   timeout_secs = var.timeout_secs
   mem_mb = var.mem_mb
   environment_var_map = merge({

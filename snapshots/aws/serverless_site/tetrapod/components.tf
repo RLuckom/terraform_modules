@@ -23,7 +23,7 @@ locals {
 }
 
 module default_assets {
-  source= "../../../themes/trails?ref=f5ba570f905b"
+  source= "../../../themes/trails"
 }
 
 locals {
@@ -50,14 +50,14 @@ locals {
 
 module asset_file_configs {
   count = var.enable ? 1 : 0
-  source= "../../coordinators/asset_directory?ref=f5ba570f905b"
+  source= "../../coordinators/asset_directory"
   asset_directory_root = local.asset_path
 }
 
 module site_static_assets {
   count = var.enable ? 1 : 0
   bucket_name = local.site_bucket
-  source= "../../s3_directory?ref=f5ba570f905b"
+  source= "../../s3_directory"
   file_configs = module.asset_file_configs[0].file_configs
   depends_on = [module.website_bucket]
 }
@@ -87,13 +87,13 @@ resource "random_id" "layer_suffix" {
 
 module markdown_tools_layer {
   count = var.layers.markdown_tools.present ? 0 : 1
-  source= "../../layers/markdown_tools?ref=f5ba570f905b"
+  source= "../../layers/markdown_tools"
   layer_name = "markdown_tools_${random_id.layer_suffix.b64_url}"
 }
 
 module donut_days_layer {
   count = var.layers.donut_days.present ? 0 : 1
-  source= "../../layers/donut_days?ref=f5ba570f905b"
+  source= "../../layers/donut_days"
   layer_name = "donut_days_${random_id.layer_suffix.b64_url}"
 }
 
@@ -112,7 +112,7 @@ locals {
 
 module site_render {
   count = var.enable ? 1 : 0
-  source= "../../donut_days_function?ref=b1b400e6a57a9d5"
+  source= "../../donut_days_function"
   timeout_secs = 40
   mem_mb = 256
   log_level = var.log_level
@@ -148,7 +148,7 @@ module site_render {
 
 module deletion_cleanup {
   count = var.enable ? 1 : 0
-  source= "../../donut_days_function?ref=b1b400e6a57a9d5"
+  source= "../../donut_days_function"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
@@ -180,7 +180,7 @@ module deletion_cleanup {
 
 module trails_updater {
   count = var.enable ? 1 : 0
-  source= "../../donut_days_function?ref=b1b400e6a57a9d5"
+  source= "../../donut_days_function"
   timeout_secs = 40
   mem_mb = 192
   logging_config = local.lambda_logging_config
@@ -218,7 +218,7 @@ module trails_updater {
 
 module trails_resolver {
   count = var.enable ? 1 : 0
-  source= "../../donut_days_function?ref=b1b400e6a57a9d5"
+  source= "../../donut_days_function"
   timeout_secs = 40
   mem_mb = 128
   logging_config = local.lambda_logging_config
@@ -238,7 +238,7 @@ module trails_resolver {
 
 module site {
   count = var.enable ? 1 : 0
-  source = "../../cloudfront_s3_website?ref=e976eb69c5db951b"
+  source = "../../cloudfront_s3_website"
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${local.site_bucket}.s3.${data.aws_region.current.name == "us-east-1" ? "" : "${data.aws_region.current.name}."}amazonaws.com"
@@ -314,7 +314,7 @@ locals {
 }
 
 module trails_table {
-  source= "../../state/permissioned_dynamo_table?ref=e976eb69c5db951b"
+  source= "../../state/permissioned_dynamo_table"
   table_name = local.trails_table_name
   delete_item_permission_role_names = local.trails_table_delete_role_names
   write_permission_role_names = local.trails_table_write_permission_role_names
@@ -341,7 +341,7 @@ module trails_table {
 }
 
 module website_bucket {
-  source= "../../state/object_store/website_bucket?ref=f5ba570f905b"
+  source= "../../state/object_store/website_bucket"
   name = local.site_bucket
   force_destroy = var.force_destroy
   domain_parts = local.routing.domain_parts
