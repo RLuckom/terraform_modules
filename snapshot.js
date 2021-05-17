@@ -5,7 +5,7 @@ const asyncLib = require('async')
 
 function recursiveModuleRelativizingCopy({source, dest}, cb) {
   const srcRegex = new RegExp(`^${path.join(source, '')}`)
-  const modulePathRegex = new RegExp("github.com/RLuckom/terraform_modules//([^\"]*)\"", "g")
+  const modulePathRegex = new RegExp("github.com/RLuckom/terraform_modules//([^\"?]*)([^\"]*)\"", "g")
   asyncLib.parallel(_.map(filterTree(source, _.constant(true)), (filepath) => {
     const destpath = path.join(dest, filepath)
     fs.mkdirSync(path.dirname(destpath), {recursive: true})
@@ -16,10 +16,13 @@ function recursiveModuleRelativizingCopy({source, dest}, cb) {
           if (err || !_.isString(contents)) {
             return callback(err || `contents was not a string, got ${typeof contents} : ${contents}`)
           }
-          const newContents = contents.replace(modulePathRegex, (match, modulepath) => {
+          const newContents = contents.replace(modulePathRegex, (match, modulepath, refspec) => {
             const relpath = path.relative(filedir, modulepath) + '"'
             if (process.env.NODE_DEBUG) {
               console.log(`changing ${match} to ${relpath} in file ${filepath} and moving to ${destpath}`)
+            }
+            if (refspec) {
+              console.warn(`Removing reference ${refspec} when changing ${match} to ${relpath} in file ${filepath} and moving to ${destpath}`)
             }
             return relpath
           })
