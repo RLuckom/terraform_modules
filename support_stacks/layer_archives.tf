@@ -1,11 +1,23 @@
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+  region = data.aws_region.current.name
+}
+
 module "logging_bucket" {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/logging_bucket"
   name = "rluckom-support-s3-logging"
+  account_id = local.account_id
+  region = local.region
 }
 
 module "layer_bucket" {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   acl = "public-read"
+  account_id = local.account_id
+  region = local.region
   versioning = [{
     enabled = true
   }]
