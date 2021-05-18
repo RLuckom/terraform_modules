@@ -165,7 +165,7 @@ footer {
 }
 
 main {
-  max-width: 960px;
+  max-width: 1140px;
 }
 
 /* styles cribbed from https://grid-cats.glitch.me/ */
@@ -173,7 +173,7 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-gap: 30px;
-  max-width: 960px;
+  max-width: 1140px;
   margin: 0 auto 30px;
 }
 
