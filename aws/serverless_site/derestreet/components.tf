@@ -81,6 +81,7 @@ module admin_site_frontpage {
     site_description = var.admin_site_description
     nav_menu_items = [for name, config in var.plugin_static_configs : {
       link = "/plugins/${trimprefix(config.api_name, "/")}/index.html"
+      api_name = config.api_name
       title = config.display_name
     }]
   }

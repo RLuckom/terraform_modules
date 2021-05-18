@@ -29,6 +29,7 @@ variable admin_running_material {
     site_description = string
     nav_menu_items = list(object({
       link = string
+      api_name = string
       title = string
     }))
   })
@@ -45,7 +46,7 @@ locals {
 			<nav class="navbar">
         <a href="${var.admin_running_material.site_root_url}" class="nav-logo">${var.admin_running_material.site_title}</a>
 				<ul class="nav-menu">
-    ${join("\n", [ for nav_item in var.admin_running_material.nav_menu_items : "<li class=\"nav-item\"><a href=\"${nav_item.link}\" class=\"nav-link\">${nav_item.title}</a></li>"])}
+    ${join("\n", [ for nav_item in var.admin_running_material.nav_menu_items : "<li class=\"nav-item\"><a href=\"${nav_item.link}\" class=\"nav-link nav-plugin-link-${nav_item.api_name}\">${nav_item.title}</a></li>"])}
 				</ul>
     
 				<div class="hamburger">
