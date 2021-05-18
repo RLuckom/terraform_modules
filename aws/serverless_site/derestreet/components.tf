@@ -80,7 +80,7 @@ module admin_site_frontpage {
     site_title = var.admin_site_title == "" ? "${var.system_id.security_scope}-${var.system_id.subsystem_name} admin" : var.admin_site_title
     site_description = var.admin_site_description
     nav_menu_items = [for name, config in var.plugin_static_configs : {
-      link = "/${trimprefix(config.api_name, "/")}"
+      link = "/plugins/${trimprefix(config.api_name, "/")}/index.html"
       title = config.display_name
     }]
   }
