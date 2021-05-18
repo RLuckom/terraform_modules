@@ -2,15 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
-    <link rel="stylesheet" href="/${trimprefix(styles_path, "/")}">
+    <title>${admin_running_material.site_title}</title>
+    <meta name="description" content="${replace(admin_running_material.site_description, "\"", "\\\"")}">
+    ${join("\n", [ for p in css_paths : "<link rel=\"stylesheet\" href=\"/${trimprefix(p, "/")}\">"])}
+    ${join("\n", [ for p in script_paths : "<script src=\"/${trimprefix(p, "/")}\"></script>"])}
+    ${join("\n", [ for p in deferred_script_paths : "<script src=\"/${trimprefix(p, "/")}\" defer></script>"])}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Site</title>
-    <meta name="description" content="This is the private part of the site">
   </head>
   <body>
     <header>
-      <div class="header-block"><h1 class="heading">Private Site</h1></div>
+      ${admin_running_material.header_contents}
     </header>
     <main>
       <section class="site-tools">
@@ -28,7 +29,7 @@ EOF
       </section>
     </main>
     <footer>
-      this is the footer text
+      ${admin_running_material.footer_contents}
     </footer>
   </body>
 </html>

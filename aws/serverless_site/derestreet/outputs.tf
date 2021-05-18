@@ -31,8 +31,8 @@ output plugin_config {
   }])
 }
 
-output default_styles_path {
-  value = module.admin_site_frontpage.default_styles_path
+output site_resources {
+  value = module.admin_site_frontpage.site_resources
 }
 
 output plugin_authenticated_roles {

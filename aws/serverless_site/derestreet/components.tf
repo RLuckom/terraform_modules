@@ -71,10 +71,19 @@ module apigateway_dispatcher {
 
 module admin_site_frontpage {
   source = "github.com/RLuckom/terraform_modules//themes/admin_site_ui"
-  plugin_configs = [for name, config in local.plugin_configs : {
+  plugin_configs = [for name, config in var.plugin_static_configs : {
     name = name
-    slug = config.slug
+    slug = config.display_name
   }]
+  admin_running_material = {
+    site_root_url = "/"
+    site_title = var.admin_site_title == "" ? "${var.system_id.security_scope}-${var.system_id.subsystem_name} admin" : var.admin_site_title
+    site_description = var.admin_site_description
+    nav_menu_items = [for name, config in var.plugin_static_configs : {
+      link = "/${trimprefix(config.api_name, "/")}"
+      title = config.display_name
+    }]
+  }
 }
 
 module admin_site {
