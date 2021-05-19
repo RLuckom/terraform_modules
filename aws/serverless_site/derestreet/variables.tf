@@ -66,6 +66,7 @@ variable plugin_static_configs {
 variable plugin_configs {
   type = map(object({
     additional_connect_sources = list(string)
+    additional_style_sources = list(string)
     policy_statements = list(object({
       actions = list(string)
       resources = list(string)
@@ -252,7 +253,7 @@ locals {
       policy_statements = config.policy_statements
       http_header_values = merge(
         {
-          "Content-Security-Policy" = "default-src 'none'; style-src 'self'; script-src https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/assets/js/ https://${var.coordinator_data.routing.domain}/assets/js/; object-src 'none'; connect-src 'self' ${join(" ", concat(config.additional_connect_sources, [ for origin in config.plugin_relative_lambda_origins : "https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}" ]))}; img-src 'self' data: blob:;"
+          "Content-Security-Policy" = "default-src 'none'; style-src 'self' ${join(" ", config.additional_style_sources)}; script-src https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/assets/js/ https://${var.coordinator_data.routing.domain}/assets/js/; object-src 'none'; connect-src 'self' ${join(" ", concat(config.additional_connect_sources, [ for origin in config.plugin_relative_lambda_origins : "https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}" ]))}; img-src 'self' data: blob:;"
         },
         var.default_static_headers
       )
