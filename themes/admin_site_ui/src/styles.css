@@ -36,7 +36,7 @@ time, mark, audio, video {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
-  font-family: "QuicksandLight" "Helvetica" sans-serif;
+  font-family: 'QuicksandLight', 'Helvetica', sans-serif;
 }
 
 a {
@@ -81,7 +81,7 @@ table {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
 }
 
 .hamburger {
@@ -119,12 +119,14 @@ table {
 }
 
 .nav-logo {
+  font-family: 'QuicksandMedium', 'Helvetica', sans-serif;
   font-size: 2.1rem;
   font-weight: 500;
   color: #482ff7;
 }
 
 @media only screen and (max-width: 768px) {
+
   .navbar {
     min-height: 5rem;
   }
@@ -139,6 +141,7 @@ table {
     border-radius: 10px;
     text-align: center;
     transition: 0.3s;
+    z-index: 10;
     box-shadow:
     0 10px 27px rgba(0, 0, 0, 0.05);
   }
@@ -183,6 +186,7 @@ footer {
 main {
   margin: 0 auto;
   max-width: 1140px;
+  padding: 1rem;
 }
 
 /* styles cribbed from https://grid-cats.glitch.me/ */
