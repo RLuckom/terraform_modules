@@ -82,6 +82,8 @@ table {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+  max-width: 1140px;
+  margin: 0 auto;
 }
 
 .hamburger {
@@ -126,10 +128,6 @@ table {
 }
 
 @media only screen and (max-width: 768px) {
-
-  .navbar {
-    min-height: 5rem;
-  }
 
   .nav-menu {
     position: fixed;
@@ -186,7 +184,7 @@ footer {
 main {
   margin: 0 auto;
   max-width: 1140px;
-  padding: 1rem;
+  padding: 0 1rem;
 }
 
 /* styles cribbed from https://grid-cats.glitch.me/ */
