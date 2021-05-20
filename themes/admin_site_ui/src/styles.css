@@ -1,3 +1,18 @@
+@font-face {
+  font-family: 'QuicksandLight';
+  font-style: italic;
+  font-weight: 100;
+  font-display: swap;
+  src: url(/assets/static/fonts/Quicksand-Light.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'QuicksandMedium';
+  font-weight: 400;
+  font-display: swap;
+  src: url(/assets/static/fonts/Quicksand-Medium.woff2) format('woff2');
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -21,6 +36,7 @@ time, mark, audio, video {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+  font-family: "QuicksandLight" "Helvetica" sans-serif;
 }
 
 a {

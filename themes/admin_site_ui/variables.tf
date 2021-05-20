@@ -97,6 +97,18 @@ EOF
       content_type = "image/x-icon"
     },
     {
+      key = "${local.file_prefix}/assets/static/fonts/Quicksand-Medium.woff2"
+      file_contents = null
+      file_path = "${path.module}/assets/static/fonts/Quicksand-Medium.woff2"
+      content_type = "font/woff2"
+    },
+    {
+      key = "${local.file_prefix}/assets/static/fonts/Quicksand-Light.woff2"
+      file_contents = null
+      file_path = "${path.module}/assets/static/fonts/Quicksand-Light.woff2"
+      content_type = "font/woff2"
+    },
+    {
       key = local.styles_path
       file_contents = null
       file_path = "${path.module}/src/styles.css"
