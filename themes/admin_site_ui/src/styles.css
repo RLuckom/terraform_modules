@@ -1,13 +1,19 @@
 @font-face {
-  font-family: 'QuicksandLight';
-  font-style: italic;
+  font-family: 'Quicksand';
   font-weight: 100;
   font-display: swap;
   src: url(/assets/static/fonts/Quicksand-Light.woff2) format('woff2');
 }
 
 @font-face {
-  font-family: 'QuicksandMedium';
+  font-family: 'UbuntuMono';
+  font-weight: 100;
+  font-display: swap;
+  src: url(/assets/static/fonts/UbuntuMono-Regular.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'Quicksand';
   font-weight: 400;
   font-display: swap;
   src: url(/assets/static/fonts/Quicksand-Medium.woff2) format('woff2');
@@ -20,7 +26,7 @@
 
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
+a, abbr, acronym, address, big, cite,
 del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
@@ -35,8 +41,28 @@ time, mark, audio, video {
   border: 0;
   font-size: 100%;
   font: inherit;
+  font-weight: 100;
   vertical-align: baseline;
-  font-family: 'QuicksandLight', 'Helvetica', sans-serif;
+  font-family: 'Quicksand', 'Helvetica', sans-serif;
+}
+
+strong {
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font-weight: 400;
+  font: inherit;
+  vertical-align: baseline;
+  font-family: 'Quicksand', 'Helvetica', sans-serif;
+}
+
+code {
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  font-family: 'UbuntuMono', monospace;
 }
 
 a {
@@ -121,7 +147,7 @@ table {
 }
 
 .nav-logo {
-  font-family: 'QuicksandMedium', 'Helvetica', sans-serif;
+  font-family: 'Quicksand', 'Helvetica', sans-serif;
   font-size: 2.1rem;
   font-weight: 500;
   color: #482ff7;
