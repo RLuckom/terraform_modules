@@ -1,3 +1,7 @@
+:root {
+  --app-height: 100%;
+}
+
 @font-face {
   font-family: 'Quicksand';
   font-weight: 100;
@@ -73,10 +77,6 @@ a {
 article, aside, details, figcaption, figure, 
 footer, header, hgroup, menu, nav, section {
   display: block;
-}
-
-body {
-  line-height: 1;
 }
 
 ol, ul {
@@ -158,14 +158,14 @@ table {
   .nav-menu {
     position: fixed;
     right: -100%;
-    top: 5rem;
+    top: 4rem;
     flex-direction: column;
     background-color: #fff;
     width: 100%;
     border-radius: 10px;
     text-align: center;
     transition: 0.3s;
-    z-index: 10;
+    z-index: 50;
     box-shadow:
     0 10px 27px rgba(0, 0, 0, 0.05);
   }
@@ -197,20 +197,23 @@ table {
 }
 
 body {
-  min-height: 100vh;
+  line-height: 1;
   display: flex;
   flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  height: var(--app-height);
 }
 
 footer {
   margin-top: auto;
-  background-color: powderblue;
 }
 
 main {
   margin: 0 auto;
   max-width: 1140px;
   padding: 0 1rem;
+  flex: 1;
 }
 
 /* styles cribbed from https://grid-cats.glitch.me/ */
