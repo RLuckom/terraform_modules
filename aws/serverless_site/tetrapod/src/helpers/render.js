@@ -106,7 +106,7 @@ function renderFeed(feedType, {siteDetails, item, dependencies}) {
   })
   _.each(accumulators.members, (member) => {
     const feedItem = {
-      title: _.get(member, 'memberMetadata.frontMatter.title'),
+      title: _.get(member, 'memberMetadata.frontMatter.title') || 'no title',
       date: moment(_.get(member, 'memberMetadata.frontMatter.date')).toDate(),
       description: _.get(member, 'memberMetadata.raw'),
       content: _.get(member, 'memberMetadata.raw'),

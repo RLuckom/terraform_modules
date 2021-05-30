@@ -17,7 +17,7 @@
 </div>
 </section>
 <article id="content">
-  <h1><%= item.title %> </h1>
+  <h1><%= item.title || 'no title' %> </h1>
     <p class="subtitle">
       <%= formatDate(item.date) %>
     </p>
