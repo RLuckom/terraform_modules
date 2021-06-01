@@ -71,7 +71,7 @@ module.exports = {
           params: {
             arg: {
               all: {
-                specific: {ref: 'item.results.parsed.frontMatter.meta.trail'},
+                specific: {ref: 'item.results.parsed.frontMatter.meta.trails'},
                 general: { ref: 'item.vars.metadata.typeDef.meta.trail.default' },
               },
             },
