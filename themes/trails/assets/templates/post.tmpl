@@ -19,7 +19,7 @@
 <article id="content">
   <h1><%= item.title || 'no title' %> </h1>
     <p class="subtitle">
-      <%= formatDate(item.date) %>
+      <%= formatDate(item.createDate || item.date) %>
     </p>
 <section class="article-content">
 <%= item.content %>
