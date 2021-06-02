@@ -63,8 +63,8 @@ function parsePost(s) {
     }
     try {
       const fm = yaml.load(frontMatter)
-      if (fm.date) {
-        fm.date = moment(fm.date)
+      if (fm.createDate) {
+        fm.createDate = moment(fm.createDate)
       }
       return { frontMatter: fm, content, raw:s }
     } catch(e) {
@@ -106,15 +106,13 @@ function renderFeed(feedType, {siteDetails, item, dependencies}) {
   })
   _.each(accumulators.members, (member) => {
     const feedItem = {
-      title: _.get(member, 'memberMetadata.frontMatter.title') || 'no title',
-      date: moment(_.get(member, 'memberMetadata.frontMatter.date')).toDate(),
-      description: _.get(member, 'memberMetadata.raw'),
-      content: _.get(member, 'memberMetadata.raw'),
+      title: _.get(member, 'memberMetadata.title') || 'no title',
+      date: moment(_.get(member, 'memberMetadata.createDate')).toDate(),
       id: _.get(member, 'memberUri'),
       link: _.get(member, 'memberUri'),
       author: [{
-        name: _.get(member, 'memberMetadata.frontMatter.author') || "",
-        email: _.get(member, 'memberMetadata.frontMatter.email') || "",
+        name: _.get(member, 'memberMetadata.author') || "",
+        email: _.get(member, 'memberMetadata.email') || "",
         link: siteDetails.browserRoot || '',
       }],
       contributor: [],

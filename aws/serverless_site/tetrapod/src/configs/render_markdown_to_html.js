@@ -95,12 +95,12 @@ module.exports = {
                     arg: {
                       all: {
                         description: {ref: 'item.vars.metadata'},
-                        parsed: {ref: 'item.results.parsed'},
+                        frontMatter: {ref: 'item.results.parsed.frontMatter'},
                       }
                     },
-                    func: ({description, parsed}) => {
+                    func: ({description, frontMatter}) => {
                       const item = {...description}
-                      item.metadata = parsed
+                      item.metadata = frontMatter
                       delete item.typeDef
                       return item
                     }

@@ -71,7 +71,7 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
         memberKey: `trail:${trailName}`,
         memberType: 'trail',
         memberMetadata: {
-          date: new Date().toISOString(),
+          createDate: new Date().toISOString(),
         }
       })
       updates.trailsToReRender.push(trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: trailName}}))
@@ -120,7 +120,7 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
 } 
 
 function sortTrailMembers(members) {
-  return _(members).sortBy((m) => _.get(m, 'memberMetadata.date') || _.get(m, 'memberMetadata.frontMatter.date')).reverse().value()
+  return _(members).sortBy((m) => _.get(m, 'memberMetadata.createDate')).reverse().value()
 }
 
 module.exports = {determineUpdates, checkForEmptyLists, sortTrailMembers}
