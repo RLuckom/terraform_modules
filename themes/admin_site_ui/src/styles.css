@@ -112,6 +112,14 @@ table {
   margin: 0 auto;
 }
 
+.location-link-sep {
+  font-size: 2.1rem;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  margin: 0 0.2em;
+  color: var(--neutral);
+}
+
 .hamburger {
   display: none;
 }
