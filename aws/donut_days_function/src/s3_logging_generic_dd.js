@@ -3,8 +3,12 @@ const fs = require('fs')
 const config = fs.existsSync('./config.js') ? require('./config') : {}
 const recordCollectors = fs.existsSync('./recordCollectors.js') ? require('./recordCollectors') : {}
 const _ = require('lodash');
+const asyncLib = require('async')
 const AWS = require('aws-sdk')
 const zlib = require('zlib')
+
+const s3 = new AWS.S3()
+const dyn = new AWS.DynamoDB()
 
 function loadHelpers(s) {
   const sourcePath = `${__dirname}/${s}`
@@ -32,12 +36,9 @@ function createDatedS3Key(prefix, scope, action, requestId, date) {
 }
 
 function buildLogger(event, context, callback) {
+  const startTime = new Date().getTime()
   const logBucket = process.env.LOG_BUCKET
-  _.each(_.get(event, 'Records'), (rec) => {
-    if (_.get(rec, 's3.object.key')) {
-      rec.s3.object.decodedKey = decodeURIComponent(rec.s3.object.key.replace(/\+/g, ' '))
-    }
-  })
+  const metricTable = process.env.METRIC_TABLE
   if (!logBucket) {
     return {
       log: function(arg) {
@@ -51,21 +52,49 @@ function buildLogger(event, context, callback) {
   const logKey = createDatedS3Key(process.env.LOG_PREFIX, process.env.SCOPE, process.env.ACTION, _.get(context, 'awsRequestId'))
   const logs = []
   function log(arg) {
-    if (process.env.DONUT_DAYS_DEBUG === "true" || arg.level === 'ERROR' || arg.level === "WARN") {
+    if (process.env.DONUT_DAYS_DEBUG === "true" || arg.level === 'ERROR' || arg.level === "WARN" || arg.level === "METRIC") {
       logs.push(JSON.stringify(arg))
     }
   }
-  function newCallback(taskErr, taskRes) {
-    new AWS.S3().putObject({
-      Body: zlib.gzipSync(logs.join("\n")),
-      Bucket: logBucket,
-      Key: logKey,
-    }, (e, r) => {
-      if (e) {
-        console.log(e)
+  function newCallback(taskErr, taskRes, metrics) {
+    const parallel = []
+    if (metrics && metricTable) {
+      const metricData = {
+        functionName: _.get(context, 'functionName'),
+        requestId: _.get(context, 'awsRequestId'),
+        invokedFunctionArn: _.get(context, 'invokedFunctionArn'),
+        approximateDuration: startTime - new Date().getTime(),
+        metrics,
       }
+      parallel.push(function(parallelCallback) {
+        dyn.putItem({
+          Item: dyn.bbb(metricData),
+          Table: metricTable
+        }, parallelCallback)
+      })
+    }
+    if (logs.length && logBucket && logKey) {
+      log({level: 'METRIC', metrics})
+      parallel.push(function(parallelCallback) {
+        s3.putObject({
+          Body: zlib.gzipSync(logs.join("\n")),
+          Bucket: logBucket,
+          Key: logKey,
+        }, (e, r) => {
+        }, parallelCallback)
+      })
+    }
+    if (parallel.length) {
+      asyncLib.parallel(parallel, (e, r) => {
+        if (e) {
+          console.log(e)
+        }
+        callback(taskErr, taskRes)
+      })
+      return
+    } else {
       callback(taskErr, taskRes)
-    })
+    }
   }
   return {
     log,
@@ -77,6 +106,11 @@ const helpers = loadHelpers('helpers')
 const dependencyHelpers = loadHelpers('dependencyHelpers')
 
 exports.handler = (event, context, callback) => {
+  _.each(_.get(event, 'Records'), (rec) => {
+    if (_.get(rec, 's3.object.key')) {
+      rec.s3.object.decodedKey = decodeURIComponent(rec.s3.object.key.replace(/\+/g, ' '))
+    }
+  })
   const logger = buildLogger(event, context, callback)
   const ddConfig = config || {}
   config.expectations = config.expectations || event.expectations || {}
