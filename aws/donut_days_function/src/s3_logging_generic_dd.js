@@ -39,14 +39,9 @@ function buildLogger(event, context, callback) {
   const startTime = new Date().getTime()
   const logBucket = process.env.LOG_BUCKET
   const metricTable = process.env.METRIC_TABLE
-  if (!logBucket) {
-    return {
-      log: function(arg) {
-        if (process.env.DONUT_DAYS_DEBUG === "true" || arg.level === 'ERROR' || arg.level === "WARN") {
-          console.log(JSON.stringify(arg))
-        }
-      },
-      callback
+  let logFunction = function(arg) {
+    if (process.env.DONUT_DAYS_DEBUG === "true" || arg.level === 'ERROR' || arg.level === "WARN" || arg.level === "METRIC") {
+      console.log(JSON.stringify(arg))
     }
   }
   const logKey = createDatedS3Key(process.env.LOG_PREFIX, process.env.SCOPE, process.env.ACTION, _.get(context, 'awsRequestId'))
@@ -56,20 +51,30 @@ function buildLogger(event, context, callback) {
       logs.push(JSON.stringify(arg))
     }
   }
+  if (logBucket) {
+    logFunction = log
+  }
   function newCallback(taskErr, taskRes, metrics) {
     const parallel = []
+    // use the time as the range key. Yes, this means
+    // that if things happen simultaneously
+    // we lose data. But it's metric data in which
+    // we're looking for trends, not forensic
+    // debugging data.
+    const time = new Date().getTime()
     if (metrics && metricTable) {
       const metricData = {
         functionName: _.get(context, 'functionName'),
         requestId: _.get(context, 'awsRequestId'),
         invokedFunctionArn: _.get(context, 'invokedFunctionArn'),
-        approximateDuration: startTime - new Date().getTime(),
+        approximateDuration: time - startTime,
+        time,
         metrics,
       }
       parallel.push(function(parallelCallback) {
         dyn.putItem({
-          Item: dyn.bbb(metricData),
-          Table: metricTable
+          Item: AWS.DynamoDB.Converter.marshall(metricData),
+          TableName: metricTable
         }, parallelCallback)
       })
     }
@@ -97,7 +102,7 @@ function buildLogger(event, context, callback) {
     }
   }
   return {
-    log,
+    log: logFunction,
     callback: newCallback
   }
 }

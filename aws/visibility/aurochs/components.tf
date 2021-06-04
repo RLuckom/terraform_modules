@@ -36,6 +36,30 @@ module log_delivery_bucket {
   lambda_notifications = local.archive_function_cloudfront_delivery_bucket_notifications
 }
 
+resource random_id metric_table_suffixes {
+  for_each = toset(local.system_ids.*.security_scope)
+  byte_length = 4
+}
+
+module metric_tables {
+  for_each = toset(keys(local.metric_table_configs))
+  source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  partition_key = {
+    name = "invokedFunctionArn",
+    type = "S"
+  }
+  range_key = {
+    name = "time",
+    type = "N"
+  }
+  table_name = local.metric_table_configs[each.key].table_name
+  put_item_permission_role_names = [ for arn in flatten([
+    [ for security_scope, config in var.supported_system_clients : [
+      for subsystem_name, subsystem_config in config.subsystems : subsystem_config.scoped_logging_functions
+    ]], [module.archive_function.role.arn]]
+  ) : split("/", arn)[1]] 
+}
+
 module data_warehouse {
   source = "github.com/RLuckom/terraform_modules//aws/state/data_warehouse"
   for_each = local.data_warehouse_configs

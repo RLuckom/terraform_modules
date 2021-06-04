@@ -37,6 +37,7 @@ variable coordinator_data {
     lambda_log_delivery_bucket = string
     cloudfront_log_delivery_prefix = string
     cloudfront_log_delivery_bucket = string
+    metric_table = string
   })
 }
 

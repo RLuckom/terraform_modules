@@ -22,6 +22,7 @@ output plugin_config {
     [for k, v in var.plugin_static_configs : {
     bucket_name = module.admin_site.website_bucket_name
     domain = module.admin_site.routing.domain
+    metric_table = var.coordinator_data.metric_table
     authenticated_role = module.cognito_identity_management.authenticated_role[replace(k, "/", "")]
     aws_credentials_endpoint = var.get_access_creds_path_for_lambda_origin
     source_root = "${local.plugin_root}/${replace(k, "/", "")}/"

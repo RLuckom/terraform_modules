@@ -76,6 +76,12 @@ variable supported_system_clients {
 }
 
 locals {
+  metric_table_configs = zipmap(
+    local.system_ids.*.security_scope,
+    [for sys in local.system_ids.*.security_scope : {
+      table_name = "metrics-${sys}-${random_id.metric_table_suffixes[sys].b64_url}"
+    }]
+  )
   systems_with_subsystems = [ for sys_name, sys_config in var.supported_system_definitions : {
     security_scope = sys_name
     subsystem_names = keys(sys_config.subsystems)
@@ -117,6 +123,7 @@ locals {
   lambda_logging_config = {
     bucket = local.visibility_data_bucket
     prefix = local.scoped_log_prefixes[var.visibility_system_id.security_scope][var.visibility_system_id.subsystem_name].lambda_log_prefix
+    metric_table = local.metric_table_configs[var.visibility_system_id.security_scope].table_name
   }
 }
 
@@ -328,6 +335,7 @@ locals {
       lambda_athena_result_location = "s3://${local.visibility_data_bucket}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
       lambda_source_bucket = var.lambda_source_bucket
       log_delivery_bucket = local.cloudfront_delivery_bucket
+      metric_table = local.metric_table_configs[v.system_id.security_scope].table_name
       cloudfront_log_delivery_bucket = local.cloudfront_delivery_bucket
       log_partition_bucket = local.visibility_data_bucket
       lambda_log_delivery_bucket = local.visibility_data_bucket
@@ -350,6 +358,7 @@ locals {
     [for system_id in local.system_ids : {
       log_delivery_bucket = local.cloudfront_delivery_bucket
       data_bucket = local.visibility_data_bucket
+      metric_table = local.metric_table_configs[system_id.security_scope].table_name
       glue_database_name = replace("${system_id.security_scope}-${local.visibility_data_bucket}", "-", "_")
       athena_region = var.athena_region
       security_scope = system_id.security_scope
@@ -402,9 +411,11 @@ locals {
       [for subsystem_name in system_id.subsystem_names : {
         log_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
         log_bucket = local.visibility_data_bucket
+        metric_table = local.metric_table_configs[system_id.security_scope].table_name
         config = {
           prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
           bucket = local.visibility_data_bucket
+          metric_table = local.metric_table_configs[system_id.security_scope].table_name
         }
         system_id = {
           security_scope = system_id.security_scope

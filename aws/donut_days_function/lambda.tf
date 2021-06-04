@@ -48,6 +48,7 @@ module function {
     DONUT_DAYS_DEBUG = var.log_level
     LOG_BUCKET = var.logging_config.bucket
     LOG_PREFIX = var.logging_config.prefix
+    METRIC_TABLE = var.logging_config.metric_table
     ACTION = var.action_name
     SCOPE = var.scope_name
   }, var.environment_var_map)
