@@ -1,9 +1,9 @@
 output lambda_logging_roles {
   value = flatten([
-    module.site_render.*.role.arn,
-    module.deletion_cleanup.*.role.arn,
-    module.trails_resolver.*.role.arn,
-    module.trails_updater.*.role.arn
+    module.site_render.role.arn,
+    module.deletion_cleanup.role.arn,
+    module.trails_resolver.role.arn,
+    module.trails_updater.role.arn
   ])
 }
 
