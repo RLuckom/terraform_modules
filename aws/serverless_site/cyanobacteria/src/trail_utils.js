@@ -15,6 +15,8 @@ const TRAIL_URI_TEMPLATES = {
   html: urlTemplate.parse("https://{domainName}/trails/{name}.html"),
 }
 
+const INDEX_HTML_KEY = 'index.html'
+
 const mdr = require('markdown-it')({
   html: true,
   highlight: function (str, lang) {
@@ -232,21 +234,44 @@ function postMDKey(postId) {
   return `posts/${postId}.md`
 }
 
+function renderChangedPosts({posts, runningMaterial, currentPostList}) {
+  const annotatedPostList = annotatePostList(_.cloneDeep(currentPostList), runningMaterial.domainName)
+  return _.map(posts, (p) => {
+    const parsed = parsePost(p, runningMaterial.domainName)
+    const neighbors = getPostNeighbors(parsed.id, annotatedPostList)
+    return {
+      key: postHTMLKey(p.id),
+      rendered: renderPostToHTML({runningMaterial, post: parsed, neighbors})
+    }
+  })
+}
+
+function postRecordToDynamo(pr) {
+  return {type: 'post', id: pr.id, frontMatter: pr.frontMatter}
+}
+
 function determineUpdates({postText, previousPostList, isDelete, postId, runningMaterial}) {
   const annotatedPreviousPostList = annotatePostList(_.cloneDeep(previousPostList), runningMaterial.domainName)
   const parsedPost = isDelete ? null : parsePost(postId, postText, runningMaterial.domainName)
   let newPostList = _.cloneDeep(annotatedPreviousPostList)
+  const dynamoDeletes = []
+  const dynamoPuts = []
   const currentPostRecord = _.find(newPostList, (p) => p.id === postId)
   if (isDelete) {
     newPostList = newPostList.filter((p) => p.id !== postId)
+    if (currentPostRecord) {
+      dynamoDeletes.push(postRecordToDynamo(currentPostRecord))
+    }
   } else if (!currentPostRecord) {
     newPostList.push({
       id: postId,
       frontMatter: _.cloneDeep(parsedPost.frontMatter),
       synthetic: _.cloneDeep(parsedPost.synthetic),
     })
+    dynamoPuts.push(postRecordToDynamo(parsedPost))
   } else {
     currentPostRecord.frontMatter = _.cloneDeep(parsedPost.frontMatter)
+    dynamoPuts.push(postRecordToDynamo(parsedPost))
   }
   const diffs = findChanges(annotatedPreviousPostList, newPostList, postId, isDelete)
   const neighbors = isDelete ? null : getPostNeighbors(postId, newPostList)
@@ -260,10 +285,21 @@ function determineUpdates({postText, previousPostList, isDelete, postId, running
       rendered: renderTrailToHTML({trailId, runningMaterial, members: getTrailMembers(trailId, newPostList)})
     }
   })
+  const indexContent = renderTrailToHTML({trailId: 'posts', runningMaterial, members: newPostList})
+  trailUpdates.push({
+    key: trailHTMLKey('posts'),
+    rendered: indexContent,
+  })
+  trailUpdates.push({
+    key: INDEX_HTML_KEY,
+    rendered: indexContent,
+  })
   const trailDeleteKeys = _.map(diffs.deleted.trails, trailHTMLKey)
   const postUpdateKeys = _.map(diffs.changed.posts, postMDKey)
   const postDeleteKeys = isDelete ? [postHTMLKey(postId)] : []
   return {
+    dynamoPuts,
+    dynamoDeletes,
     parsedPost,
     newPostList,
     diffs,
