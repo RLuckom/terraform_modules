@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link rel="stylesheet" href="/assets/static/css/main.css">
+  <link rel="stylesheet" href="/assets/static/css/highlight.css">
+    <title>
+         <%= post.frontMatter.title %>
+    </title>
+  </head>
+  <body>
+<section id="nav">
+<a href="<%= runningMaterial.browserRoot %>"><h1><%= runningMaterial.title %></h1></a>
+<div class="nav-links">
+<% _.forEach(_.get(runningMaterial, 'navLinks'), function({name, target}) { 
+    %><div class="nav-link-ctr"><a class="nav-link" href="<%- target %>"><%- name  %></a></div><% 
+}); %>
+</div>
+</section>
+<article id="content">
+  <h1><%= post.frontMatter.title || 'no title' %> </h1>
+    <p class="subtitle">
+      <%= formatDate(post.frontMatter.createDate || post.frontMatter.date) %>
+    </p>
+<section class="article-content">
+<%= post.synthetic.renderedContent %>
+</section>
+</article>
+<section id="trails">
+<div class="trail-links"><%
+  if (neighbors.previous) {
+   %><a class="previous-neighbor" href="<%= neighbors.previous.synthetic.url %>"><%= neighbors.previous.frontMatter.title %></a><% 
+} else {
+%><span class="neighbor-placeholder"></span><%
+} 
+%><a class="trail-name" href="<%= runningMaterial.postListUrl %>">Posts</a><% 
+if (neighbors.next) {
+   %><a class="next-neighbor" href="<%= neighbors.next.synthetic.url %>"><%= neighbors.next.frontMatter.title %></a><% 
+} else {
+%><span class="neighbor-placeholder"></span><%
+} 
+%></div>
+</section>
+  </body>
+</html>
