@@ -30,11 +30,9 @@ describe('utils', () => {
     const whyWebsite = copyMock.pop()
     whyWebsite.frontMatter.title = "new title"
     copyMock.push(whyWebsite)
-    const {changed: {trails: changedTrails, posts: changedPosts}} = utils.findChanges(mockPostList, copyMock)
-    const {deleted: {trails: deletedTrails}} = utils.findChanges(mockPostList, copyMock)
+    const {deleted: {trails: deletedTrails, posts: deletedPosts}, changed: {trails: changedTrails, posts: changedPosts}} = utils.findChanges(mockPostList, copyMock, 'why_website')
     expect(changedPosts).toEqual([
       'diy_singer_66_belt',
-      'why_website',
       'taking_down_windmills_from_the_inside'
     ])
     expect(changedTrails).toEqual([
@@ -48,10 +46,8 @@ describe('utils', () => {
     const whyWebsite = copyMock.pop()
     whyWebsite.frontMatter.meta.trails.push("new trail")
     copyMock.push(whyWebsite)
-    const {changed: {trails: changedTrails, posts: changedPosts}} = utils.findChanges(mockPostList, copyMock)
-    const {deleted: {trails: deletedTrails}} = utils.findChanges(mockPostList, copyMock)
+    const {deleted: {trails: deletedTrails, posts: deletedPosts}, changed: {trails: changedTrails, posts: changedPosts}} = utils.findChanges(mockPostList, copyMock, 'why_website')
     expect(changedPosts).toEqual([
-      'why_website'
     ])
     expect(changedTrails).toEqual([
       'new trail'
@@ -64,9 +60,26 @@ describe('utils', () => {
     const whyWebsite = copyMock.pop()
     whyWebsite.frontMatter.meta.trails = []
     copyMock.push(whyWebsite)
-    const {deleted: {trails: deletedTrails}} = utils.findChanges(mockPostList, copyMock)
-    const {changed: {trails: changedTrails, posts: changedPosts}} = utils.findChanges(mockPostList, copyMock)
+    const {deleted: {trails: deletedTrails, posts: deletedPosts}, changed: {trails: changedTrails, posts: changedPosts}} = utils.findChanges(mockPostList, copyMock, 'why_website')
+    expect(deletedPosts).toEqual([
+    ])
     expect(changedPosts).toEqual([
+    ])
+    expect(changedTrails).toEqual(['identity'])
+    expect(deletedTrails).toEqual([
+      'philosophy'
+    ])
+  })
+
+  it('identifies when a post has been deleted', () => {
+    const copyMock = _.cloneDeep(mockPostList)
+    const whyWebsite = copyMock.pop()
+    const {deleted: {trails: deletedTrails, posts: deletedPosts}, changed: {trails: changedTrails, posts: changedPosts}} = utils.findChanges(mockPostList, copyMock, 'why_website', true)
+    expect(changedPosts).toEqual([
+      'diy_singer_66_belt',
+      'taking_down_windmills_from_the_inside',
+    ])
+    expect(deletedPosts).toEqual([
       'why_website',
     ])
     expect(changedTrails).toEqual(['identity'])
@@ -85,6 +98,7 @@ describe('utils', () => {
 
   it('annotates a post list', () => {
     const annotated = utils.annotatePostList(mockPostList)
+    //fs.writeFileSync(__dirname + '/support/tests/test4.json', JSON.stringify(annotated, null, 2))
     const mock = require(__dirname + '/support/tests/test4.json')
     expect(annotated).toEqual(mock)
   })
@@ -112,7 +126,56 @@ describe('utils', () => {
   it('renders a trail', () => {
     const members = utils.getTrailMembers('practitioner-journey', utils.annotatePostList(mockPostList))
     const rendered = utils.renderTrailToHTML({trailId: 'practitioner-journey', runningMaterial, members})
+    //fs.writeFileSync(__dirname + '/support/tests/practitioner_journey.html', rendered)
     const mock = fs.readFileSync(__dirname + '/support/tests/practitioner_journey.html').toString('utf8')
+    expect(rendered).toEqual(mock)
+  })
+
+  it('determines updates on delete', () => {
+    const rendered = utils.determineUpdates({
+      postId: 'alpha_todos',
+      isDelete: true, 
+      runningMaterial,
+      previousPostList: _.cloneDeep(mockPostList)
+    })
+    //fs.writeFileSync(__dirname + '/support/tests/delete_updates.json', JSON.stringify(rendered, null, 2))
+    const mock = require(__dirname + '/support/tests/delete_updates.json')
+    //console.log(JSON.stringify(rendered, null, 2))
+    expect(rendered).toEqual(mock)
+  })
+
+  it('determines no updates on resave same', () => {
+    const rendered = utils.determineUpdates({
+      postId: 'alpha_todos',
+      runningMaterial,
+      postText: post,
+      previousPostList: _.cloneDeep(mockPostList)
+    })
+    //fs.writeFileSync(__dirname + '/support/tests/resave_updates.json', JSON.stringify(rendered, null, 2))
+    const mock = require(__dirname + '/support/tests/resave_updates.json')
+    //console.log(JSON.stringify(rendered, null, 2))
+    rendered.parsedPost.frontMatter.createDate = rendered.parsedPost.frontMatter.createDate.toISOString()
+    rendered.parsedPost.frontMatter.date = rendered.parsedPost.frontMatter.date.toISOString()
+    rendered.newPostList[72].frontMatter.createDate = rendered.newPostList[72].frontMatter.createDate.toISOString()
+    rendered.newPostList[72].frontMatter.date = rendered.newPostList[72].frontMatter.date.toISOString()
+    expect(rendered).toEqual(mock)
+  })
+
+  it('determines updates on add new', () => {
+    const previousPostList = _.filter(_.cloneDeep(mockPostList), (p) => p.id !== 'alpha_todos')
+    const rendered = utils.determineUpdates({
+      postId: 'alpha_todos',
+      runningMaterial,
+      postText: post,
+      previousPostList,
+    })
+    //fs.writeFileSync(__dirname + '/support/tests/add_updates.json', JSON.stringify(rendered, null, 2))
+    const mock = require(__dirname + '/support/tests/add_updates.json')
+    //console.log(JSON.stringify(rendered, null, 2))
+    rendered.parsedPost.frontMatter.createDate = rendered.parsedPost.frontMatter.createDate.toISOString()
+    rendered.parsedPost.frontMatter.date = rendered.parsedPost.frontMatter.date.toISOString()
+    rendered.newPostList[76].frontMatter.createDate = rendered.newPostList[76].frontMatter.createDate.toISOString()
+    rendered.newPostList[76].frontMatter.date = rendered.newPostList[76].frontMatter.date.toISOString()
     expect(rendered).toEqual(mock)
   })
 })

@@ -20,7 +20,7 @@
     <p class="subtitle">
     </p>
 <section>
-<% _.forEach(_(members).sortBy((x) => _.get(x, 'frontMatter.createDate')).reverse().value(), function(member) { %><div class="trail-member"><h3><a href="<%= member.synthetic.url %>"><%- _.get(member, 'frontMatter.title') || "no title" %></a></h3><p><%- _.get(member, 'frontMatter.author') %></p><p><%- formatDate(_.get(member, 'frontMatter.createDate') || _.get(member, 'frontMatter.date')) %></p></div><% }); %>
+<% _.forEach(members, function(member) { %><div class="trail-member"><h3><a href="<%= member.synthetic.url %>"><%- _.get(member, 'frontMatter.title') || "no title" %></a></h3><p><%- _.get(member, 'frontMatter.author') %></p><p><%- formatDate(_.get(member, 'frontMatter.createDate') || _.get(member, 'frontMatter.date')) %></p></div><% }); %>
 </section>
   </body>
 </html>
