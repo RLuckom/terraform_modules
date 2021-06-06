@@ -178,4 +178,22 @@ describe('utils', () => {
     rendered.newPostList[76].frontMatter.date = rendered.newPostList[76].frontMatter.date.toISOString()
     expect(rendered).toEqual(mock)
   })
+
+  it('determines updates on date change', () => {
+    const previousPostList = _.cloneDeep(mockPostList)
+    const rendered = utils.determineUpdates({
+      postId: 'alpha_todos',
+      runningMaterial,
+      postText: post.toString('utf8').replace(/2021/g, '2020'),
+      previousPostList,
+    })
+    //fs.writeFileSync(__dirname + '/support/tests/change_date.json', JSON.stringify(rendered, null, 2))
+    const mock = require(__dirname + '/support/tests/change_date.json')
+    //console.log(JSON.stringify(rendered, null, 2))
+    rendered.parsedPost.frontMatter.createDate = rendered.parsedPost.frontMatter.createDate.toISOString()
+    rendered.parsedPost.frontMatter.date = rendered.parsedPost.frontMatter.date.toISOString()
+    rendered.newPostList[72].frontMatter.createDate = rendered.newPostList[72].frontMatter.createDate.toISOString()
+    rendered.newPostList[72].frontMatter.date = rendered.newPostList[72].frontMatter.date.toISOString()
+    expect(rendered).toEqual(mock)
+  })
 })
