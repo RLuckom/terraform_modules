@@ -1,7 +1,7 @@
 {
   "dynamoPuts": [
     {
-      "type": "post",
+      "kind": "post",
       "id": "alpha_todos",
       "frontMatter": {
         "title": "Early May Check-in: Alpha release thoughts",

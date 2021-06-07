@@ -1,9 +1,11 @@
 const _ = require('lodash')
-const = {
+const {
+  isS3Delete,
+  renderChangedPosts,
   getPostIdFromKey,
   annotatePostList,
   determineUpdates,
-} = require('./trail_utils')
+} = require('./helpers/render_utils')
 
 module.exports = {
   stages: {
@@ -21,7 +23,7 @@ module.exports = {
         isDelete: {
           helper: isS3Delete,
           params: { 
-            eventType: {ref: 'event.Records[0].s3.object.decodedKey'},
+            eventType: {ref: 'event.Records[0].eventName'},
           }
         },
         runningMaterial: {
@@ -42,13 +44,13 @@ module.exports = {
             params: {
               explorandaParams: {
                 apiConfig: {value: {region: '${aws_region}'}},
-                TableName: '${table}',
+                TableName: '${table_name}',
                 ExpressionAttributeValues: {
                   all: {
-                    ':typeId': {value: 'post'}
+                    ':kindId': {value: 'post'}
                   }
                 },
-                KeyConditionExpression: 'type = :typeId'
+                KeyConditionExpression: 'kind = :kindId'
               }
             },
           }
@@ -58,7 +60,6 @@ module.exports = {
           condition: {
             not: { ref: 'stage.isDelete' },
           },
-          formatter: '[0].Body',
           params: {
             accessSchema: {value: 'dataSources.AWS.s3.getObject'},
             params: {
@@ -68,28 +69,53 @@ module.exports = {
               }
             }
           },
+        },
+        getPostTemplate: {
+          action: 'exploranda',
+          params: {
+            accessSchema: {value: 'dataSources.AWS.s3.getObject'},
+            params: {
+              explorandaParams: {
+                Bucket: {ref: 'stage.bucket'},
+                Key: { value: '${post_template_key}' },
+              }
+            }
+          },
+        },
+        getTrailTemplate: {
+          action: 'exploranda',
+          params: {
+            accessSchema: {value: 'dataSources.AWS.s3.getObject'},
+            params: {
+              explorandaParams: {
+                Bucket: {ref: 'stage.bucket'},
+                Key: { value: '${trail_template_key}' },
+              }
+            }
+          },
         }
       },
     },
     determineUpdates: {
       index: 1,
       transformers: {
-        values: {
-          updates: {
-            helper: determineUpdates,
-            params: {
-              postText: { ref: 'requiredInputs.results.getPost' },
-              previousPostList: {
-                helper: ({raw}) => {
-                  return annotatePostList(raw, '${domain_name}')
-                },
-                params: {
-                  raw: {ref: 'requiredInputs.results.previousPostList'},
-                }
+        updates: {
+          helper: determineUpdates,
+          params: {
+            postText: { ref: 'requiredInputs.results.getPost[0].Body' },
+            previousPostList: {
+              helper: ({raw}) => {
+                return annotatePostList(raw, '${domain_name}')
               },
-              postId: { ref: 'requiredInputs.vars.postId' },
-              runningMaterial: { ref: 'requiredInputs.vars.runningMaterial' },
-            }
+              params: {
+                raw: {ref: 'requiredInputs.results.previousPostList'},
+              }
+            },
+            postId: { ref: 'requiredInputs.vars.postId' },
+            isDelete: { ref: 'requiredInputs.vars.isDelete' },
+            runningMaterial: { ref: 'requiredInputs.vars.runningMaterial' },
+            postTemplate: { ref: 'requiredInputs.results.getPostTemplate[0].Body' },
+            trailTemplate: { ref: 'requiredInputs.results.getTrailTemplate[0].Body' },
           }
         }
       },
@@ -102,7 +128,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
-                Keys: { ref: 'stage.updates.trailDeleteKeys' },
+                Key: { ref: 'stage.updates.trailDeleteKeys' },
               }
             }
           },
@@ -115,7 +141,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
-                Keys: { ref: 'stage.updates.postDeleteKeys' },
+                Key: { ref: 'stage.updates.postDeleteKeys' },
               }
             }
           },
@@ -124,11 +150,12 @@ module.exports = {
           action: 'exploranda',
           condition: { ref: 'stage.updates.renderedPost' },
           params: {
-            accessSchema: {value: 'dataSources.AWS.s3.deleteObject'},
+            accessSchema: {value: 'dataSources.AWS.s3.putObject'},
             params: {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
-                Keys: { ref: 'stage.updates.renderedPost.key' },
+                Key: { ref: 'stage.updates.renderedPost.key' },
+                ContentType: { value: 'text/html' },
                 Body: { ref: 'stage.updates.renderedPost.rendered' },
               }
             }
@@ -138,11 +165,12 @@ module.exports = {
           action: 'exploranda',
           condition: { ref: 'stage.updates.trailUpdates.length' },
           params: {
-            accessSchema: {value: 'dataSources.AWS.s3.deleteObject'},
+            accessSchema: {value: 'dataSources.AWS.s3.putObject'},
             params: {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
-                Keys: { 
+                ContentType: { value: 'text/html' },
+                Key: { 
                   helper: ({updates}) => _.map(updates, 'key'),
                   params: {
                     updates: {ref: 'stage.updates.trailUpdates' },
@@ -165,7 +193,7 @@ module.exports = {
             accessSchema: {value: 'dataSources.AWS.s3.getObject'},
             params: {
               explorandaParams: {
-                Bucket: {ref: 'stage.bucket'},
+                Bucket: {ref: 'requiredInputs.vars.bucket'},
                 Key: { ref: 'stage.updates.postUpdateKeys' },
               }
             }
@@ -179,7 +207,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 apiConfig: {value: {region: '${aws_region}'}},
-                TableName: '${table}',
+                TableName: '${table_name}',
                 Item: { ref: 'stage.updates.dynamoPuts' }
               }
             }
@@ -193,7 +221,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 apiConfig: {value: {region: '${aws_region}'}},
-                TableName: '${table}',
+                TableName: '${table_name}',
                 Key: { ref: 'stage.updates.dynamoDeletes' }
               }
             }
@@ -208,9 +236,21 @@ module.exports = {
         postsToRerender: {
           helper: renderChangedPosts,
           params: {
-            posts: {ref: 'determineUpdates.results.getPostsToRerender' },
+            posts: {
+              helper: ({posts, keys}) => _.map(posts, (p, indx) => {
+                return {
+                  text: p.Body.toString('utf8'),
+                  id: getPostIdFromKey({key: keys[indx]})
+                }
+              }),
+              params: {
+                posts: {ref: 'determineUpdates.results.getPostsToRerender' },
+                keys: { ref: 'determineUpdates.vars.updates.postUpdateKeys' },
+              }
+            },
             currentPostList: {ref: 'determineUpdates.vars.updates.newPostList' },
             runningMaterial: { ref: 'requiredInputs.vars.runningMaterial' },
+            postTemplate: { ref: 'requiredInputs.results.getPostTemplate[0].Body' },
           },
         }
       },
@@ -218,11 +258,12 @@ module.exports = {
         saveRenderedPostsHTML: {
           action: 'exploranda',
           params: {
-            accessSchema: {value: 'dataSources.AWS.s3.deleteObject'},
+            accessSchema: {value: 'dataSources.AWS.s3.putObject'},
             params: {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
-                Keys: { 
+                ContentType: { value: 'text/html' },
+                Key: {
                   helper: ({updates}) => _.map(updates, 'key'),
                   params: {
                     updates: {ref: 'stage.postsToRerender' },

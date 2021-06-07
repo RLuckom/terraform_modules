@@ -1,9 +1,9 @@
 const _ = require('lodash')
-const utils = require('../trail_utils')
+const utils = require('../render_utils')
 const mockPostList = require('./support/mocks.json')
 const fs = require('fs')
-const trailTemplate = utils.compileTemplate(fs.readFileSync(__dirname + '/support/templates/trail.tmpl'))
-const postTemplate = utils.compileTemplate(fs.readFileSync(__dirname + '/support/templates/post.tmpl'))
+const trailTemplate = fs.readFileSync(__dirname + '/support/templates/trail.tmpl')
+const postTemplate = fs.readFileSync(__dirname + '/support/templates/post.tmpl').toString('utf8')
 const post = fs.readFileSync(__dirname + '/support/posts/alpha_todos.md')
 
 const emptyNavLinks = []
@@ -118,14 +118,14 @@ describe('utils', () => {
   it('renders a post', () => {
     const parsed = utils.parsePost('alpha_todos', post, runningMaterial.domainName)
     const neighbors = utils.getPostNeighbors('alpha_todos', utils.annotatePostList(mockPostList))
-    const rendered = utils.renderPostToHTML({runningMaterial, post: parsed, neighbors})
+    const rendered = utils.renderPostToHTML({runningMaterial, post: parsed, neighbors, postTemplate})
     const renderedMock = fs.readFileSync(__dirname + '/support/tests/alpha_todos.html').toString('utf8')
     expect(rendered).toEqual(renderedMock)
   })
 
   it('renders a trail', () => {
     const members = utils.getTrailMembers('practitioner-journey', utils.annotatePostList(mockPostList))
-    const rendered = utils.renderTrailToHTML({trailId: 'practitioner-journey', runningMaterial, members})
+    const rendered = utils.renderTrailToHTML({trailId: 'practitioner-journey', runningMaterial, members, trailTemplate})
     //fs.writeFileSync(__dirname + '/support/tests/practitioner_journey.html', rendered)
     const mock = fs.readFileSync(__dirname + '/support/tests/practitioner_journey.html').toString('utf8')
     expect(rendered).toEqual(mock)
@@ -133,6 +133,8 @@ describe('utils', () => {
 
   it('determines updates on delete', () => {
     const rendered = utils.determineUpdates({
+      postTemplate,
+      trailTemplate,
       postId: 'alpha_todos',
       isDelete: true, 
       runningMaterial,
@@ -146,6 +148,8 @@ describe('utils', () => {
 
   it('determines no updates on resave same', () => {
     const rendered = utils.determineUpdates({
+      postTemplate,
+      trailTemplate,
       postId: 'alpha_todos',
       runningMaterial,
       postText: post,
@@ -164,6 +168,8 @@ describe('utils', () => {
   it('determines updates on add new', () => {
     const previousPostList = _.filter(_.cloneDeep(mockPostList), (p) => p.id !== 'alpha_todos')
     const rendered = utils.determineUpdates({
+      postTemplate,
+      trailTemplate,
       postId: 'alpha_todos',
       runningMaterial,
       postText: post,
@@ -182,6 +188,8 @@ describe('utils', () => {
   it('determines updates on date change', () => {
     const previousPostList = _.cloneDeep(mockPostList)
     const rendered = utils.determineUpdates({
+      postTemplate,
+      trailTemplate,
       postId: 'alpha_todos',
       runningMaterial,
       postText: post.toString('utf8').replace(/2021/g, '2020'),

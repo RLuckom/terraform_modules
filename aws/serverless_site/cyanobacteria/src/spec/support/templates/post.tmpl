@@ -4,43 +4,41 @@
   <link rel="stylesheet" href="/assets/static/css/main.css">
   <link rel="stylesheet" href="/assets/static/css/highlight.css">
     <title>
-         <%= item.title %>
+         <%= post.frontMatter.title %>
     </title>
   </head>
   <body>
 <section id="nav">
-<a href="<%= siteDetails.browserRoot %>"><h1><%= siteDetails.title %></h1></a>
+<a href="<%= runningMaterial.browserRoot %>"><h1><%= runningMaterial.title %></h1></a>
 <div class="nav-links">
-<% _.forEach(_.get(siteDetails, 'formats.html.nav.links'), function({name, target}) { 
+<% _.forEach(_.get(runningMaterial, 'navLinks'), function({name, target}) { 
     %><div class="nav-link-ctr"><a class="nav-link" href="<%- target %>"><%- name  %></a></div><% 
 }); %>
 </div>
 </section>
 <article id="content">
-  <h1><%= item.title || 'no title' %> </h1>
+  <h1><%= post.frontMatter.title || 'no title' %> </h1>
     <p class="subtitle">
-      <%= formatDate(item.createDate || item.date) %>
+      <%= formatDate(post.frontMatter.createDate || post.frontMatter.date) %>
     </p>
 <section class="article-content">
-<%= item.content %>
+<%= post.synthetic.renderedContent %>
 </section>
 </article>
 <section id="trails">
-<% _.forEach(meta.trails.neighbors, function({trailName, previousNeighbor, nextNeighbor}, trailUri) { 
-%><div class="trail-links"><%
-  if (previousNeighbor) {
-   %><a class="previous-neighbor" href="<%- _.get(identifyUri(previousNeighbor.memberUri), 'browserUrl') %>"><%- _.get(previousNeighbor, "memberMetadata.title") %></a><% 
+<div class="trail-links"><%
+  if (neighbors.previous) {
+   %><a class="previous-neighbor" href="<%= neighbors.previous.synthetic.url %>"><%= neighbors.previous.frontMatter.title || 'no title'%></a><% 
 } else {
 %><span class="neighbor-placeholder"></span><%
 } 
-%><a class="trail-name" href="<%- _.get(identifyUri(trailUri), 'browserUrl') %>"><%- trailName %></a><% 
-if (nextNeighbor) {
-%><a class="next-neighbor" href="<%- _.get(identifyUri(nextNeighbor.memberUri), 'browserUrl') %>"><%- _.get(nextNeighbor, "memberMetadata.title") %></a><%
+%><a class="trail-name" href="<%= runningMaterial.postListUrl %>">Posts</a><% 
+if (neighbors.next) {
+   %><a class="next-neighbor" href="<%= neighbors.next.synthetic.url %>"><%= neighbors.next.frontMatter.title || 'no title' %></a><% 
 } else {
 %><span class="neighbor-placeholder"></span><%
 } 
-%></div><%
-%><% }) %>
+%></div>
 </section>
   </body>
 </html>

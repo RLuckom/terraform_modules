@@ -3,8 +3,6 @@ const yaml = require('js-yaml')
 const hljs = require('highlight.js');
 const urlTemplate = require('url-template')
 const fs = require('fs')
-const TRAIL_TEMPLATE = compileTemplate(fs.readFileSync('./templates/trail.tmpl').toString('utf8'))
-const POST_TEMPLATE = compileTemplate(fs.readFileSync('./templates/post.tmpl').toString('utf8'))
 
 const POST_URI_TEMPLATES = {
   md: urlTemplate.parse("https://{domainName}/posts/{name}.md"),
@@ -51,7 +49,7 @@ mdr.renderer.rules.link_open = function (tokens, idx, options, env, self) {
 };
 
 function getPostIdFromKey({key}) {
-  const postIdParts = Key.split('/').pop().split('.')
+  const postIdParts = key.split('/').pop().split('.')
   postIdParts.pop()
   return postIdParts.join('.')
 }
@@ -161,7 +159,7 @@ function parsePost(postId, s, domainName) {
   let started = false
   let frontMatter = ''
   let content = ''
-  for (r of t.slice(1)) {
+  for (let r of t.slice(1)) {
     if (_.trim(r) === '---') {
       if (!started) {
         started = true
@@ -206,16 +204,16 @@ function annotatePostList(postList, domainName) {
 }
 
 // expects annotated post
-function renderPostToHTML({runningMaterial, post, neighbors}) {
-  return POST_TEMPLATE({runningMaterial, post, neighbors})
+function renderPostToHTML({runningMaterial, post, neighbors, postTemplate}) {
+  return compileTemplate(postTemplate)({runningMaterial, post, neighbors})
 }
 
-function renderTrailToHTML({trailId, runningMaterial, members}) {
-  return TRAIL_TEMPLATE({trailId, runningMaterial,members})
+function renderTrailToHTML({trailId, runningMaterial, members, trailTemplate}) {
+  return compileTemplate(trailTemplate)({trailId, runningMaterial,members})
 }
 
 function compileTemplate(s) {
-  return _.template(s, {imports: {formatDate: (n) => n.toLocaleString()}})
+  return _.template(_.isBuffer(s) ? s.toString('utf8') : s, {imports: {formatDate: (n) => n.toLocaleString()}})
 }
 
 function isS3Delete({eventType}) {
@@ -234,23 +232,27 @@ function postMDKey(postId) {
   return `posts/${postId}.md`
 }
 
-function renderChangedPosts({posts, runningMaterial, currentPostList}) {
+function renderChangedPosts({posts, runningMaterial, currentPostList, postTemplate}) {
   const annotatedPostList = annotatePostList(_.cloneDeep(currentPostList), runningMaterial.domainName)
-  return _.map(posts, (p) => {
-    const parsed = parsePost(p, runningMaterial.domainName)
-    const neighbors = getPostNeighbors(parsed.id, annotatedPostList)
+  return _.map(posts, ({text, id}) => {
+    const parsed = parsePost(id, text, runningMaterial.domainName)
+    const neighbors = getPostNeighbors(id, annotatedPostList)
     return {
-      key: postHTMLKey(p.id),
-      rendered: renderPostToHTML({runningMaterial, post: parsed, neighbors})
+      key: postHTMLKey(id),
+      rendered: renderPostToHTML({runningMaterial, post: parsed, neighbors, postTemplate})
     }
   })
 }
 
-function postRecordToDynamo(pr) {
-  return {type: 'post', id: pr.id, frontMatter: pr.frontMatter}
+function postRecordToDynamoDeleteKey(pr) {
+  return {kind: 'post', id: pr.id}
 }
 
-function determineUpdates({postText, previousPostList, isDelete, postId, runningMaterial}) {
+function postRecordToDynamo(pr) {
+  return {kind: 'post', id: pr.id, frontMatter: pr.frontMatter}
+}
+
+function determineUpdates({postText, previousPostList, isDelete, postId, runningMaterial, postTemplate, trailTemplate}) {
   const annotatedPreviousPostList = annotatePostList(_.cloneDeep(previousPostList), runningMaterial.domainName)
   const parsedPost = isDelete ? null : parsePost(postId, postText, runningMaterial.domainName)
   let newPostList = _.cloneDeep(annotatedPreviousPostList)
@@ -260,7 +262,7 @@ function determineUpdates({postText, previousPostList, isDelete, postId, running
   if (isDelete) {
     newPostList = newPostList.filter((p) => p.id !== postId)
     if (currentPostRecord) {
-      dynamoDeletes.push(postRecordToDynamo(currentPostRecord))
+      dynamoDeletes.push(postRecordToDynamoDeleteKey(currentPostRecord))
     }
   } else if (!currentPostRecord) {
     newPostList.push({
@@ -277,15 +279,15 @@ function determineUpdates({postText, previousPostList, isDelete, postId, running
   const neighbors = isDelete ? null : getPostNeighbors(postId, newPostList)
   const renderedPost = isDelete ? null : {
     key: postHTMLKey(postId),
-    rendered: renderPostToHTML({runningMaterial, post: parsedPost, neighbors})
+    rendered: renderPostToHTML({runningMaterial, post: parsedPost, neighbors,  postTemplate})
   }
   const trailUpdates = _.map(diffs.changed.trails, (trailId) => {
     return {
       key: trailHTMLKey(trailId),
-      rendered: renderTrailToHTML({trailId, runningMaterial, members: getTrailMembers(trailId, newPostList)})
+      rendered: renderTrailToHTML({trailId, runningMaterial, members: getTrailMembers(trailId, newPostList), trailTemplate})
     }
   })
-  const indexContent = renderTrailToHTML({trailId: 'posts', runningMaterial, members: newPostList})
+  const indexContent = renderTrailToHTML({trailId: 'posts', runningMaterial, members: newPostList, trailTemplate})
   trailUpdates.push({
     key: trailHTMLKey('posts'),
     rendered: indexContent,
@@ -324,5 +326,7 @@ module.exports = {
   compileTemplate,
   getPostNeighbors,
   getTrailMembers,
+  isS3Delete,
+  renderChangedPosts,
   determineUpdates,
 }

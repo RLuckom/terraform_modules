@@ -2,22 +2,8 @@
   "dynamoPuts": [],
   "dynamoDeletes": [
     {
-      "type": "post",
-      "id": "alpha_todos",
-      "frontMatter": {
-        "date": "2021-05-08T11:40:00.000Z",
-        "author": "Raphael Luckom",
-        "meta": {
-          "trails": [
-            "check-in",
-            "alpha release"
-          ]
-        },
-        "draft": false,
-        "publish": true,
-        "title": "Early May Check-in: Alpha release thoughts",
-        "createDate": "2021-05-08T11:40:00.000Z"
-      }
+      "kind": "post",
+      "id": "alpha_todos"
     }
   ],
   "parsedPost": null,
