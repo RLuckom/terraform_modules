@@ -82,11 +82,12 @@ function getTrailMembers(trailId, postList) {
   return _(sortPostList(postList)).filter(post => (_.get(post, 'frontMatter.meta.trails') || []).indexOf(trailId) !== -1).value()
 }
 
-function sortPostList(postList) {
-  return _.sortBy(postList, (p) => {
+function sortPostList(postList, reverse) {
+  const sorted = _.sortBy(postList, (p) => {
     const d = _.get(p, 'frontMatter.createDate')
     return _.isDate(d) ? d.toISOString() : d
   })
+  return reverse ? _.reverse(sorted) : sorted
 }
 
 function hashTrailsAndPosts(postList) {
@@ -284,10 +285,10 @@ function determineUpdates({postText, previousPostList, isDelete, postId, running
   const trailUpdates = _.map(diffs.changed.trails, (trailId) => {
     return {
       key: trailHTMLKey(trailId),
-      rendered: renderTrailToHTML({trailId, runningMaterial, members: getTrailMembers(trailId, newPostList), trailTemplate})
+      rendered: renderTrailToHTML({trailId, runningMaterial, members: sortPostList(getTrailMembers(trailId, newPostList), true), trailTemplate})
     }
   })
-  const indexContent = renderTrailToHTML({trailId: 'posts', runningMaterial, members: newPostList, trailTemplate})
+  const indexContent = renderTrailToHTML({trailId: 'posts', runningMaterial, members: sortPostList(_.clone(newPostList), true), trailTemplate})
   trailUpdates.push({
     key: trailHTMLKey('posts'),
     rendered: indexContent,
