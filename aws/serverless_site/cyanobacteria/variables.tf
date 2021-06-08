@@ -255,7 +255,11 @@ variable nav_links {
   default = []
 }
 
-variable asset_path {
-  type = string
-  default = ""
+variable asset_file_configs {
+  type = list(object({
+    content_type = string
+    key = string
+    file_path = string
+  }))
+  default = null
 }

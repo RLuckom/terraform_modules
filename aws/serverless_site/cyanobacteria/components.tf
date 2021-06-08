@@ -15,10 +15,6 @@ locals {
   }]
 }
 
-module default_assets {
-  source = "github.com/RLuckom/terraform_modules//themes/trails"
-}
-
 locals {
   nav_links = jsonencode(concat(
     var.nav_links,
@@ -35,37 +31,78 @@ locals {
       nav_links = local.nav_links
       aws_region = var.region
       table_name = local.trails_table_name
-      post_template_key = "templates/post.tmpl"
-      trail_template_key = "templates/trail.tmpl"
+      post_template_key = "assets/templates/post.tmpl"
+      trail_template_key = "assets/templates/trail.tmpl"
     }
   )
-  asset_path = var.asset_path == "" ? module.default_assets.asset_directory_root : var.asset_path
-}
-
-module asset_file_configs {
-  source = "github.com/RLuckom/terraform_modules//aws/coordinators/asset_directory"
-  asset_directory_root = local.asset_path
-  s3_asset_prefix = "assets/"
+  default_asset_file_configs = [
+    {
+      content_type = "text/plain; charset=utf-8"
+      key = "/assets/templates/trail.tmpl"
+      file_path = "${path.module}/default_assets/templates/trail.tmpl",
+    },
+    {
+      content_type = "text/plain; charset=utf-8"
+      key = "/assets/templates/post.tmpl"
+      file_path = "${path.module}/default_assets/templates/post.tmpl"
+    },
+    {
+      content_type = "text/css; charset=utf-8"
+      key = "/assets/css/main.css"
+      file_path = "${path.module}/default_assets/css/main.css"
+    },
+    {
+      content_type = "text/css; charset=utf-8"
+      key = "/assets/css/highlight.css"
+      file_path = "${path.module}/default_assets/css/highlight.css"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/Source400.woff2"
+      file_path = "${path.module}/default_assets/fonts/Source400.woff2"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/Montserrat.woff2"
+      file_path = "${path.module}/default_assets/fonts/Montserrat.woff2"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/Montserrat-ThinItalic.woff2"
+      file_path = "${path.module}/default_assets/fonts/Montserrat-ThinItalic.woff2"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/Montserrat200.woff2"
+      file_path = "${path.module}/default_assets/fonts/Montserrat200.woff2"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/IBMPlex600.woff2"
+      file_path = "${path.module}/default_assets/fonts/IBMPlex600.woff2"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/IBMPlex400.woff2"
+      file_path = "${path.module}/default_assets/fonts/IBMPlex400.woff2"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/IBMPlex300.woff2"
+      file_path = "${path.module}/default_assets/fonts/IBMPlex300.woff2"
+    },
+    {
+      content_type = "font/woff2"
+      key = "/assets/fonts/Garamond700.woff2"
+      file_path = "${path.module}/default_assets/fonts/Garamond700.woff2"
+    },
+  ]
 }
 
 module site_static_assets {
   source = "github.com/RLuckom/terraform_modules//aws/s3_directory"
   bucket_name = local.site_bucket
-  file_configs = concat(
-    module.asset_file_configs.file_configs,
-    [
-      {
-        content_type = "text/plain"
-        key = "templates/trail.tmpl"
-        file_path = "${path.module}/src/spec/support/templates/trail.tmpl",
-      },
-      {
-        content_type = "text/plain"
-        key = "templates/post.tmpl"
-        file_path = "${path.module}/src/spec/support/templates/post.tmpl"
-      }
-    ]
-  )
+  file_configs = var.asset_file_configs == null ? local.default_asset_file_configs : var.asset_file_configs 
   depends_on = [module.website_bucket]
 }
 
@@ -242,7 +279,7 @@ module website_bucket {
     var.website_bucket_prefix_object_permissions
   )
   suffix_object_denials = local.website_bucket_suffix_object_denials
-  forbidden_website_paths = concat(["templates"], var.forbidden_website_paths)
+  forbidden_website_paths = concat(["assets/templates"], var.forbidden_website_paths)
   bucket_permissions = concat(
     [],
     var.website_bucket_bucket_permissions
