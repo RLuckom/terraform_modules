@@ -155,7 +155,7 @@ module.exports = {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
                 Key: { ref: 'stage.updates.renderedPost.key' },
-                ContentType: { value: 'text/html' },
+                ContentType: { value: 'text/html; charset=utf-8' },
                 Body: { ref: 'stage.updates.renderedPost.rendered' },
               }
             }
@@ -169,7 +169,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
-                ContentType: { value: 'text/html' },
+                ContentType: { value: 'text/html; charset=utf-8' },
                 Key: { 
                   helper: ({updates}) => _.map(updates, 'key'),
                   params: {
@@ -262,7 +262,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 Bucket: {ref: 'requiredInputs.vars.bucket'},
-                ContentType: { value: 'text/html' },
+                ContentType: { value: 'text/html; charset=utf-8' },
                 Key: {
                   helper: ({updates}) => _.map(updates, 'key'),
                   params: {
