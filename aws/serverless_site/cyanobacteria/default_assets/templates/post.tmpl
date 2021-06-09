@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/highlight.css">
     <title>
@@ -25,18 +26,19 @@
 <%= post.synthetic.renderedContent %>
 </section>
 </article>
-<section id="trails">
-<div class="trail-links"><%
+<section id="series-links">
+<div class="prev-link series-link"><%
   if (neighbors.previous) {
-   %><a class="previous-neighbor" href="<%= neighbors.previous.synthetic.url %>"><%= neighbors.previous.frontMatter.title || 'no title'%></a><% 
-} else {
-%><span class="neighbor-placeholder"></span><%
-} 
-%><a class="trail-name" href="<%= runningMaterial.postListUrl %>">Posts</a><% 
+   %><span class="full-width">Previous:</span><a class="previous-neighbor" href="<%= neighbors.previous.synthetic.url %>"><%= neighbors.previous.frontMatter.title || 'no title' %></a><% 
+}
+%>
+</div>
+<div class="series-link">
+<a class="back" href="<%= runningMaterial.browserRoot %>">Back</a>
+</div>
+<div class="next-link series-link"><%
 if (neighbors.next) {
-   %><a class="next-neighbor" href="<%= neighbors.next.synthetic.url %>"><%= neighbors.next.frontMatter.title || 'no title' %></a><% 
-} else {
-%><span class="neighbor-placeholder"></span><%
+   %><span class="full-width">Next:</span><a class="next-neighbor" href="<%= neighbors.next.synthetic.url %>"><%= neighbors.next.frontMatter.title || 'no title' %></a><% 
 } 
 %></div>
 </section>

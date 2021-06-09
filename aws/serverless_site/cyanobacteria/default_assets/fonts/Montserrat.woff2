@@ -1,7 +1,0 @@
-@font-face {
-  font-family: 'MontserratOblique';
-  font-style: italic;
-  font-weight: 100;
-  font-display: swap;
-  src: url('https://test.raphaelluckom.com/assets/static/fonts/Montserrat.ttf') format('truetype');
-}

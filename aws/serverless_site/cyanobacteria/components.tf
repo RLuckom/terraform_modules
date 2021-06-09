@@ -56,46 +56,6 @@ locals {
       key = "/assets/css/highlight.css"
       file_path = "${path.module}/default_assets/css/highlight.css"
     },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/Source400.woff2"
-      file_path = "${path.module}/default_assets/fonts/Source400.woff2"
-    },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/Montserrat.woff2"
-      file_path = "${path.module}/default_assets/fonts/Montserrat.woff2"
-    },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/Montserrat-ThinItalic.woff2"
-      file_path = "${path.module}/default_assets/fonts/Montserrat-ThinItalic.woff2"
-    },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/Montserrat200.woff2"
-      file_path = "${path.module}/default_assets/fonts/Montserrat200.woff2"
-    },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/IBMPlex600.woff2"
-      file_path = "${path.module}/default_assets/fonts/IBMPlex600.woff2"
-    },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/IBMPlex400.woff2"
-      file_path = "${path.module}/default_assets/fonts/IBMPlex400.woff2"
-    },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/IBMPlex300.woff2"
-      file_path = "${path.module}/default_assets/fonts/IBMPlex300.woff2"
-    },
-    {
-      content_type = "font/woff2"
-      key = "/assets/fonts/Garamond700.woff2"
-      file_path = "${path.module}/default_assets/fonts/Garamond700.woff2"
-    },
   ]
 }
 
