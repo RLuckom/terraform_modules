@@ -213,8 +213,27 @@ function renderTrailToHTML({trailId, runningMaterial, members, trailTemplate}) {
   return compileTemplate(trailTemplate)({trailId, runningMaterial,members})
 }
 
+const months = {
+  0: 'January',
+  1: 'February',
+  2: 'March',
+  3: 'April',
+  4: 'May',
+  5: 'June',
+  6: 'July',
+  7: 'August',
+  8: 'September',
+  9: 'October',
+  10: 'November',
+  11: 'December'
+}
+
 function compileTemplate(s) {
-  return _.template(_.isBuffer(s) ? s.toString('utf8') : s, {imports: {formatDate: (n) => n.toLocaleString()}})
+  return _.template(_.isBuffer(s) ? s.toString('utf8') : s, {imports: {formatDate: (d) => {
+    d = _.isDate(d) ? d : new Date(d) 
+    return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+  }
+  }})
 }
 
 function isS3Delete({eventType}) {

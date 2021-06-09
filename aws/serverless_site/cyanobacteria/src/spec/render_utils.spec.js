@@ -119,6 +119,7 @@ describe('utils', () => {
     const parsed = utils.parsePost('alpha_todos', post, runningMaterial.domainName)
     const neighbors = utils.getPostNeighbors('alpha_todos', utils.annotatePostList(mockPostList))
     const rendered = utils.renderPostToHTML({runningMaterial, post: parsed, neighbors, postTemplate})
+    //fs.writeFileSync(__dirname + '/support/tests/alpha_todos.html', rendered)
     const renderedMock = fs.readFileSync(__dirname + '/support/tests/alpha_todos.html').toString('utf8')
     expect(rendered).toEqual(renderedMock)
   })
