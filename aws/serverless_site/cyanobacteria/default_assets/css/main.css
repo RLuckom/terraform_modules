@@ -32,6 +32,10 @@ sup a, sub a {
   text-underline-position: from-font;
 }
 
+blockquote {
+  margin-left: 2em;
+}
+
 .trail-member a {
   text-decoration: none;
 }
