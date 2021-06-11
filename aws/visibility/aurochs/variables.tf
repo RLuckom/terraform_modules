@@ -1,4 +1,23 @@
+variable bucket_prefix {
+  type = string
+}
+
 variable cloudfront_delivery_bucket {
+  type = string
+  default = ""
+}
+
+variable cost_table_read_role_names {
+  type = list(string)
+  default = []
+}
+
+variable cost_report_table_name {
+  type = string
+  default = ""
+}
+
+variable cost_report_bucket {
   type = string
   default = ""
 }
@@ -62,6 +81,7 @@ variable supported_system_definitions {
 
 variable supported_system_clients {
   type = map(object({
+    metric_table_read_role_names = list(string)
     subsystems = map(object({
       glue_permission_name_map = object({
         add_partition_permission_names = list(string)
@@ -80,6 +100,15 @@ locals {
     local.system_ids.*.security_scope,
     [for sys in local.system_ids.*.security_scope : {
       table_name = "metrics-${sys}-${random_id.metric_table_suffixes[sys].b64_url}"
+    }]
+  )
+  metric_table_read_roles = zipmap(
+    local.system_ids.*.security_scope,
+    [for sys in local.system_ids.*.security_scope : {
+      read_role_names = lookup(var.supported_system_clients, sys, {
+        subsystems = {}
+        metric_table_read_role_names = []
+      }).metric_table_read_role_names
     }]
   )
   systems_with_subsystems = [ for sys_name, sys_config in var.supported_system_definitions : {
@@ -132,8 +161,10 @@ locals {
     subsystem_names = [var.visibility_system_id.subsystem_name]
     security_scope = var.visibility_system_id.security_scope
   }], local.systems_with_subsystems)
-  cloudfront_delivery_bucket = var.cloudfront_delivery_bucket
-  visibility_data_bucket = var.visibility_data_bucket
+  cloudfront_delivery_bucket = var.cloudfront_delivery_bucket == "" ? "${var.bucket_prefix}-cloudfront-delivery" : var.cloudfront_delivery_bucket
+  visibility_data_bucket = var.visibility_data_bucket == "" ? "${var.bucket_prefix}-visibility-data" : var.visibility_data_bucket
+  cost_report_table_name = var.cost_report_table_name == "" ? "visibility-cost-table" : var.cost_report_table_name
+  cost_report_bucket = var.cost_report_bucket == "" ? "${var.bucket_prefix}-cost-report" : var.cost_report_bucket
   athena_results_bucket = var.athena_results_bucket == "" ? var.visibility_data_bucket : var.athena_results_bucket
 }
 
@@ -309,6 +340,17 @@ locals {
       ],
     ]
   )
+  cost_report_bucket_notifications = [
+    {
+      permission_type = "read_and_tag_known"
+      lambda_role_arn = module.cost_report_function.role.arn
+      lambda_arn = module.cost_report_function.lambda.arn
+      lambda_name = module.cost_report_function.lambda.function_name
+      events = ["s3:ObjectCreated:*"]
+      filter_prefix = ""
+      filter_suffix = ""
+    }
+  ]
   scoped_log_prefixes = zipmap(
     local.system_ids.*.security_scope,
     [for system_id in local.system_ids : 
@@ -437,14 +479,6 @@ locals {
   )
 }
 
-output visibility_lifecycle_rules {
-  value = concat(
-    local.cloudfront_log_path_lifecycle_rules,
-    local.lambda_log_path_lifecycle_rules,
-    local.athena_result_path_lifecycle_rules
-  )
-}
-
 variable scoped_archive_notifications {
   type = map(map(object({
       lambda_arn = string
@@ -499,32 +533,4 @@ locals {
       ]
     ]
   ])
-}
-
-output visibility_data_bucket {
-  value = local.visibility_data_bucket
-}
-
-output athena_results_bucket {
-  value = local.athena_results_bucket
-}
-
-output cloudfront_delivery_bucket {
-  value = local.cloudfront_delivery_bucket
-}
-
-output data_warehouse_configs {
-  value = local.data_warehouse_configs
-}
-
-output serverless_site_configs {
-  value = local.serverless_site_configs
-}
-
-output lambda_source_bucket {
-  value = var.lambda_source_bucket
-}
-
-output lambda_log_configs {
-  value = local.lambda_log_configs
 }
