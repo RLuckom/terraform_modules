@@ -5,7 +5,7 @@ module "lambda_role" {
   role_policy = concat(local.lambda_destinations, var.self_invoke.allowed ? local.lambda_invoke : [], var.deny_cloudwatch ? [] : var.log_writer_policy, var.lambda_details.policy_statements)
   principals = [{
     type = "Service"
-    identifiers = var.role_service_principal_ids
+    identifiers = sort(var.role_service_principal_ids)
   }]
 }
 
