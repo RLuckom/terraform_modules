@@ -14,12 +14,12 @@ resource "aws_apigatewayv2_integration" "integration" {
   integration_type = "AWS_PROXY"
 }
 locals {
-  configuration_sha = sha1(join(",", list(
+  configuration_sha = sha1(join(",", [
                 jsonencode(aws_apigatewayv2_integration.integration.*),
                       jsonencode(aws_apigatewayv2_route.route.*),
                       jsonencode(var.cors_configuration),
                       jsonencode(var.lambda_routes),
-                          )))
+                    ]))
 
 }
 
