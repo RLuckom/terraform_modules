@@ -70,7 +70,7 @@ module apigateway_dispatcher {
 }
 
 module admin_site_frontpage {
-  source = "github.com/RLuckom/terraform_modules//themes/admin_site_ui"
+  source = "github.com/RLuckom/terraform_modules//themes/icknield/admin_site_ui"
   plugin_configs = [for name, config in var.plugin_static_configs : {
     name = name
     slug = config.display_name

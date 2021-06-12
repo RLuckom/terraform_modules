@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>${running_material.site_title}</title>
+    <meta name="description" content="${replace(running_material.site_description, "\"", "\\\"")}">
+    ${join("\n", [ for p in css_paths : "<link rel=\"stylesheet\" href=\"/${trimprefix(p, "/")}\">"])}
+    ${join("\n", [ for p in script_paths : "<script src=\"/${trimprefix(p, "/")}\"></script>"])}
+    ${join("\n", [ for p in deferred_script_paths : "<script src=\"/${trimprefix(p, "/")}\" defer></script>"])}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <header>
+      ${running_material.header_contents}
+    </header>
+    <main>
+    </main>
+    <footer>
+      ${running_material.footer_contents}
+    </footer>
+  </body>
+</html>
