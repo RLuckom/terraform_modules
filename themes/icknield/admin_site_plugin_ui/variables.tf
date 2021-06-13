@@ -20,18 +20,12 @@ variable admin_site_resources {
     default_scripts_path = string
     header_contents = string
     footer_contents = string
-    lodash_path = string
-    exploranda_path = string
-    aws_path = string
-    site_title = string
     site_description = string
+    site_title = string
   })
   default = {
     default_styles_path = ""
     default_scripts_path = ""
-    lodash_path = ""
-    aws_path = ""
-    exploranda_path = ""
     header_contents = "<div class=\"header-block\"><h1 class=\"heading\">Private Site</h1></div>"
     footer_contents = "<div class=\"footer-block\"><h1 class=\"footing\">Private Site</h1></div>"
     site_title = "running_material.site_title"
@@ -100,20 +94,12 @@ variable plugin_file_configs {
   default = []
 }
 
-output libaries {
-  value = local.libraries
-}
-
 locals {
-  libaries = {
-    aws = var.admin_site_resources.aws_script_path,
-    lodash = var.admin_site_resources.lodash_path,
-    exploranda = var.admin_site_resources.exploranda_path,
-  }
   file_prefix = trim(var.plugin_config.source_root, "/")
   config_path = "${local.file_prefix}/assets/js/config.js"
   utils_js_path = "${local.file_prefix}/assets/js/utils-${filemd5("${path.module}/src/frontend/libs/utils.js")}.js"
   gopher_config_js_path = "${local.file_prefix}/assets/js/gopher_config-${md5(var.gopher_config_contents)}.js"
+  js_prefix = "${local.file_prefix}assets/js/"
 
   plugin_config = merge({
     name = var.name
@@ -136,12 +122,10 @@ locals {
     local.gopher_config_js_path,
     local.utils_js_path,
   ])
-  index_script_paths = [
-    local.index_js_path
-  ]
   files = flatten([
     [for page_name, page_config in var.page_configs : {
       key = "${local.file_prefix}${page_name}.html"
+      file_path = null
       file_contents = templatefile("${path.module}/src/frontend/index.html", {
       running_material = var.admin_site_resources
       css_paths = concat(
@@ -150,8 +134,8 @@ locals {
       )
       script_paths = concat(
         local.default_script_paths,
-        ["${local.file_prefix}${page_name}.js"],
-        page_config.script_paths
+        page_config.script_paths,
+        ["${local.file_prefix}/assets/js/${page_name}-${filemd5(page_config.render_config_path)}.js"],
       )
       deferred_script_paths = concat(
         local.default_deferred_script_paths,
@@ -159,14 +143,12 @@ locals {
       )
     })
       content_type = "text/html"
-      file_path = ""
     }],
     [for page_name, page_config in var.page_configs : {
-      key = "${local.file_prefix}${page_name}.js"
+      key = "${local.js_prefix}${page_name}-${filemd5(page_config.render_config_path)}.js"
       file_contents = null
       file_path = page_config.render_config_path
       content_type = "application/javascript"
-      file_path = ""
     }],
     var.plugin_file_configs,
     {

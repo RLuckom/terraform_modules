@@ -60,9 +60,9 @@ EOF
   file_prefix = trim(var.file_prefix, "/")
   styles_path = "${local.file_prefix}/assets/styles/styles-${filemd5("${path.module}/src/styles.css")}.css"
   scripts_path = "${local.file_prefix}/assets/js/scripts-${filemd5("${path.module}/src/scripts.js")}.js"
-  exploranda_path = "${local.file_prefix}/assets/js/exploranda-browser.js"
-  aws_path = "${local.file_prefix}/assets/js/aws-sdk-2.868.0.min.js"
-  lodash_path = "${local.file_prefix}/assets/js/lodash-4-17-15.js"
+  exploranda_script_path = "${local.file_prefix}/assets/js/exploranda-browser.js"
+  aws_script_path = "${local.file_prefix}/assets/js/aws-sdk-2.868.0.min.js"
+  lodash_script_path = "${local.file_prefix}/assets/js/lodash-4-17-15.js"
   files = [
     {
       key = "${local.file_prefix}/manifest.json",
@@ -124,19 +124,19 @@ EOF
       content_type = "application/javascript"
     },
     {
-      key = local.exploranda_path
+      key = local.exploranda_script_path
       file_contents = null
       file_path = "${path.module}/src/exploranda-browser.js"
       content_type = "application/javascript"
     },
     {
-      key = local.aws_path
+      key = local.aws_script_path
       file_contents = null
       file_path = "${path.module}/src/aws-sdk-2.868.0.min.js"
       content_type = "application/javascript"
     },
     {
-      key = local.lodash_path
+      key = local.lodash_script_path
       file_contents = null
       file_path = "${path.module}/src/lodash-4-17-15.js"
       content_type = "application/javascript"
@@ -159,9 +159,9 @@ output site_resources {
     footer_contents = local.footer_contents
     default_styles_path = local.styles_path
     default_scripts_path = local.scripts_path
-    lodash_path = local.lodash_path
-    aws_path = local.aws_path
-    exploranda_path = local.exploranda_path
+    lodash_script_path = local.lodash_script_path
+    aws_script_path = local.aws_script_path
+    exploranda_script_path = local.exploranda_script_path
     site_title = var.admin_running_material.site_title 
     site_description = var.admin_running_material.site_description 
   }
