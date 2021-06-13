@@ -10,7 +10,7 @@ variable account_id {
   type = string
 }
 
-variable gopher_config_content {
+variable gopher_config_contents {
   type = string
 }
 
@@ -52,29 +52,6 @@ variable plugin_config {
       arn = string
       name = string
     })
-  })
-}
-
-variable coordinator_data {
-  type = object({
-    system_id = object({
-      security_scope = string
-      subsystem_name = string
-    })
-    routing = object({
-      domain_parts = object({
-        top_level_domain = string
-        controlled_domain_part = string
-      })
-      domain = string
-      route53_zone_name = string
-    })
-    // these can be set to "" if NA
-    metric_table = string
-    lambda_log_delivery_prefix = string
-    lambda_log_delivery_bucket = string
-    cloudfront_log_delivery_prefix = string
-    cloudfront_log_delivery_bucket = string
   })
 }
 
@@ -136,7 +113,7 @@ locals {
   file_prefix = trim(var.plugin_config.source_root, "/")
   config_path = "${local.file_prefix}/assets/js/config.js"
   utils_js_path = "${local.file_prefix}/assets/js/utils-${filemd5("${path.module}/src/frontend/libs/utils.js")}.js"
-  gopher_config_js_path = "${local.file_prefix}/assets/js/gopher_config-${filemd5("${path.module}/src/frontend/libs/gopher_config.js")}.js"
+  gopher_config_js_path = "${local.file_prefix}/assets/js/gopher_config-${md5(var.gopher_config_contents)}.js"
 
   plugin_config = merge({
     name = var.name
@@ -202,8 +179,8 @@ EOF
       content_type = "application/javascript"
     },
     {
-      key = "${local.file_prefix}/assets/js/gopher_config-${md5(var.gopher_config_content)}.js"
-      file_contents = var.gopher_config_content
+      key = "${local.file_prefix}/assets/js/gopher_config-${md5(var.gopher_config_contents)}.js"
+      file_contents = var.gopher_config_contents
       file_path = null
       content_type = "application/javascript"
     },
