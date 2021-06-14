@@ -60,11 +60,6 @@ variable plugin_config {
   })
 }
 
-variable library_const_names {
-  type = list(string)
-  default = []
-}
-
 variable config_values {
   type = map(string)
   default = {}
@@ -172,7 +167,6 @@ locals {
       key = local.config_path
       file_contents = <<EOF
 window.CONFIG = ${jsonencode(local.plugin_config)}
-const {${join(", ", var.library_const_names)}} = window.LIBRARIES
 EOF
       file_path = null
       content_type = "application/javascript"
