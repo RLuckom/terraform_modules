@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/highlight.css">
+    <title>
+         <%= post.frontMatter.title %>
+    </title>
+  </head>
+  <body>
+<section id="nav">
+<a href="<%= runningMaterial.browserRoot %>"><h1><%= runningMaterial.title %></h1></a>
+<div class="nav-links">
+<% _.forEach(_.get(runningMaterial, 'navLinks'), function({name, target}) { 
+    %><div class="nav-link-ctr"><a class="nav-link" href="<%- target %>"><%- name  %></a></div><% 
+}); %>
+</div>
+</section>
+<article id="content">
+  <h1><%= post.frontMatter.title || 'no title' %> </h1>
+    <p class="subtitle">
+      <%= formatDate(post.frontMatter.createDate || post.frontMatter.date) %>
+    </p>
+<section class="article-content">
+<%= post.synthetic.renderedContent %>
+</section>
+</article>
+<section id="series-links">
+<div class="prev-link series-link"><%
+  if (neighbors.previous) {
+   %><span class="full-width">Previous:</span><a class="previous-neighbor" href="<%= neighbors.previous.synthetic.url %>"><%= neighbors.previous.frontMatter.title || 'no title' %></a><% 
+}
+%>
+</div>
+<div class="series-link">
+<a class="back" href="<%= runningMaterial.browserRoot %>">Back</a>
+</div>
+<div class="next-link series-link"><%
+if (neighbors.next) {
+   %><span class="full-width">Next:</span><a class="next-neighbor" href="<%= neighbors.next.synthetic.url %>"><%= neighbors.next.frontMatter.title || 'no title' %></a><% 
+} 
+%></div>
+</section>
+  </body>
+</html>

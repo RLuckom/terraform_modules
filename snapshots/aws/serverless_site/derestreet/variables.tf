@@ -37,6 +37,7 @@ variable coordinator_data {
     lambda_log_delivery_bucket = string
     cloudfront_log_delivery_prefix = string
     cloudfront_log_delivery_bucket = string
+    metric_table = string
   })
 }
 
@@ -44,10 +45,21 @@ variable user_email {
   type = string
 }
 
+variable admin_site_title {
+  type = string
+  default = "admin site"
+}
+
+variable admin_site_description {
+  type = string
+  default = "admin site"
+}
+
 variable plugin_static_configs {
   type = map(object({
     role_name_stem = string
-    slug = string
+    api_name = string
+    display_name = string
   }))
   default = {}
 }
@@ -55,6 +67,7 @@ variable plugin_static_configs {
 variable plugin_configs {
   type = map(object({
     additional_connect_sources = list(string)
+    additional_style_sources = list(string)
     policy_statements = list(object({
       actions = list(string)
       resources = list(string)
@@ -231,7 +244,7 @@ locals {
     [for k in keys(var.plugin_configs) : replace(k, "/", "")],
     [for name, config in var.plugin_configs : {
       role_name_stem = var.plugin_static_configs[name].role_name_stem
-      slug = var.plugin_static_configs[name].slug
+      slug = var.plugin_static_configs[name].display_name
       additional_connect_sources = concat(
         config.additional_connect_sources,
         [ for origin in config.plugin_relative_lambda_origins :
@@ -241,7 +254,7 @@ locals {
       policy_statements = config.policy_statements
       http_header_values = merge(
         {
-          "Content-Security-Policy" = "default-src 'none'; style-src 'self'; script-src https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/assets/js/; object-src 'none'; connect-src 'self' ${join(" ", concat(config.additional_connect_sources, [ for origin in config.plugin_relative_lambda_origins : "https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}" ]))}; img-src 'self' data: blob:;"
+          "Content-Security-Policy" = "default-src 'none'; font-src 'self'; style-src 'self' ${join(" ", config.additional_style_sources)}; script-src https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/assets/js/ https://${var.coordinator_data.routing.domain}/assets/js/; object-src 'none'; connect-src 'self' ${join(" ", concat(config.additional_connect_sources, [ for origin in config.plugin_relative_lambda_origins : "https://${var.coordinator_data.routing.domain}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}" ]))}; img-src 'self' data: blob:;"
         },
         var.default_static_headers
       )

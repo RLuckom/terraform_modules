@@ -22,15 +22,51 @@ module.exports = {
         siteDescription: siteDescriptionDependency('${domain_name}', '${site_description_path}')
       },
     },
-    updateDependencies: {
+    parseTrails: {
       index: 1,
       transformers: {
         trails: {
+          helper: 'transform',
+          params: {
+            arg: {
+              all: {
+                trailNames: {ref: 'event.trailNames'},
+                rerenderNeighbors: { ref: 'event.rerenderNeighbors' },
+              },
+            },
+            func: {
+              value: ({trailNames, rerenderNeighbors}) => {
+                const {specific, general} = trailNames
+                const allTrailNames = (specific && general) ? _.concat(specific, general) : specific || general || []
+                return {
+                  allTrailNames: (specific && general) ? _.concat(specific, general) : specific || general || [],
+                  specific: specific && !_.isArray(specific) ? [specific] : specific || [],
+                  general: general && !_.isArray(general) ? [general] : general || [],
+                  trailNamesToRerenderMembers: rerenderNeighbors ? allTrailNames : trailNames.general
+                }
+              }
+            }
+          },
+        }
+      }
+    },
+    updateDependencies: {
+      index: 2,
+      transformers: {
+        rerenderTrailMembers: {
           helper: 'idUtils.expandUrlTemplateWithNames',
           params: {
             templateString: {ref: 'siteDescription.results.siteDescription.${self_type}.setTemplate'},
             siteDetails: {ref: 'siteDescription.results.siteDescription.siteDetails'},
-            names: {ref: 'event.trailNames'},
+            names: {
+              helper: ({trails, rerenderNeighbors}) => {
+                return trails.allTrailNames
+              },
+              params: {
+                trails: {ref: 'parseTrails.vars.trails'},
+                rerenderNeighbors: { ref: 'event.rerenderNeighbors' },
+              }
+            }
           }
         },
         existingMemberships: {
@@ -60,10 +96,10 @@ module.exports = {
       dependencies: {
         trails: {
           action: 'genericApi',
-          condition: { ref: 'stage.trails.length'},
+          condition: { ref: 'stage.rerenderTrailMembers.length'},
           formatter: formatters.singleValue.unwrapJsonHttpResponseArray,
           params: {
-            url: { ref: 'stage.trails' }
+            url: { ref: 'stage.rerenderTrailMembers' }
           }
         },
         existingMemberships: {
@@ -91,7 +127,7 @@ module.exports = {
       },
     },
     parseLists: {
-      index: 2,
+      index: 3,
       transformers: {
         trails: { 
           helper: 'transform',
@@ -99,8 +135,8 @@ module.exports = {
             arg: {
               all: {
                 trailArrays: {ref: 'updateDependencies.results.trails' },
-                trailUrls: {ref: 'updateDependencies.vars.trails' },
-                trailNames: {ref: 'event.trailNames'},
+                trailUrls: {ref: 'updateDependencies.vars.rerenderTrailMembers' },
+                trailNames: {ref: 'parseTrails.vars.trails.allTrailNames'},
               }
             },
             func: {value: ({trailUrls, trailNames, trailArrays}) => {
@@ -117,7 +153,7 @@ module.exports = {
       }
     },
     determineUpdates: {
-      index: 3,
+      index: 4,
       transformers: {
         updates: {
           helper: 'transform',
@@ -125,10 +161,11 @@ module.exports = {
             arg: {
               all: {
                 trails: { ref: 'parseLists.vars.trails' },
-                trailNames: {ref: 'event.trailNames'},
+                trailNames: {ref: 'parseTrails.vars.trails'},
                 existingMemberships: { ref: 'updateDependencies.results.existingMemberships' },
                 siteDescription: { ref: 'siteDescription.results.siteDescription' }, 
                 item: { ref: 'event.item' },
+                rerenderNeighbors: { ref: 'event.rerenderNeighbors' },
               }
             },
             func: { value: trails.determineUpdates }
@@ -164,7 +201,7 @@ module.exports = {
       }
     },
     checkForEmptyLists: {
-      index: 4,
+      index: 5,
       transformers: {
         allUpdates: {
           helper: 'transform',
@@ -196,7 +233,7 @@ module.exports = {
             }
           }
         },
-        dynamorDeletes: {
+        dynamoDeletes: {
           action: 'exploranda',
           condition: { ref: 'stage.allUpdates.dynamoDeletes.length' },
           params: {
@@ -212,7 +249,11 @@ module.exports = {
         },
         rerenderNeighbors: {
           action: 'invokeFunction',
-          condition: { ref: 'stage.allUpdates.neighborsToReRender.length' },
+          condition: {
+            every: [
+              { ref: 'stage.allUpdates.neighborsToReRender.length' },
+            ]
+          },
           params: {
             FunctionName: {value: '${render_function}'},
             Payload: { 

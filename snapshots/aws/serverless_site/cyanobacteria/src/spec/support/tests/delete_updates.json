@@ -1,0 +1,1794 @@
+{
+  "dynamoPuts": [],
+  "dynamoDeletes": [
+    {
+      "kind": "post",
+      "id": "alpha_todos"
+    }
+  ],
+  "parsedPost": null,
+  "newPostList": [
+    {
+      "id": "distortion_fields",
+      "frontMatter": {
+        "date": "2017-12-10T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "3D modeling"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Distortion Fields in OpenSCAD: Computationally Expensive And Not Entirely Satisfying, But Good To Know Anyway",
+        "createDate": "2017-12-10T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/distortion_fields.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/3D%20modeling.html"
+        ]
+      }
+    },
+    {
+      "id": "some_functions_for_vases",
+      "frontMatter": {
+        "date": "2017-12-10T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "3D modeling"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Encapsulation and Abstraction in 3D: Modules for Vase Sculptures in OpenSCAD",
+        "createDate": "2017-12-10T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/some_functions_for_vases.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/3D%20modeling.html"
+        ]
+      }
+    },
+    {
+      "id": "bezier_curves",
+      "frontMatter": {
+        "date": "2018-07-13T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "3D modeling"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Organic Parametric Shapes: Bézier Curves in OpenSCAD",
+        "createDate": "2018-07-13T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/bezier_curves.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/3D%20modeling.html"
+        ]
+      }
+    },
+    {
+      "id": "the_roof_of_the_auditorium",
+      "frontMatter": {
+        "date": "2020-07-28T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "identity"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "The Roof of the Auditorium",
+        "createDate": "2020-07-28T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/the_roof_of_the_auditorium.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/identity.html"
+        ]
+      }
+    },
+    {
+      "id": "the_patchwork_house_coat",
+      "frontMatter": {
+        "date": "2020-08-02T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "crafts",
+            "sewing"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "The Patchwork House Coat",
+        "createDate": "2020-08-02T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/the_patchwork_house_coat.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/crafts.html",
+          "https://%24%7Bdomain_name%7D/trails/sewing.html"
+        ]
+      }
+    },
+    {
+      "id": "honoring_personhood",
+      "frontMatter": {
+        "date": "2020-08-10T12:09:34.000Z",
+        "title": "Honoring personhood in material culture",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "culture"
+          ]
+        },
+        "publish": true,
+        "createDate": "2020-08-10T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/honoring_personhood.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/culture.html"
+        ]
+      }
+    },
+    {
+      "id": "not_draft",
+      "frontMatter": {
+        "date": "2020-08-15T12:09:34.000Z",
+        "title": "This Is Not A Draft: The Virtue of Making Things Badly",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "culture",
+            "identity"
+          ]
+        },
+        "publish": true,
+        "createDate": "2020-08-15T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/not_draft.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/culture.html",
+          "https://%24%7Bdomain_name%7D/trails/identity.html"
+        ]
+      }
+    },
+    {
+      "id": "diy_singer_66_belt",
+      "frontMatter": {
+        "date": "2020-08-16T12:09:34.000Z",
+        "title": "DIY Singer 66 Belt",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "sewing",
+            "crafts"
+          ]
+        },
+        "publish": true,
+        "createDate": "2020-08-16T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/diy_singer_66_belt.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/sewing.html",
+          "https://%24%7Bdomain_name%7D/trails/crafts.html"
+        ]
+      }
+    },
+    {
+      "id": "why_website",
+      "frontMatter": {
+        "date": "2020-08-25T02:13:34.000Z",
+        "title": "Why I run my own website",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "philosophy",
+            "identity"
+          ]
+        },
+        "createDate": "2020-08-25T02:13:34.000Z",
+        "publish": true
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/why_website.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/philosophy.html",
+          "https://%24%7Bdomain_name%7D/trails/identity.html"
+        ]
+      }
+    },
+    {
+      "id": "taking_down_windmills_from_the_inside",
+      "frontMatter": {
+        "date": "2020-09-04T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "culture",
+            "identity"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Taking Down The Windmills From The Inside",
+        "createDate": "2020-09-04T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/taking_down_windmills_from_the_inside.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/culture.html",
+          "https://%24%7Bdomain_name%7D/trails/identity.html"
+        ]
+      }
+    },
+    {
+      "id": "hardware",
+      "frontMatter": {
+        "date": "2020-09-05T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "beginners"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Landscape With Cloud",
+        "createDate": "2020-09-05T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/hardware.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/beginners.html"
+        ]
+      }
+    },
+    {
+      "id": "a_saturday_meander",
+      "frontMatter": {
+        "date": "2020-09-05T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "culture"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "The Story The Map Tells",
+        "createDate": "2020-09-05T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/a_saturday_meander.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/culture.html"
+        ]
+      }
+    },
+    {
+      "id": "foundations",
+      "frontMatter": {
+        "date": "2020-09-09T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "beginners"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Foundations",
+        "createDate": "2020-09-09T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/foundations.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/beginners.html"
+        ]
+      }
+    },
+    {
+      "id": "anatomy_of_a_web_service",
+      "frontMatter": {
+        "date": "2020-09-13T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Anatomy of a Web App",
+        "createDate": "2020-09-13T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/anatomy_of_a_web_service.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html"
+        ]
+      }
+    },
+    {
+      "id": "a_terraform_pattern",
+      "frontMatter": {
+        "date": "2020-09-18T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems",
+            "cloud"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Terraform and Software Tectonics",
+        "createDate": "2020-09-18T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/a_terraform_pattern.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html",
+          "https://%24%7Bdomain_name%7D/trails/cloud.html"
+        ]
+      }
+    },
+    {
+      "id": "profit_and_misinformation",
+      "frontMatter": {
+        "date": "2020-09-22T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "culture"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "What Everyone Likes",
+        "createDate": "2020-09-22T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/profit_and_misinformation.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/culture.html"
+        ]
+      }
+    },
+    {
+      "id": "system_design",
+      "frontMatter": {
+        "date": "2020-09-29T12:10:47.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "A Way Of Thinking About Software System Design",
+        "createDate": "2020-09-29T12:10:47.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/system_design.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html"
+        ]
+      }
+    },
+    {
+      "id": "cloud_functions",
+      "frontMatter": {
+        "date": "2020-10-03T01:55:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems",
+            "cloud primitives"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Cloud Functions at 30,000 Feet",
+        "createDate": "2020-10-03T01:55:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/cloud_functions.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html",
+          "https://%24%7Bdomain_name%7D/trails/cloud%20primitives.html"
+        ]
+      }
+    },
+    {
+      "id": "october_check_in",
+      "frontMatter": {
+        "date": "2020-10-14T19:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "October Check-In",
+        "createDate": "2020-10-14T19:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/october_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "almond_shape",
+      "frontMatter": {
+        "date": "2020-10-17T07:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Almond-Shaped Systems",
+        "createDate": "2020-10-17T07:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/almond_shape.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html"
+        ]
+      }
+    },
+    {
+      "id": "fixable_problems",
+      "frontMatter": {
+        "date": "2020-10-22T01:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "culture"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Fixable Problems",
+        "createDate": "2020-10-22T01:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/fixable_problems.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/culture.html"
+        ]
+      }
+    },
+    {
+      "id": "on_privacy_000",
+      "frontMatter": {
+        "date": "2020-10-24T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "privacy"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Privacy: Part 000",
+        "createDate": "2020-10-24T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_privacy_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/privacy.html"
+        ]
+      }
+    },
+    {
+      "id": "on_security_000",
+      "frontMatter": {
+        "date": "2020-10-30T01:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "security"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Security: Part 000",
+        "createDate": "2020-10-30T01:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_security_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/security.html"
+        ]
+      }
+    },
+    {
+      "id": "complexity_budget",
+      "frontMatter": {
+        "date": "2020-11-03T01:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Complexity Budgets",
+        "createDate": "2020-11-03T01:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/complexity_budget.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html"
+        ]
+      }
+    },
+    {
+      "id": "early_november_check_in",
+      "frontMatter": {
+        "date": "2020-11-04T19:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Early November Check-In",
+        "createDate": "2020-11-04T19:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/early_november_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "indie_web_camp_east_rsvp",
+      "frontMatter": {
+        "date": "2020-11-05T00:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "IWC"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "RSVP to IndieWebCamp East 2020",
+        "createDate": "2020-11-05T00:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/indie_web_camp_east_rsvp.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/IWC.html"
+        ]
+      }
+    },
+    {
+      "id": "internet_history_000",
+      "frontMatter": {
+        "date": "2020-11-10T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "internet history"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Internet History 000: One Place To Start",
+        "createDate": "2020-11-10T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/internet_history_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/internet%20history.html"
+        ]
+      }
+    },
+    {
+      "id": "internet_history_001",
+      "frontMatter": {
+        "date": "2020-11-11T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "internet history"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Internet History 001: The Web Goes Mainstream",
+        "createDate": "2020-11-11T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/internet_history_001.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/internet%20history.html"
+        ]
+      }
+    },
+    {
+      "id": "internet_history_002",
+      "frontMatter": {
+        "date": "2020-11-12T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "internet history",
+            "REST"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Internet History 002: The REST Architectural Style",
+        "createDate": "2020-11-12T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/internet_history_002.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/internet%20history.html",
+          "https://%24%7Bdomain_name%7D/trails/REST.html"
+        ]
+      }
+    },
+    {
+      "id": "mid_november_check_in",
+      "frontMatter": {
+        "date": "2020-11-18T19:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Mid-November Check-In",
+        "createDate": "2020-11-18T19:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/mid_november_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "complexity_and_motivation",
+      "frontMatter": {
+        "date": "2020-11-26T01:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Complexity And Motivation",
+        "createDate": "2020-11-26T01:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/complexity_and_motivation.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html"
+        ]
+      }
+    },
+    {
+      "id": "the_cloud_is_just_a_server",
+      "frontMatter": {
+        "date": "2020-11-27T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems",
+            "cloud primitives"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "The Cloud is Just A Server",
+        "createDate": "2020-11-27T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/the_cloud_is_just_a_server.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html",
+          "https://%24%7Bdomain_name%7D/trails/cloud%20primitives.html"
+        ]
+      }
+    },
+    {
+      "id": "revenge_of_hateoas",
+      "frontMatter": {
+        "date": "2020-11-29T12:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "REST"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Revenge of HATEOAS: Meditations on Discovery",
+        "createDate": "2020-11-29T12:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/revenge_of_hateoas.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/REST.html"
+        ]
+      }
+    },
+    {
+      "id": "early_december_check_in",
+      "frontMatter": {
+        "date": "2020-12-08T17:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Early December Check-in",
+        "createDate": "2020-12-08T17:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/early_december_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "mid_december_check_in",
+      "frontMatter": {
+        "date": "2020-12-15T22:22:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Mid-December Check-in",
+        "createDate": "2020-12-15T22:22:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/mid_december_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "postmortem_000",
+      "frontMatter": {
+        "date": "2020-12-18T16:38:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "postmortem",
+            "cloud",
+            "budget"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Postmortem: Logging cost explosion",
+        "createDate": "2020-12-18T16:38:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/postmortem_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/postmortem.html",
+          "https://%24%7Bdomain_name%7D/trails/cloud.html",
+          "https://%24%7Bdomain_name%7D/trails/budget.html"
+        ]
+      }
+    },
+    {
+      "id": "deciding_what_comes_next",
+      "frontMatter": {
+        "date": "2020-12-19T16:06:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Deciding What Comes Next",
+        "createDate": "2020-12-19T16:06:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/deciding_what_comes_next.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "thinking_about_state",
+      "frontMatter": {
+        "date": "2020-12-22T16:17:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems",
+            "storage"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Thinking About State",
+        "createDate": "2020-12-22T16:17:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/thinking_about_state.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html",
+          "https://%24%7Bdomain_name%7D/trails/storage.html"
+        ]
+      }
+    },
+    {
+      "id": "terraform_module_storage",
+      "frontMatter": {
+        "date": "2020-12-24T17:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "terraform"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Terraform module storage dilemma",
+        "createDate": "2020-12-24T17:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/terraform_module_storage.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/terraform.html"
+        ]
+      }
+    },
+    {
+      "id": "my_role",
+      "frontMatter": {
+        "date": "2020-12-25T17:26:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "ethics"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "My Role",
+        "createDate": "2020-12-25T17:26:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/my_role.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/ethics.html"
+        ]
+      }
+    },
+    {
+      "id": "diagrams_000",
+      "frontMatter": {
+        "date": "2020-12-27T19:09:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems",
+            "diagrams"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Diagrams and Incongruities",
+        "createDate": "2020-12-27T19:09:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/diagrams_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html",
+          "https://%24%7Bdomain_name%7D/trails/diagrams.html"
+        ]
+      }
+    },
+    {
+      "id": "toward_legible_computing",
+      "frontMatter": {
+        "date": "2020-12-28T16:25:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems",
+            "pedagogy",
+            "ethics"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Toward Legible Computing",
+        "createDate": "2020-12-28T16:25:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/toward_legible_computing.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html",
+          "https://%24%7Bdomain_name%7D/trails/pedagogy.html",
+          "https://%24%7Bdomain_name%7D/trails/ethics.html"
+        ]
+      }
+    },
+    {
+      "id": "practitioners_and_practice",
+      "frontMatter": {
+        "date": "2020-12-29T16:42:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "culture",
+            "pedagogy"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Practitioners and Practice",
+        "createDate": "2020-12-29T16:42:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/practitioners_and_practice.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/culture.html",
+          "https://%24%7Bdomain_name%7D/trails/pedagogy.html"
+        ]
+      }
+    },
+    {
+      "id": "on_security_001",
+      "frontMatter": {
+        "date": "2021-01-01T12:36:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "security"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Security, Part 001: Social Media Values",
+        "createDate": "2021-01-01T12:36:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_security_001.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/security.html"
+        ]
+      }
+    },
+    {
+      "id": "practitioner_journey",
+      "frontMatter": {
+        "date": "2021-01-09T11:19:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Practitioner Journey 001: First Step",
+        "createDate": "2021-01-09T11:19:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/practitioner_journey.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html"
+        ]
+      }
+    },
+    {
+      "id": "early_january_check_in",
+      "frontMatter": {
+        "date": "2021-01-10T17:07:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Early January Check-in",
+        "createDate": "2021-01-10T17:07:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/early_january_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "practitioner_journey_002",
+      "frontMatter": {
+        "date": "2021-01-11T20:23:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Practitioner Journey 002: Billing Alert",
+        "createDate": "2021-01-11T20:23:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/practitioner_journey_002.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html"
+        ]
+      }
+    },
+    {
+      "id": "practitioner_inn_000",
+      "frontMatter": {
+        "date": "2021-01-24T17:43:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey",
+            "practitioner-inn"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Practitioner Inn: State Floats",
+        "createDate": "2021-01-24T17:43:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/practitioner_inn_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-inn.html"
+        ]
+      }
+    },
+    {
+      "id": "practitioner_journey_003",
+      "frontMatter": {
+        "date": "2021-01-27T12:23:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Practitioner Journey 003: Domain Name",
+        "createDate": "2021-01-27T12:23:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/practitioner_journey_003.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html"
+        ]
+      }
+    },
+    {
+      "id": "late_january_check_in",
+      "frontMatter": {
+        "date": "2021-01-31T18:16:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Late January Check In",
+        "createDate": "2021-01-31T18:16:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/late_january_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "practitioner_journey_004",
+      "frontMatter": {
+        "date": "2021-02-03T18:00:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Practitioner Journey 004: Basic Blogging Website",
+        "createDate": "2021-02-03T18:00:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/practitioner_journey_004.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html"
+        ]
+      }
+    },
+    {
+      "id": "on_security_002",
+      "frontMatter": {
+        "date": "2021-02-05T18:30:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey",
+            "security"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Security 002: Security Approaches For Personal Social Media Systems",
+        "createDate": "2021-02-05T18:30:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_security_002.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/security.html"
+        ]
+      }
+    },
+    {
+      "id": "early_february_check_in",
+      "frontMatter": {
+        "date": "2021-02-09T12:09:44.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Early February Check-in",
+        "createDate": "2021-02-09T12:09:44.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/early_february_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "aws_limits",
+      "frontMatter": {
+        "date": "2021-02-13T21:06:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "postmortem",
+            "practitioner-inn"
+          ],
+          "imageIds": []
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Postmortem: AWS Certificate limit",
+        "createDate": "2021-02-13T21:06:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/aws_limits.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/postmortem.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-inn.html"
+        ]
+      }
+    },
+    {
+      "id": "looking_forward",
+      "frontMatter": {
+        "date": "2021-02-15T13:54:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems",
+            "practitioner-journey",
+            "practitioner-inn"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Looking Forward",
+        "createDate": "2021-02-15T13:54:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/looking_forward.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-inn.html"
+        ]
+      }
+    },
+    {
+      "id": "hard_work",
+      "frontMatter": {
+        "date": "2021-02-19T13:47:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in",
+            "labor"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Mid-February Check-in: On Work",
+        "createDate": "2021-02-19T13:47:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/hard_work.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html",
+          "https://%24%7Bdomain_name%7D/trails/labor.html"
+        ]
+      }
+    },
+    {
+      "id": "login_system_notes",
+      "frontMatter": {
+        "date": "2021-02-21T14:18:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "note-to-self"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Note to Self: Login System Overview",
+        "createDate": "2021-02-21T14:18:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/login_system_notes.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/note-to-self.html"
+        ]
+      }
+    },
+    {
+      "id": "on_testing_000",
+      "frontMatter": {
+        "date": "2021-02-24T08:25:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey",
+            "practitioner-inn",
+            "testing"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Testing 000",
+        "createDate": "2021-02-24T08:25:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_testing_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-inn.html",
+          "https://%24%7Bdomain_name%7D/trails/testing.html"
+        ]
+      }
+    },
+    {
+      "id": "late_february_check_in",
+      "frontMatter": {
+        "date": "2021-02-27T17:45:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in",
+            "labor"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Late-February Check-in: On Work 001",
+        "createDate": "2021-02-27T17:45:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/late_february_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html",
+          "https://%24%7Bdomain_name%7D/trails/labor.html"
+        ]
+      }
+    },
+    {
+      "id": "on_testing_001",
+      "frontMatter": {
+        "date": "2021-03-03T08:25:34.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey",
+            "practitioner-inn",
+            "testing"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Testing 001",
+        "createDate": "2021-03-03T08:25:34.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_testing_001.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-inn.html",
+          "https://%24%7Bdomain_name%7D/trails/testing.html"
+        ]
+      }
+    },
+    {
+      "id": "early_march_check_in",
+      "frontMatter": {
+        "date": "2021-03-07T14:09:44.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Early March Check-in",
+        "createDate": "2021-03-07T14:09:44.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/early_march_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "on_security_003",
+      "frontMatter": {
+        "date": "2021-03-11T17:45:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey",
+            "security"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Security 003: Optimistic-Collaborative Security Controls",
+        "createDate": "2021-03-11T17:45:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_security_003.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/security.html"
+        ]
+      }
+    },
+    {
+      "id": "mid_march_check_in",
+      "frontMatter": {
+        "date": "2021-03-13T14:14:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Mid March Check-in",
+        "createDate": "2021-03-13T14:14:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/mid_march_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "language_interaction_system_design",
+      "frontMatter": {
+        "date": "2021-03-22T13:05:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "disability"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Language, Interaction, and System Design",
+        "createDate": "2021-03-22T13:05:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/language_interaction_system_design.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/disability.html"
+        ]
+      }
+    },
+    {
+      "id": "what_if_infrastructure_is_small",
+      "frontMatter": {
+        "date": "2021-03-31T11:45:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "systems"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "What if infrastructure is actually small?",
+        "createDate": "2021-03-31T11:45:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/what_if_infrastructure_is_small.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/systems.html"
+        ]
+      }
+    },
+    {
+      "id": "social_media_economic_networks",
+      "frontMatter": {
+        "date": "2021-04-04T09:45:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Early April Check-In: Potentials for Economic Networks Using Personal Social Media",
+        "createDate": "2021-04-04T09:45:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/social_media_economic_networks.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "system_notes_001",
+      "frontMatter": {
+        "date": "2021-04-11T20:18:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "implemetation-note"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Design Outline 001",
+        "createDate": "2021-04-11T20:18:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/system_notes_001.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/implemetation-note.html"
+        ]
+      }
+    },
+    {
+      "id": "isolation_proposal_001",
+      "frontMatter": {
+        "date": "2021-04-13T11:02:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "implemetation-note",
+            "security",
+            "proposal"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Plugin Permission Isolation Proposal 001",
+        "createDate": "2021-04-13T11:02:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/isolation_proposal_001.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/implemetation-note.html",
+          "https://%24%7Bdomain_name%7D/trails/security.html",
+          "https://%24%7Bdomain_name%7D/trails/proposal.html"
+        ]
+      }
+    },
+    {
+      "id": "mid_april_check_in",
+      "frontMatter": {
+        "date": "2021-04-17T13:26:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Mid April Check-in",
+        "createDate": "2021-04-17T13:26:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/mid_april_check_in.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "some_decisions",
+      "frontMatter": {
+        "date": "2021-04-21T10:31:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in",
+            "practitioner-journey",
+            "practitioner-inn"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Upcoming Alpha Release and Related Decisions",
+        "createDate": "2021-04-21T10:31:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/some_decisions.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/practitioner-inn.html"
+        ]
+      }
+    },
+    {
+      "id": "visibility_system_outline",
+      "frontMatter": {
+        "date": "2021-04-28T10:36:44.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "implemetation-note"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Design Outline 002: Visibility System Details",
+        "createDate": "2021-04-28T10:36:44.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/visibility_system_outline.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/implemetation-note.html"
+        ]
+      }
+    },
+    {
+      "id": "on_security_004",
+      "frontMatter": {
+        "date": "2021-04-30T17:17:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "practitioner-journey",
+            "security"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On Security 004: Threats applicable to personal social media systems",
+        "createDate": "2021-04-30T17:17:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_security_004.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/practitioner-journey.html",
+          "https://%24%7Bdomain_name%7D/trails/security.html"
+        ]
+      }
+    },
+    {
+      "id": "domain_boundaries",
+      "frontMatter": {
+        "date": "2021-05-10T12:11:44.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "check-in"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Mid-May Check-in: On Domain Boundaries",
+        "createDate": "2021-05-10T12:11:44.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/domain_boundaries.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/check-in.html"
+        ]
+      }
+    },
+    {
+      "id": "why_has_it_taken_this_long",
+      "frontMatter": {
+        "date": "2021-05-14T16:38:22.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "labor"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "Why is this taking so long?",
+        "createDate": "2021-05-14T16:38:22.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/why_has_it_taken_this_long.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/labor.html"
+        ]
+      }
+    },
+    {
+      "id": "how_things_change",
+      "frontMatter": {
+        "date": "2021-05-17T00:14:00.000Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "poem"
+          ]
+        },
+        "draft": false,
+        "publish": true,
+        "title": "How Things Change: a prose poem",
+        "createDate": "2021-05-17T00:14:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/how_things_change.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/poem.html"
+        ]
+      }
+    },
+    {
+      "id": "on_user_interfaces_000",
+      "frontMatter": {
+        "date": "2021-06-01T19:44:50.033Z",
+        "updateDate": "2021-06-01T19:44:50.033Z",
+        "author": "Raphael Luckom",
+        "meta": {
+          "trails": [
+            "UI"
+          ],
+          "imageIds": []
+        },
+        "draft": false,
+        "publish": true,
+        "title": "On User Interfaces 000: Expectations and Betrayal",
+        "createDate": "2021-05-21T12:32:00.000Z"
+      },
+      "synthetic": {
+        "url": "https://%24%7Bdomain_name%7D/posts/on_user_interfaces_000.html",
+        "trails": [
+          "https://%24%7Bdomain_name%7D/trails/UI.html"
+        ]
+      }
+    }
+  ],
+  "diffs": {
+    "changed": {
+      "trails": [
+        "check-in"
+      ],
+      "posts": [
+        "on_security_004",
+        "domain_boundaries"
+      ]
+    },
+    "deleted": {
+      "trails": [
+        "alpha release"
+      ],
+      "posts": [
+        "alpha_todos"
+      ]
+    }
+  },
+  "neighbors": null,
+  "trailUpdates": [
+    {
+      "key": "trails/check-in.html",
+      "rendered": "<!DOCTYPE html>\n<html lang=\"en-us\">\n<link rel=\"stylesheet\" href=\"/assets/css/main.css\">\n<link rel=\"stylesheet\" href=\"/assets/css/highlight.css\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <head>\n    <title>\n    ${site_title}\n    </title>\n  </head>\n  <body>\n<section id=\"nav\">\n<a href=\"https://${domain_name}\"><h1>${site_title}</h1></a>\n<div class=\"nav-links\">\n<div class=\"nav-link-ctr\"><a class=\"nav-link\" href=\"https://example.com/name\">name</a></div>\n</div>\n</section>\n  <h1>Posts tagged with check-in</h1>\n<section>\n<div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/domain_boundaries.html\">Mid-May Check-in: On Domain Boundaries</a></h3><p>May 10, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/some_decisions.html\">Upcoming Alpha Release and Related Decisions</a></h3><p>April 21, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_april_check_in.html\">Mid April Check-in</a></h3><p>April 17, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/social_media_economic_networks.html\">Early April Check-In: Potentials for Economic Networks Using Personal Social Media</a></h3><p>April 4, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_march_check_in.html\">Mid March Check-in</a></h3><p>March 13, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_march_check_in.html\">Early March Check-in</a></h3><p>March 7, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/late_february_check_in.html\">Late-February Check-in: On Work 001</a></h3><p>February 27, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/hard_work.html\">Mid-February Check-in: On Work</a></h3><p>February 19, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_february_check_in.html\">Early February Check-in</a></h3><p>February 9, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/late_january_check_in.html\">Late January Check In</a></h3><p>January 31, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_january_check_in.html\">Early January Check-in</a></h3><p>January 10, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/deciding_what_comes_next.html\">Deciding What Comes Next</a></h3><p>December 19, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_december_check_in.html\">Mid-December Check-in</a></h3><p>December 15, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_december_check_in.html\">Early December Check-in</a></h3><p>December 8, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_november_check_in.html\">Mid-November Check-In</a></h3><p>November 18, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_november_check_in.html\">Early November Check-In</a></h3><p>November 4, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/october_check_in.html\">October Check-In</a></h3><p>October 14, 2020</p></div>\n</section>\n  </body>\n</html>\n"
+    },
+    {
+      "key": "trails/posts.html",
+      "rendered": "<!DOCTYPE html>\n<html lang=\"en-us\">\n<link rel=\"stylesheet\" href=\"/assets/css/main.css\">\n<link rel=\"stylesheet\" href=\"/assets/css/highlight.css\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <head>\n    <title>\n    ${site_title}\n    </title>\n  </head>\n  <body>\n<section id=\"nav\">\n<a href=\"https://${domain_name}\"><h1>${site_title}</h1></a>\n<div class=\"nav-links\">\n<div class=\"nav-link-ctr\"><a class=\"nav-link\" href=\"https://example.com/name\">name</a></div>\n</div>\n</section>\n  <h1></h1>\n<section>\n<div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_user_interfaces_000.html\">On User Interfaces 000: Expectations and Betrayal</a></h3><p>May 21, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/how_things_change.html\">How Things Change: a prose poem</a></h3><p>May 16, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/why_has_it_taken_this_long.html\">Why is this taking so long?</a></h3><p>May 14, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/domain_boundaries.html\">Mid-May Check-in: On Domain Boundaries</a></h3><p>May 10, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_004.html\">On Security 004: Threats applicable to personal social media systems</a></h3><p>April 30, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/visibility_system_outline.html\">Design Outline 002: Visibility System Details</a></h3><p>April 28, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/some_decisions.html\">Upcoming Alpha Release and Related Decisions</a></h3><p>April 21, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_april_check_in.html\">Mid April Check-in</a></h3><p>April 17, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/isolation_proposal_001.html\">Plugin Permission Isolation Proposal 001</a></h3><p>April 13, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/system_notes_001.html\">Design Outline 001</a></h3><p>April 11, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/social_media_economic_networks.html\">Early April Check-In: Potentials for Economic Networks Using Personal Social Media</a></h3><p>April 4, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/what_if_infrastructure_is_small.html\">What if infrastructure is actually small?</a></h3><p>March 31, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/language_interaction_system_design.html\">Language, Interaction, and System Design</a></h3><p>March 22, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_march_check_in.html\">Mid March Check-in</a></h3><p>March 13, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_003.html\">On Security 003: Optimistic-Collaborative Security Controls</a></h3><p>March 11, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_march_check_in.html\">Early March Check-in</a></h3><p>March 7, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_testing_001.html\">On Testing 001</a></h3><p>March 3, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/late_february_check_in.html\">Late-February Check-in: On Work 001</a></h3><p>February 27, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_testing_000.html\">On Testing 000</a></h3><p>February 24, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/login_system_notes.html\">Note to Self: Login System Overview</a></h3><p>February 21, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/hard_work.html\">Mid-February Check-in: On Work</a></h3><p>February 19, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/looking_forward.html\">Looking Forward</a></h3><p>February 15, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/aws_limits.html\">Postmortem: AWS Certificate limit</a></h3><p>February 13, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_february_check_in.html\">Early February Check-in</a></h3><p>February 9, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_002.html\">On Security 002: Security Approaches For Personal Social Media Systems</a></h3><p>February 5, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey_004.html\">Practitioner Journey 004: Basic Blogging Website</a></h3><p>February 3, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/late_january_check_in.html\">Late January Check In</a></h3><p>January 31, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey_003.html\">Practitioner Journey 003: Domain Name</a></h3><p>January 27, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_inn_000.html\">Practitioner Inn: State Floats</a></h3><p>January 24, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey_002.html\">Practitioner Journey 002: Billing Alert</a></h3><p>January 11, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_january_check_in.html\">Early January Check-in</a></h3><p>January 10, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey.html\">Practitioner Journey 001: First Step</a></h3><p>January 9, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_001.html\">On Security, Part 001: Social Media Values</a></h3><p>January 1, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioners_and_practice.html\">Practitioners and Practice</a></h3><p>December 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/toward_legible_computing.html\">Toward Legible Computing</a></h3><p>December 28, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/diagrams_000.html\">Diagrams and Incongruities</a></h3><p>December 27, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/my_role.html\">My Role</a></h3><p>December 25, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/terraform_module_storage.html\">Terraform module storage dilemma</a></h3><p>December 24, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/thinking_about_state.html\">Thinking About State</a></h3><p>December 22, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/deciding_what_comes_next.html\">Deciding What Comes Next</a></h3><p>December 19, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/postmortem_000.html\">Postmortem: Logging cost explosion</a></h3><p>December 18, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_december_check_in.html\">Mid-December Check-in</a></h3><p>December 15, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_december_check_in.html\">Early December Check-in</a></h3><p>December 8, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/revenge_of_hateoas.html\">Revenge of HATEOAS: Meditations on Discovery</a></h3><p>November 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/the_cloud_is_just_a_server.html\">The Cloud is Just A Server</a></h3><p>November 27, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/complexity_and_motivation.html\">Complexity And Motivation</a></h3><p>November 25, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_november_check_in.html\">Mid-November Check-In</a></h3><p>November 18, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/internet_history_002.html\">Internet History 002: The REST Architectural Style</a></h3><p>November 12, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/internet_history_001.html\">Internet History 001: The Web Goes Mainstream</a></h3><p>November 11, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/internet_history_000.html\">Internet History 000: One Place To Start</a></h3><p>November 10, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/indie_web_camp_east_rsvp.html\">RSVP to IndieWebCamp East 2020</a></h3><p>November 4, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_november_check_in.html\">Early November Check-In</a></h3><p>November 4, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/complexity_budget.html\">Complexity Budgets</a></h3><p>November 2, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_000.html\">On Security: Part 000</a></h3><p>October 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_privacy_000.html\">On Privacy: Part 000</a></h3><p>October 24, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/fixable_problems.html\">Fixable Problems</a></h3><p>October 21, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/almond_shape.html\">On Almond-Shaped Systems</a></h3><p>October 17, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/october_check_in.html\">October Check-In</a></h3><p>October 14, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/cloud_functions.html\">Cloud Functions at 30,000 Feet</a></h3><p>October 2, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/system_design.html\">A Way Of Thinking About Software System Design</a></h3><p>September 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/profit_and_misinformation.html\">What Everyone Likes</a></h3><p>September 21, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/a_terraform_pattern.html\">Terraform and Software Tectonics</a></h3><p>September 17, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/anatomy_of_a_web_service.html\">Anatomy of a Web App</a></h3><p>September 12, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/foundations.html\">Foundations</a></h3><p>September 8, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/a_saturday_meander.html\">The Story The Map Tells</a></h3><p>September 5, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/hardware.html\">Landscape With Cloud</a></h3><p>September 4, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/taking_down_windmills_from_the_inside.html\">Taking Down The Windmills From The Inside</a></h3><p>September 3, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/why_website.html\">Why I run my own website</a></h3><p>August 24, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/diy_singer_66_belt.html\">DIY Singer 66 Belt</a></h3><p>August 16, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/not_draft.html\">This Is Not A Draft: The Virtue of Making Things Badly</a></h3><p>August 15, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/honoring_personhood.html\">Honoring personhood in material culture</a></h3><p>August 10, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/the_patchwork_house_coat.html\">The Patchwork House Coat</a></h3><p>August 2, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/the_roof_of_the_auditorium.html\">The Roof of the Auditorium</a></h3><p>July 28, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/bezier_curves.html\">Organic Parametric Shapes: Bézier Curves in OpenSCAD</a></h3><p>July 12, 2018</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/some_functions_for_vases.html\">Encapsulation and Abstraction in 3D: Modules for Vase Sculptures in OpenSCAD</a></h3><p>December 10, 2017</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/distortion_fields.html\">Distortion Fields in OpenSCAD: Computationally Expensive And Not Entirely Satisfying, But Good To Know Anyway</a></h3><p>December 10, 2017</p></div>\n</section>\n  </body>\n</html>\n"
+    },
+    {
+      "key": "index.html",
+      "rendered": "<!DOCTYPE html>\n<html lang=\"en-us\">\n<link rel=\"stylesheet\" href=\"/assets/css/main.css\">\n<link rel=\"stylesheet\" href=\"/assets/css/highlight.css\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <head>\n    <title>\n    ${site_title}\n    </title>\n  </head>\n  <body>\n<section id=\"nav\">\n<a href=\"https://${domain_name}\"><h1>${site_title}</h1></a>\n<div class=\"nav-links\">\n<div class=\"nav-link-ctr\"><a class=\"nav-link\" href=\"https://example.com/name\">name</a></div>\n</div>\n</section>\n  <h1></h1>\n<section>\n<div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_user_interfaces_000.html\">On User Interfaces 000: Expectations and Betrayal</a></h3><p>May 21, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/how_things_change.html\">How Things Change: a prose poem</a></h3><p>May 16, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/why_has_it_taken_this_long.html\">Why is this taking so long?</a></h3><p>May 14, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/domain_boundaries.html\">Mid-May Check-in: On Domain Boundaries</a></h3><p>May 10, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_004.html\">On Security 004: Threats applicable to personal social media systems</a></h3><p>April 30, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/visibility_system_outline.html\">Design Outline 002: Visibility System Details</a></h3><p>April 28, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/some_decisions.html\">Upcoming Alpha Release and Related Decisions</a></h3><p>April 21, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_april_check_in.html\">Mid April Check-in</a></h3><p>April 17, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/isolation_proposal_001.html\">Plugin Permission Isolation Proposal 001</a></h3><p>April 13, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/system_notes_001.html\">Design Outline 001</a></h3><p>April 11, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/social_media_economic_networks.html\">Early April Check-In: Potentials for Economic Networks Using Personal Social Media</a></h3><p>April 4, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/what_if_infrastructure_is_small.html\">What if infrastructure is actually small?</a></h3><p>March 31, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/language_interaction_system_design.html\">Language, Interaction, and System Design</a></h3><p>March 22, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_march_check_in.html\">Mid March Check-in</a></h3><p>March 13, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_003.html\">On Security 003: Optimistic-Collaborative Security Controls</a></h3><p>March 11, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_march_check_in.html\">Early March Check-in</a></h3><p>March 7, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_testing_001.html\">On Testing 001</a></h3><p>March 3, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/late_february_check_in.html\">Late-February Check-in: On Work 001</a></h3><p>February 27, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_testing_000.html\">On Testing 000</a></h3><p>February 24, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/login_system_notes.html\">Note to Self: Login System Overview</a></h3><p>February 21, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/hard_work.html\">Mid-February Check-in: On Work</a></h3><p>February 19, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/looking_forward.html\">Looking Forward</a></h3><p>February 15, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/aws_limits.html\">Postmortem: AWS Certificate limit</a></h3><p>February 13, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_february_check_in.html\">Early February Check-in</a></h3><p>February 9, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_002.html\">On Security 002: Security Approaches For Personal Social Media Systems</a></h3><p>February 5, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey_004.html\">Practitioner Journey 004: Basic Blogging Website</a></h3><p>February 3, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/late_january_check_in.html\">Late January Check In</a></h3><p>January 31, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey_003.html\">Practitioner Journey 003: Domain Name</a></h3><p>January 27, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_inn_000.html\">Practitioner Inn: State Floats</a></h3><p>January 24, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey_002.html\">Practitioner Journey 002: Billing Alert</a></h3><p>January 11, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_january_check_in.html\">Early January Check-in</a></h3><p>January 10, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioner_journey.html\">Practitioner Journey 001: First Step</a></h3><p>January 9, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_001.html\">On Security, Part 001: Social Media Values</a></h3><p>January 1, 2021</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/practitioners_and_practice.html\">Practitioners and Practice</a></h3><p>December 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/toward_legible_computing.html\">Toward Legible Computing</a></h3><p>December 28, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/diagrams_000.html\">Diagrams and Incongruities</a></h3><p>December 27, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/my_role.html\">My Role</a></h3><p>December 25, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/terraform_module_storage.html\">Terraform module storage dilemma</a></h3><p>December 24, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/thinking_about_state.html\">Thinking About State</a></h3><p>December 22, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/deciding_what_comes_next.html\">Deciding What Comes Next</a></h3><p>December 19, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/postmortem_000.html\">Postmortem: Logging cost explosion</a></h3><p>December 18, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_december_check_in.html\">Mid-December Check-in</a></h3><p>December 15, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_december_check_in.html\">Early December Check-in</a></h3><p>December 8, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/revenge_of_hateoas.html\">Revenge of HATEOAS: Meditations on Discovery</a></h3><p>November 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/the_cloud_is_just_a_server.html\">The Cloud is Just A Server</a></h3><p>November 27, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/complexity_and_motivation.html\">Complexity And Motivation</a></h3><p>November 25, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/mid_november_check_in.html\">Mid-November Check-In</a></h3><p>November 18, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/internet_history_002.html\">Internet History 002: The REST Architectural Style</a></h3><p>November 12, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/internet_history_001.html\">Internet History 001: The Web Goes Mainstream</a></h3><p>November 11, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/internet_history_000.html\">Internet History 000: One Place To Start</a></h3><p>November 10, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/indie_web_camp_east_rsvp.html\">RSVP to IndieWebCamp East 2020</a></h3><p>November 4, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/early_november_check_in.html\">Early November Check-In</a></h3><p>November 4, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/complexity_budget.html\">Complexity Budgets</a></h3><p>November 2, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_security_000.html\">On Security: Part 000</a></h3><p>October 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/on_privacy_000.html\">On Privacy: Part 000</a></h3><p>October 24, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/fixable_problems.html\">Fixable Problems</a></h3><p>October 21, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/almond_shape.html\">On Almond-Shaped Systems</a></h3><p>October 17, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/october_check_in.html\">October Check-In</a></h3><p>October 14, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/cloud_functions.html\">Cloud Functions at 30,000 Feet</a></h3><p>October 2, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/system_design.html\">A Way Of Thinking About Software System Design</a></h3><p>September 29, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/profit_and_misinformation.html\">What Everyone Likes</a></h3><p>September 21, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/a_terraform_pattern.html\">Terraform and Software Tectonics</a></h3><p>September 17, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/anatomy_of_a_web_service.html\">Anatomy of a Web App</a></h3><p>September 12, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/foundations.html\">Foundations</a></h3><p>September 8, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/a_saturday_meander.html\">The Story The Map Tells</a></h3><p>September 5, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/hardware.html\">Landscape With Cloud</a></h3><p>September 4, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/taking_down_windmills_from_the_inside.html\">Taking Down The Windmills From The Inside</a></h3><p>September 3, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/why_website.html\">Why I run my own website</a></h3><p>August 24, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/diy_singer_66_belt.html\">DIY Singer 66 Belt</a></h3><p>August 16, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/not_draft.html\">This Is Not A Draft: The Virtue of Making Things Badly</a></h3><p>August 15, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/honoring_personhood.html\">Honoring personhood in material culture</a></h3><p>August 10, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/the_patchwork_house_coat.html\">The Patchwork House Coat</a></h3><p>August 2, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/the_roof_of_the_auditorium.html\">The Roof of the Auditorium</a></h3><p>July 28, 2020</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/bezier_curves.html\">Organic Parametric Shapes: Bézier Curves in OpenSCAD</a></h3><p>July 12, 2018</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/some_functions_for_vases.html\">Encapsulation and Abstraction in 3D: Modules for Vase Sculptures in OpenSCAD</a></h3><p>December 10, 2017</p></div><div class=\"trail-member\"><h3><a href=\"https://%24%7Bdomain_name%7D/posts/distortion_fields.html\">Distortion Fields in OpenSCAD: Computationally Expensive And Not Entirely Satisfying, But Good To Know Anyway</a></h3><p>December 10, 2017</p></div>\n</section>\n  </body>\n</html>\n"
+    }
+  ],
+  "renderedPost": null,
+  "trailDeleteKeys": [
+    "trails/alpha release.html"
+  ],
+  "postUpdateKeys": [
+    "posts/on_security_004.md",
+    "posts/domain_boundaries.md"
+  ],
+  "postDeleteKeys": [
+    "posts/alpha_todos.html"
+  ]
+}

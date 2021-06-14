@@ -42,22 +42,19 @@ locals {
 }
 
 module asset_file_configs {
-  count = var.enable ? 1 : 0
   source = "../../coordinators/asset_directory"
   asset_directory_root = local.asset_path
   s3_asset_prefix = "assets/"
 }
 
 module site_static_assets {
-  count = var.enable ? 1 : 0
-  bucket_name = local.site_bucket
   source = "../../s3_directory"
-  file_configs = module.asset_file_configs[0].file_configs
+  bucket_name = local.site_bucket
+  file_configs = module.asset_file_configs.file_configs
   depends_on = [module.website_bucket]
 }
 
 resource "aws_s3_bucket_object" "site_description" {
-  count = var.enable ? 1 : 0
   bucket = local.site_bucket
   key    = "site_description.json"
   content_type = "application/json"
@@ -105,7 +102,6 @@ locals {
 }
 
 module site_render {
-  count = var.enable ? 1 : 0
   source = "../../donut_days_function"
   timeout_secs = 40
   mem_mb = 256
@@ -118,7 +114,7 @@ module site_render {
       website_bucket = local.site_bucket
       domain_name = local.routing.domain
       site_description_path = "site_description.json"
-      dependency_update_function = module.trails_updater[0].lambda.arn
+      dependency_update_function = module.trails_updater.lambda.arn
     })
   additional_helpers = [
     {
@@ -134,7 +130,7 @@ module site_render {
   action_name = "site_render"
   scope_name = local.system_id.security_scope
   policy_statements =  concat(
-    module.trails_updater[0].permission_sets.invoke
+    module.trails_updater.permission_sets.invoke
   )
   donut_days_layer = local.layers.donut_days
   additional_layers = [
@@ -143,7 +139,6 @@ module site_render {
 }
 
 module deletion_cleanup {
-  count = var.enable ? 1 : 0
   source = "../../donut_days_function"
   timeout_secs = 40
   mem_mb = 128
@@ -156,7 +151,7 @@ module deletion_cleanup {
     website_bucket = local.site_bucket
     domain_name = local.routing.domain
     site_description_path = "site_description.json"
-    dependency_update_function = module.trails_updater[0].lambda.arn
+    dependency_update_function = module.trails_updater.lambda.arn
   }) 
   additional_helpers = [
     {
@@ -168,7 +163,7 @@ module deletion_cleanup {
   action_name = "deletion_cleanup"
   scope_name = local.system_id.security_scope
   policy_statements =  concat(
-    module.trails_updater[0].permission_sets.invoke
+    module.trails_updater.permission_sets.invoke
   )
   donut_days_layer = local.layers.donut_days
   additional_layers = [
@@ -177,7 +172,6 @@ module deletion_cleanup {
 }
 
 module trails_updater {
-  count = var.enable ? 1 : 0
   source = "../../donut_days_function"
   timeout_secs = 40
   account_id = var.account_id
@@ -217,7 +211,6 @@ module trails_updater {
 }
 
 module trails_resolver {
-  count = var.enable ? 1 : 0
   source = "../../donut_days_function"
   timeout_secs = 5
   account_id = var.account_id
@@ -239,7 +232,6 @@ module trails_resolver {
 }
 
 module site {
-  count = 1
   source = "../../cloudfront_s3_website"
   enable_distribution = var.enable
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
@@ -270,8 +262,8 @@ module site {
       headers = []
     }
     lambda = {
-      arn = module.trails_resolver[0].lambda.arn
-      name = module.trails_resolver[0].lambda.function_name
+      arn = module.trails_resolver.lambda.arn
+      name = module.trails_resolver.lambda.function_name
     }
   }]
   no_cache_s3_path_patterns = [ {
@@ -283,37 +275,37 @@ module site {
 }
 
 locals {
-  trails_table_delete_role_names = module.trails_updater.*.role.name
-  trails_table_write_permission_role_names = module.trails_updater.*.role.name
-  trails_table_read_permission_role_names = flatten([
-    module.trails_resolver.*.role.name,
-    module.trails_updater.*.role.name
-  ])
-  website_bucket_lambda_notifications = var.enable ? [
+  trails_table_delete_role_names = [module.trails_updater.role.name]
+  trails_table_write_permission_role_names = [module.trails_updater.role.name]
+  trails_table_read_permission_role_names = [
+    module.trails_resolver.role.name,
+    module.trails_updater.role.name
+  ]
+  website_bucket_lambda_notifications = [
     {
-      lambda_arn = module.site_render[0].lambda.arn
-      lambda_name = module.site_render[0].lambda.function_name
-      lambda_role_arn = module.site_render[0].role.arn
+      lambda_arn = module.site_render.lambda.arn
+      lambda_name = module.site_render.lambda.function_name
+      lambda_role_arn = module.site_render.role.arn
       permission_type = "put_object"
       events              = ["s3:ObjectCreated:*" ]
       filter_prefix       = ""
       filter_suffix       = ".md"
     },
     {
-      lambda_arn = module.deletion_cleanup[0].lambda.arn
-      lambda_name = module.deletion_cleanup[0].lambda.function_name
-      lambda_role_arn = module.deletion_cleanup[0].role.arn
+      lambda_arn = module.deletion_cleanup.lambda.arn
+      lambda_name = module.deletion_cleanup.lambda.function_name
+      lambda_role_arn = module.deletion_cleanup.role.arn
       permission_type = "delete_object"
       events              = ["s3:ObjectRemoved:*" ]
       filter_prefix       = ""
       filter_suffix       = ".md"
     }
-  ] : []
+  ]
   website_bucket_suffix_object_denials = concat(var.website_bucket_suffix_object_denials, [{
     permission_type = "put_object"
     suffix = ".md"
     arns = [
-      module.site_render[0].role.arn
+      module.site_render.role.arn
     ]
   }])
   glue_table_permission_names = {}
@@ -321,9 +313,9 @@ locals {
 }
 
 locals {
-  cloudfront_origin_access_principals = [for id in module.site.*.origin_access_identity.iam_arn : {
+  cloudfront_origin_access_principals = [{
     type = "AWS"
-    identifiers = [id]
+    identifiers = [module.site.origin_access_identity.iam_arn]
   }]
 }
 

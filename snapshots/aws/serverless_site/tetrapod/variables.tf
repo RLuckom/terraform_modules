@@ -17,6 +17,7 @@ variable coordinator_data {
     lambda_log_delivery_bucket = string
     cloudfront_log_delivery_prefix = string
     cloudfront_log_delivery_bucket = string
+    metric_table = string
   })
 }
 
@@ -83,6 +84,7 @@ locals {
   lambda_logging_config = {
     bucket = var.coordinator_data.lambda_log_delivery_bucket
     prefix = var.coordinator_data.lambda_log_delivery_prefix
+    metric_table = var.coordinator_data.metric_table
   }
   cloudfront_logging_config = {
     bucket = var.coordinator_data.cloudfront_log_delivery_bucket

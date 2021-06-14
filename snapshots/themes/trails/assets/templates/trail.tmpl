@@ -20,7 +20,7 @@
     <p class="subtitle">
     </p>
 <section>
-<% _.forEach(meta.trails.members, function(member) { %><div class="trail-member"><h3><a href="<%- _.get(identifyUri(member.memberUri), 'browserUrl') %>"><%- _.get(member, 'memberMetadata.frontMatter.title') %></a></h3><p><%- _.get(member, 'memberMetadata.frontMatter.author') %></p><p><%- formatDate(_.get(member, 'memberMetadata.frontMatter.date')) %></p></div><% }); %>
+<% _.forEach(_(meta.trails.members).sortBy((x) => _.get(x, 'memberMetadata.createDate')).reverse().value(), function(member) { %><div class="trail-member"><h3><a href="<%- _.get(identifyUri(member.memberUri), 'browserUrl') %>"><%- _.get(member, 'memberMetadata.title') || "no title" %></a></h3><p><%- _.get(member, 'memberMetadata.author') %></p><p><%- formatDate(_.get(member, 'memberMetadata.createDate') || _.get(member, 'memberMetadata.date')) %></p></div><% }); %>
 </section>
   </body>
 </html>

@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.7.0"
+    }
+  }
+}
+
 variable name {
   type = string
 }
@@ -197,10 +206,12 @@ variable utility_function_logging_config {
   type = object({
     bucket = string
     prefix = string
+    metric_table = string
   })
   default = {
     bucket = ""
     prefix = ""
+    metric_table = ""
   }
 }
 

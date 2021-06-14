@@ -1,0 +1,136 @@
+:root {
+  --main-font-family: Georgia Palatino serif; 
+  /* --main-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html, body {
+  max-width: 750px;
+  margin: 0 auto;
+  font-family: var(--main-font-family);
+  overflow-x: hidden;
+  color: #1a1a1a;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+  margin: 35px auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+sup a, sub a {
+  text-underline-position: from-font;
+}
+
+blockquote {
+  margin-left: 2em;
+}
+
+.trail-member a {
+  text-decoration: none;
+}
+
+.trail-member h3 {
+  margin-bottom: 0px;
+}
+
+h4, h3 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+article pre {
+  overflow: scroll;
+}
+
+article p, article li, article h4, article pre, .series-link {
+  font-size: 20px;
+  line-height: 30px;
+}
+
+sup, sub {
+  line-height: 0;
+}
+
+p, ol, ul, pre {
+  margin-bottom: 15px;
+}
+
+hr {
+  margin-bottom: 20px;
+}
+
+#nav {
+  margin-bottom: 40px;
+}
+
+#nav h1 {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: center;
+}
+
+.nav-link-ctr {
+  padding: 0 15px;
+}
+
+#series-links {
+  display: flex;
+  margin-top: 50px;
+  width: 100%;
+}
+
+.series-link {
+  flex: 1;
+  margin-bottom: 5px;
+  text-align: center;
+  margin: auto;
+}
+
+.full-width {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+@media screen and (max-width: 767px) {
+  html, body {
+    max-width: 100vw;
+    padding: 0 10px;
+  }
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    margin: 30px auto;
+  }
+
+  article p, article li, article h4, article pre, .series-link {
+    font-size: 18px;
+    line-height: 26px;
+  }
+
+  ol, ul {
+    padding-left: 24px;
+  }
+
+  .footnotes ol {
+    padding-left: 20px;
+  }
+
+}

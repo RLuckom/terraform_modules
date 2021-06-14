@@ -51,10 +51,12 @@ variable logging_config {
   type = object({
     bucket = string
     prefix = string
+    metric_table = string
   })
   default = {
     bucket = ""
     prefix = ""
+    metric_table = ""
   }
 }
 

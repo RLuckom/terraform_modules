@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>${admin_running_material.site_title}</title>
+    <meta name="description" content="${replace(admin_running_material.site_description, "\"", "\\\"")}">
+    ${join("\n", [ for p in css_paths : "<link rel=\"stylesheet\" href=\"/${trimprefix(p, "/")}\">"])}
+    ${join("\n", [ for p in script_paths : "<script src=\"/${trimprefix(p, "/")}\"></script>"])}
+    ${join("\n", [ for p in deferred_script_paths : "<script src=\"/${trimprefix(p, "/")}\" defer></script>"])}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <header>
+      ${admin_running_material.header_contents}
+    </header>
+    <main>
+      <section class="site-tools">
+        ${join("\n", [for plugin_config in plugin_configs : 
+<<EOF
+        <a href="/plugins/${plugin_config.name}/index.html">
+          <div class="site-tool-card">
+            <h1 class="tool-title">
+              ${plugin_config.slug}
+            </h1>
+          </div>
+        </a>
+EOF
+])}
+      </section>
+    </main>
+    <footer>
+      ${admin_running_material.footer_contents}
+    </footer>
+  </body>
+</html>

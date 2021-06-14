@@ -96,7 +96,7 @@ data aws_iam_policy_document bucket_policy_document {
         for_each = statement.value.principals
         content {
           type = principals.value.type
-          identifiers = principals.value.identifiers
+          identifiers = sort(principals.value.identifiers)
         }
       }
     }
@@ -112,7 +112,7 @@ data aws_iam_policy_document bucket_policy_document {
         for_each = statement.value.principals
         content {
           type = principals.value.type
-          identifiers = principals.value.identifiers
+          identifiers = sort(principals.value.identifiers)
         }
       }
     }
@@ -128,7 +128,7 @@ data aws_iam_policy_document bucket_policy_document {
         for_each = statement.value.principals
         content {
           type = principals.value.type
-          identifiers = principals.value.identifiers
+          identifiers = sort(principals.value.identifiers)
         }
       }
     }
@@ -143,7 +143,7 @@ data aws_iam_policy_document bucket_policy_document {
         for_each = statement.value.principals
         content {
           type = principals.value.type
-          identifiers = principals.value.identifiers
+          identifiers = sort(principals.value.identifiers)
         }
       }
     }
@@ -158,7 +158,7 @@ data aws_iam_policy_document bucket_policy_document {
         for_each = statement.value.principals
         content {
           type = principals.value.type
-          identifiers = principals.value.identifiers
+          identifiers = sort(principals.value.identifiers)
         }
       }
       dynamic "condition" {

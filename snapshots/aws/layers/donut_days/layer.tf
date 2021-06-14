@@ -6,7 +6,7 @@ resource "aws_lambda_layer_version" "layer" {
   layer_name = var.layer_name
   s3_bucket = "rluckom-public-layer-archives"
   s3_key = "donut_days"
-  s3_object_version = "B8D5cECY0y9K.OmbO3T7TbaOn1hmsPSf"
+  s3_object_version = "h0gw1ez9JWCF4IG6ZXQTTI87tmYr5YAS"
   compatible_runtimes = ["nodejs12.x"]
   lifecycle {
     create_before_destroy = true

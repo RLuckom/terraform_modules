@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
       for_each = var.principals 
       content {
         type = principals.value.type
-        identifiers = principals.value.identifiers
+        identifiers = sort(principals.value.identifiers)
       }
     }
   }

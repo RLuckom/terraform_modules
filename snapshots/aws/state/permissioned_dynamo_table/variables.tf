@@ -1,4 +1,4 @@
-variable "table_name" {
+variable table_name {
   type = string
 }
 
@@ -37,10 +37,6 @@ variable "partition_key" {
     name = string
     type = string 
   })
-  default = {
-    name = "id"
-    type = "S"
-  }
 }
 
 variable "range_key" {

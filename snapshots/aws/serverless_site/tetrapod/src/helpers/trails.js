@@ -27,18 +27,20 @@ function checkForEmptyLists({trailsWithDeletedMembers, plannedUpdates}) {
 	}
 }
 
-function determineUpdates({trails, existingMemberships, existingMembers, siteDescription, item, trailNames}) {
+function determineUpdates({trails, existingMemberships, existingMembers, siteDescription, item, trailNames, rerenderNeighbors}) {
+  const {allTrailNames, trailNamesToRerenderMembers} = trailNames
   const updates = {
     neighborsToReRender: [],
     trailsToReRender: [],
     dynamoPuts: [],
     dynamoDeletes: [],
-    neighbors: {}
+    neighbors: {},
+    unorderedTrails: {},
   }
   const trailUriTemplate = urlTemplate.parse(_.get(siteDescription, 'relations.meta.trail.idTemplate'))
   const trailsListId = trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: TRAILS_TRAIL_NAME}})
   _.each(existingMemberships, (trail) => {
-    if (!_.find(trailNames, (name) => name === trail.trailName) && trail.trailName !== TRAILS_TRAIL_NAME) {
+    if (!_.find(allTrailNames, (name) => name === trail.trailName) && trail.trailName !== TRAILS_TRAIL_NAME) {
       updates.dynamoDeletes.push({
         memberKey: `${item.type}:${item.name}`,
         trailName: trail.trailName
@@ -56,12 +58,11 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
   _.each(trails, ({members, trailName}) => {
     const trailUriTemplate = urlTemplate.parse(_.get(siteDescription, 'relations.meta.trail.idTemplate'))
     const newList = _.cloneDeep(members)
-    const sortedNewList = sortTrailMembers(newList)
     const trailUri = trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: trailName}})
     const currentIndex = _.findIndex(members, (member) => {
-      return member.memberKey === `${item.type}:${item.name}` && _.isEqual(member.memberMetadata, item.metadata)
+      return member.memberKey === `${item.type}:${item.name}`
     })
-    const previousIndex = _.findIndex(members, (member) => member.memberUri === item.id)
+    const previousIndex = _.findIndex(members, (member) => member.memberUri === item.uri)
     if (members.length === 0) {
       updates.dynamoPuts.push({
         trailUri: trailsListId,
@@ -71,7 +72,7 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
         memberKey: `trail:${trailName}`,
         memberType: 'trail',
         memberMetadata: {
-          date: new Date().toISOString(),
+          createDate: new Date().toISOString(),
         }
       })
       updates.trailsToReRender.push(trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: trailName}}))
@@ -89,24 +90,27 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
       newList.push(trailMember)
       updates.trailsToReRender.push(trailUriTemplate.expand({...siteDescription.siteDetails, ...{name: trailName}}))
       updates.dynamoPuts.push(trailMember)
-      const newIndex = sortedNewList.findIndex((i) => i.memberUri === item.id && _.isEqual(i.memberMetadata, item.metadata))
-      if (previousIndex !== -1 && newIndex !== previousIndex) {
-        updates.neighborsToReRender.push(members[previousIndex + 1])
-        updates.neighborsToReRender.push(members[previousIndex - 1])
-        newList.splice(previousIndex, 1)
+      if (_.find(trailNamesToRerenderMembers, (t) => t === trailName)) {
+        const sortedNewList = sortTrailMembers(newList)
+        const newIndex = _.findIndex(sortedNewList, (i) => i.memberUri === item.uri)
+        if (previousIndex !== -1 && newIndex !== previousIndex) {
+          updates.neighborsToReRender.push(members[previousIndex + 1])
+          updates.neighborsToReRender.push(members[previousIndex - 1])
+          newList.splice(previousIndex, 1)
+        }
+        updates.neighborsToReRender.push(sortedNewList[newIndex + 1])
+        updates.neighborsToReRender.push(sortedNewList[newIndex - 1])
+        updates.neighbors[trailName] = {
+          trailName,
+          previousNeighbor: sortedNewList[newIndex + 1] || null,
+          nextNeighbor: sortedNewList[newIndex - 1] || null,
+        }
       }
-      updates.neighborsToReRender.push(sortedNewList[newIndex + 1])
-      updates.neighborsToReRender.push(sortedNewList[newIndex - 1])
-      updates.neighbors[trailName] = {
-        trailName,
-        previousNeighbor: sortedNewList[newIndex + 1] || null,
-        nextNeighbor: sortedNewList[newIndex - 1] || null,
-      }
-    } else {
+    } else if (_.find(trailNamesToRerenderMembers, (t) => t === trailName)) {
       updates.neighbors[trailUri] = {
         trailName,
-        previousNeighbor: sortedNewList[currentIndex + 1] || null,
-        nextNeighbor: sortedNewList[currentIndex - 1] || null,
+        previousNeighbor: newList[currentIndex + 1] || null,
+        nextNeighbor: newList[currentIndex - 1] || null,
       }
     }
   })
@@ -120,7 +124,7 @@ function determineUpdates({trails, existingMemberships, existingMembers, siteDes
 } 
 
 function sortTrailMembers(members) {
-  return _(members).sortBy((m) => _.get(m, 'memberMetadata.date') || _.get(m, 'memberMetadata.frontMatter.date')).reverse().value()
+  return _(members).sortBy((m) => _.get(m, 'memberMetadata.createDate')).reverse().value()
 }
 
 module.exports = {determineUpdates, checkForEmptyLists, sortTrailMembers}

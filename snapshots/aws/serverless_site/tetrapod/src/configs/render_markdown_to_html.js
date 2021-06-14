@@ -67,21 +67,14 @@ module.exports = {
       index: 4,
       transformers: {
         trailNames: {
-          helper: 'transform',
-          params: {
-            arg: {
-              all: {
-                specific: {ref: 'item.results.parsed.frontMatter.meta.trail'},
-                general: { ref: 'item.vars.metadata.typeDef.meta.trail.default' },
-              },
-            },
-            func: {value: ({specific, general}) => (specific && general) ? _.concat(specific, general) : specific || general || []}
-          }
+          all: {
+            specific: {ref: 'item.results.parsed.frontMatter.meta.trails'},
+            general: { ref: 'item.vars.metadata.typeDef.meta.trail.default' },
+          },
         },
       },
       dependencies: {
         trails: {
-          condition: { ref: 'stage.trailNames.length' },
           action: 'DD',
           formatter: formatters.singleValue.unwrapFunctionPayload,
           params: {
@@ -95,18 +88,19 @@ module.exports = {
                     arg: {
                       all: {
                         description: {ref: 'item.vars.metadata'},
-                        parsed: {ref: 'item.results.parsed'},
+                        frontMatter: {ref: 'item.results.parsed.frontMatter'},
                       }
                     },
-                    func: ({description, parsed}) => {
+                    func: ({description, frontMatter}) => {
                       const item = {...description}
-                      item.metadata = parsed
+                      item.metadata = frontMatter
                       delete item.typeDef
                       return item
                     }
                   }
                 },
-                trailNames: { ref: 'stage.trailNames'}
+                trailNames: { ref: 'stage.trailNames'},
+                rerenderNeighbors: { value: false },
               }
             }
           }

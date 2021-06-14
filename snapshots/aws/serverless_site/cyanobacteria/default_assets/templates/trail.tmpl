@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/highlight.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <title>
+    <%= runningMaterial.title %>
+    </title>
+  </head>
+  <body>
+<section id="nav">
+<a href="<%= runningMaterial.browserRoot %>"><h1><%= runningMaterial.title %></h1></a>
+<div class="nav-links">
+<% _.forEach(runningMaterial.navLinks, function({name, target}) { 
+    %><div class="nav-link-ctr"><a class="nav-link" href="<%- target %>"><%- name  %></a></div><% 
+}); %>
+</div>
+</section>
+  <h1><%= trailId === 'posts' ? '' : 'Posts tagged with ' + trailId%></h1>
+<section>
+<% _.forEach(members, function(member) { %><div class="trail-member"><h3><a href="<%= member.synthetic.url %>"><%- _.get(member, 'frontMatter.title') || "no title" %></a></h3><p><%- formatDate(_.get(member, 'frontMatter.createDate') || _.get(member, 'frontMatter.date')) %></p></div><% }); %>
+</section>
+  </body>
+</html>

@@ -1,5 +1,11 @@
-provider "aws" {
-  alias = "replica1"
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 2.7.0"
+      configuration_aliases = [ aws.replica1, aws.replica2, aws.replica3]
+    }
+  }
 }
 
 variable region1 {
@@ -20,14 +26,6 @@ variable region3 {
 variable need_policy_override {
   type = bool
   default = true
-}
-
-provider "aws" {
-  alias = "replica2"
-}
-
-provider "aws" {
-  alias = "replica3"
 }
 
 variable account_id {
@@ -91,10 +89,12 @@ variable replication_function_logging_config {
   type = object({
     bucket = string
     prefix = string
+    metric_table = string
   })
   default = {
     bucket = ""
     prefix = ""
+    metric_table = ""
   }
 }
 
