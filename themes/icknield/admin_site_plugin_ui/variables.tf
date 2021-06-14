@@ -18,12 +18,18 @@ variable admin_site_resources {
   type = object({
     default_styles_path = string
     default_scripts_path = string
+    aws_script_path = string
+    exploranda_script_path = string
+    lodash_script_path = string
     header_contents = string
     footer_contents = string
     site_description = string
     site_title = string
   })
   default = {
+    aws_script_path = ""
+    exploranda_script_path = ""
+    lodash_script_path = ""
     default_styles_path = ""
     default_scripts_path = ""
     header_contents = "<div class=\"header-block\"><h1 class=\"heading\">Private Site</h1></div>"
@@ -31,6 +37,11 @@ variable admin_site_resources {
     site_title = "running_material.site_title"
     site_description = "running_material.site_description"
   }
+}
+
+variable include_aws {
+  type = bool
+  default = true
 }
 
 variable plugin_config {
@@ -117,11 +128,17 @@ locals {
   default_deferred_script_paths = concat(var.default_deferred_script_paths, [
     var.admin_site_resources.default_scripts_path,
   ])
-  default_script_paths = concat(var.default_script_paths, [
-    local.config_path,
-    local.gopher_config_js_path,
-    local.utils_js_path,
-  ])
+  default_script_paths = concat(
+    var.include_aws ? [var.admin_site_resources.aws_script_path] : [],
+    [
+      var.admin_site_resources.lodash_script_path,
+      var.admin_site_resources.exploranda_script_path,
+      local.config_path,
+      local.gopher_config_js_path,
+      local.utils_js_path,
+    ],
+    var.default_script_paths,
+  )
   files = flatten([
     [for page_name, page_config in var.page_configs : {
       key = "${local.file_prefix}${page_name}.html"
