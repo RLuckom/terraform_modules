@@ -68,6 +68,11 @@ variable invoking_roles {
   default = []
 }
 
+variable runtime {
+  type = string
+  default = "nodejs14.x"
+}
+
 variable lambda_event_configs {
   type = list(object({
     maximum_event_age_in_seconds = number
