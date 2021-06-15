@@ -14,7 +14,7 @@ output lambda_notification_config {
     permission_type     = "read_and_tag_known"
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = var.io_config.input_config.prefix
-    filter_suffix       = ""
+    filter_suffix       = ".csv.gz"
   }
 }
 

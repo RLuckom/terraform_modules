@@ -1,5 +1,5 @@
 const _ = require('lodash'); 
-const {parseReportAccessSchema} = require('./parse_report_utils')
+const {parseReportAccessSchema} = require('./helpers/parse_report_utils')
 
 module.exports = {
   stages: {
@@ -11,8 +11,8 @@ module.exports = {
           params: {
             accessSchema: {value: 'dataSources.AWS.s3.getObject'},
             explorandaParams: {
-              Bucket: {ref: 'stage.bucket'},
-              Key: {ref: 'stage.imageKey'},
+              Bucket: {ref: 'event.Records[0].s3.bucket.name'},
+              Key: {ref: 'event.Records[0].s3.object.decodedKey'},
             }
           }
         }

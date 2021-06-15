@@ -18,6 +18,10 @@ module cur_parser_lambda {
   {
     destination = var.io_config.output_config
   })
+  additional_helpers = [{
+    file_contents = file("${path.module}/src/parse_report_utils.js")
+    helper_name = "parse_report_utils"
+  }]
   logging_config = var.logging_config
   lambda_event_configs = var.lambda_event_configs
   action_name = var.action_name
