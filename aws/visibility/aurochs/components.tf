@@ -17,6 +17,7 @@ module visibility_bucket {
   prefix_object_permissions = concat(
     local.archive_function_visibility_bucket_permissions,
     local.visibility_prefix_object_permissions 
+    [module.cur_parser_lambda.destination_permission_needed]
   )
   lifecycle_rules = local.visibility_lifecycle_rules
 }
@@ -36,6 +37,43 @@ module log_delivery_bucket {
   lambda_notifications = local.archive_function_cloudfront_delivery_bucket_notifications
 }
 
+module cost_report_delivery_bucket {
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
+  account_id = var.account_id
+  region = var.region
+  name = local.cost_report_bucket
+  lambda_notifications = [module.cost_report_function.lambda_notification_config]
+  principal_bucket_permissions = [{
+    permission_type = "allow_billing_report"
+    principals = [{
+      type = "Service"
+      identifiers = ["billingreports.amazonaws.com"]
+    }]
+  }]
+  principal_prefix_object_permissions = [{
+    permission_type = "put_object"
+    prefix = ""
+    principals = [{
+      type = "Service"
+      identifiers = ["billingreports.amazonaws.com"]
+    }]
+  }]
+  prefix_list_permissions = []
+  prefix_object_permissions = [
+  ]
+}
+
+resource aws_cur_report_definition cost_report_definition {
+  report_name                = "overall-cost-report"
+  time_unit                  = "HOURLY"
+  format                     = "textORcsv"
+  compression                = "GZIP"
+  additional_schema_elements = ["RESOURCES"]
+  s3_bucket                  = local.cost_report_bucket
+  s3_region                  = var.region
+  report_versioning = "OVERWRITE_REPORT"
+}
+
 resource random_id metric_table_suffixes {
   for_each = toset(local.system_ids.*.security_scope)
   byte_length = 4
@@ -53,6 +91,7 @@ module metric_tables {
     type = "N"
   }
   table_name = local.metric_table_configs[each.key].table_name
+  read_permission_role_names = local.metric_table_read_roles[each.key].read_role_names
   put_item_permission_role_names = [ for arn in flatten([
     [ for security_scope, config in var.supported_system_clients : [
       for subsystem_name, subsystem_config in config.subsystems : subsystem_config.scoped_logging_functions
@@ -70,7 +109,10 @@ module data_warehouse {
   table_permission_names = {
     query_permission_names = distinct(
       flatten([for k, table_config in each.value.glue_table_configs : 
-      lookup(lookup(var.supported_system_clients, each.value.security_scope, {subsystems = {}}).subsystems, table_config.subsystem_name, {
+      lookup(lookup(var.supported_system_clients, each.value.security_scope, {
+        subsystems = {}
+        metric_table_read_role_names = []
+      }).subsystems, table_config.subsystem_name, {
         glue_permission_name_map = {
           add_partition_permission_names = []
           add_partition_permission_arns = []
@@ -84,7 +126,10 @@ module data_warehouse {
     add_partition_permission_names = distinct(concat(
       [module.archive_function.role.name],
       flatten([for k, table_config in each.value.glue_table_configs : 
-      lookup(lookup(var.supported_system_clients, each.value.security_scope, {subsystems = {}}).subsystems, table_config.subsystem_name, {
+      lookup(lookup(var.supported_system_clients, each.value.security_scope, {
+        subsystems = {}
+        metric_table_read_role_names = []
+      }).subsystems, table_config.subsystem_name, {
         glue_permission_name_map = {
           add_partition_permission_names = []
           add_partition_permission_arns = []
@@ -95,6 +140,29 @@ module data_warehouse {
         scoped_logging_functions = []
       }).glue_permission_name_map.add_partition_permission_names
     ])))
+  }
+}
+
+module cost_report_function {
+  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/cur_report_parser"
+  timeout_secs = 15
+  mem_mb = 256
+  account_id = var.account_id
+  region = var.region
+  logging_config = local.lambda_logging_config
+  log_level = var.log_level
+  security_scope = "visibility"
+  donut_days_layer = var.donut_days_layer
+  csv_parser_layer = var.csv_parser_layer
+  io_config = {
+    input_config = {
+      bucket = local.cost_report_bucket
+      prefix = ""
+    }
+    output_config = {
+      bucket = local.visibility_data_bucket
+      prefix = "security_scope=cost_reports"
+    }
   }
 }
 
