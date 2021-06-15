@@ -4,7 +4,7 @@ module donut_days {
 }
 
 module csv_parser {
-  count = local.need_donut_days_layer ? 1 : 0
+  count = local.need_csv_parser_layer ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/layers/csv_parser"
 }
 
@@ -32,5 +32,5 @@ locals {
   need_donut_days_layer = var.donut_days_layer.present == false
   need_csv_parser_layer = var.csv_parser_layer.present == false
   donut_days_layer_config = local.need_donut_days_layer ? module.donut_days[0].layer_config : var.donut_days_layer
-  csv_parser_layer_config = local.need_csv_parser_layer ? module.csv_parser_layer[0].layer_config : var.csv_parser_layer
+  csv_parser_layer_config = local.need_csv_parser_layer ? module.csv_parser[0].layer_config : var.csv_parser_layer
 }

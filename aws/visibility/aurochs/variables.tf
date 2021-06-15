@@ -86,6 +86,7 @@ variable supported_system_clients {
 }
 
 locals {
+  cost_report_prefix = "security_scope=cost_reports"
   metric_table_configs = zipmap(
     local.system_ids.*.security_scope,
     [for sys in local.system_ids.*.security_scope : {

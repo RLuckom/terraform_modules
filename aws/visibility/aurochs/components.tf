@@ -16,8 +16,8 @@ module visibility_bucket {
   )
   prefix_object_permissions = concat(
     local.archive_function_visibility_bucket_permissions,
-    local.visibility_prefix_object_permissions 
-    [module.cur_parser_lambda.destination_permission_needed]
+    local.visibility_prefix_object_permissions, 
+    [module.cost_report_function.destination_permission_needed]
   )
   lifecycle_rules = local.visibility_lifecycle_rules
 }
@@ -145,12 +145,9 @@ module data_warehouse {
 
 module cost_report_function {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/cur_report_parser"
-  timeout_secs = 15
-  mem_mb = 256
   account_id = var.account_id
   region = var.region
   logging_config = local.lambda_logging_config
-  log_level = var.log_level
   security_scope = "visibility"
   donut_days_layer = var.donut_days_layer
   csv_parser_layer = var.csv_parser_layer
@@ -161,7 +158,7 @@ module cost_report_function {
     }
     output_config = {
       bucket = local.visibility_data_bucket
-      prefix = "security_scope=cost_reports"
+      prefix = local.cost_report_prefix
     }
   }
 }

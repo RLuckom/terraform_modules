@@ -66,7 +66,7 @@ variable function_time_limit {
 
 variable function_memory_size {
   type = number
-  default = 512
+  default = 256
 }
 
 variable security_scope {

@@ -38,6 +38,6 @@ output metric_table_configs {
   value = local.metric_table_configs
 }
 
-output cost_report_table_name {
-  value = local.cost_report_table_name
+output cost_report_prefix {
+  value = local.cost_report_prefix
 }

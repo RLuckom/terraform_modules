@@ -42,7 +42,7 @@ module.exports = {
           params: {
             accessSchema: { value: 'dataSources.AWS.s3.putObject' },
             explorandaParams: {
-              Bucket: { value: '${destination.bucket' },
+              Bucket: { value: '${destination.bucket}' },
               Body: { 
                 helper: ({parsed}) => JSON.stringify(parsed),
                 params: {
