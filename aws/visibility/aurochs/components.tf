@@ -92,11 +92,21 @@ module metric_tables {
   }
   table_name = local.metric_table_configs[each.key].table_name
   read_permission_role_names = local.metric_table_read_roles[each.key].read_role_names
-  put_item_permission_role_names = [ for arn in flatten([
-    [ for security_scope, config in var.supported_system_clients : [
-      for subsystem_name, subsystem_config in config.subsystems : subsystem_config.scoped_logging_functions
-    ]], [module.archive_function.role.arn]]
-  ) : split("/", arn)[1]] 
+  put_item_permission_role_names = [ for arn in flatten(values(lookup(var.supported_system_clients, each.key, {
+    subsystems = {
+      visibility = {
+        glue_permission_name_map = {
+          add_partition_permission_names = []
+          add_partition_permission_arns = []
+          query_permission_names = []
+          query_permission_arns = []
+        }
+        serverless_site_configs = {}
+        scoped_logging_functions = [module.archive_function.role.arn, module.cost_report_function.role.arn]
+      }
+    }
+    metric_table_read_role_names = []
+  }).subsystems).*.scoped_logging_functions) : split("/", arn)[1]] 
 }
 
 module data_warehouse {

@@ -2,7 +2,7 @@ output lambda {
   value = module.cur_parser_lambda.lambda
 }
 
-output lambda_role {
+output role {
   value = module.cur_parser_lambda.role
 }
 
