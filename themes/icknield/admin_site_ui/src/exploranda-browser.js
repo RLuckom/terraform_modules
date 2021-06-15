@@ -29,12 +29,13 @@ module.exports = {
 },{"./lib/browserRecordCollectors":2,"./lib/dataSources":3,"./lib/dataSources/kubernetes/accessSchemaBuilder":31,"./lib/gopher":38,"./lib/recordCollectors/baseRecordCollector.js":40,"./lib/recordCollectors/genericFunctionRecordCollector.js":43,"async":45,"lodash":58}],2:[function(require,module,exports){
 module.exports = {
   GENERIC_API: require('./recordCollectors/fetchRecordCollector').lookUpRecords,
+  GENERIC_FUNCTION: require('./recordCollectors/genericFunctionRecordCollector').lookUpRecords,
   SYNTHETIC: require('./recordCollectors/syntheticRecordCollector').transform,
   FILE_TYPE: require('./recordCollectors/filetypeRecordCollector').transform,
   AWS: require('./recordCollectors/awsRecordCollector').lookUpRecords
 };
 
-},{"./recordCollectors/awsRecordCollector":39,"./recordCollectors/fetchRecordCollector":41,"./recordCollectors/filetypeRecordCollector":42,"./recordCollectors/syntheticRecordCollector":44}],3:[function(require,module,exports){
+},{"./recordCollectors/awsRecordCollector":39,"./recordCollectors/fetchRecordCollector":41,"./recordCollectors/filetypeRecordCollector":42,"./recordCollectors/genericFunctionRecordCollector":43,"./recordCollectors/syntheticRecordCollector":44}],3:[function(require,module,exports){
 const {readListAccessSchemas, nonNamespacedReadListAccessSchemas} = require('./dataSources/kubernetes/accessSchemaBuilder');
 
 module.exports = {
@@ -4880,7 +4881,7 @@ module.exports = {
 
 },{"./baseRecordCollector":40,"lodash":58}],43:[function(require,module,exports){
 const _ = require('lodash')
-const { createBoundApi } = require('./baseRecordCollector')
+const { createBoundApi, buildSDKCollector } = require('./baseRecordCollector')
 
 function getApi(dependencies, sourceSchema, paramSet) {
   const nonApiConfigParams = _.cloneDeep(paramSet)
@@ -4954,7 +4955,8 @@ function getApi(dependencies, sourceSchema, paramSet) {
 
 
 module.exports = {
-  genericFunctionRecordCollector: getApi
+  genericFunctionRecordCollector: getApi,
+  lookUpRecords: buildSDKCollector({getApi}),
 }
 
 },{"./baseRecordCollector":40,"lodash":58}],44:[function(require,module,exports){
