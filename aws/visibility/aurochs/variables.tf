@@ -7,16 +7,6 @@ variable cloudfront_delivery_bucket {
   default = ""
 }
 
-variable cost_table_read_role_names {
-  type = list(string)
-  default = []
-}
-
-variable cost_report_table_name {
-  type = string
-  default = ""
-}
-
 variable cost_report_bucket {
   type = string
   default = ""
@@ -148,6 +138,17 @@ variable donut_days_layer {
   }
 }
 
+variable csv_parser_layer {
+  type = object({
+    present = bool
+    arn = string
+  })
+  default = {
+    present = false
+    arn = ""
+  }
+}
+
 locals {
   lambda_logging_config = {
     bucket = local.visibility_data_bucket
@@ -163,7 +164,6 @@ locals {
   }], local.systems_with_subsystems)
   cloudfront_delivery_bucket = var.cloudfront_delivery_bucket == "" ? "${var.bucket_prefix}-cloudfront-delivery" : var.cloudfront_delivery_bucket
   visibility_data_bucket = var.visibility_data_bucket == "" ? "${var.bucket_prefix}-visibility-data" : var.visibility_data_bucket
-  cost_report_table_name = var.cost_report_table_name == "" ? "visibility-cost-table" : var.cost_report_table_name
   cost_report_bucket = var.cost_report_bucket == "" ? "${var.bucket_prefix}-cost-report" : var.cost_report_bucket
   athena_results_bucket = var.athena_results_bucket == "" ? var.visibility_data_bucket : var.athena_results_bucket
 }
@@ -340,17 +340,6 @@ locals {
       ],
     ]
   )
-  cost_report_bucket_notifications = [
-    {
-      permission_type = "read_and_tag_known"
-      lambda_role_arn = module.cost_report_function.role.arn
-      lambda_arn = module.cost_report_function.lambda.arn
-      lambda_name = module.cost_report_function.lambda.function_name
-      events = ["s3:ObjectCreated:*"]
-      filter_prefix = ""
-      filter_suffix = ""
-    }
-  ]
   scoped_log_prefixes = zipmap(
     local.system_ids.*.security_scope,
     [for system_id in local.system_ids : 

@@ -17,6 +17,7 @@ module visibility_bucket {
   prefix_object_permissions = concat(
     local.archive_function_visibility_bucket_permissions,
     local.visibility_prefix_object_permissions 
+    [module.cur_parser_lambda.destination_permission_needed]
   )
   lifecycle_rules = local.visibility_lifecycle_rules
 }
@@ -37,11 +38,11 @@ module log_delivery_bucket {
 }
 
 module cost_report_delivery_bucket {
-  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket?ref=cost-reports"
+  source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   account_id = var.account_id
   region = var.region
   name = local.cost_report_bucket
-  lambda_notifications = local.cost_report_bucket_notifications
+  lambda_notifications = [module.cost_report_function.lambda_notification_config]
   principal_bucket_permissions = [{
     permission_type = "allow_billing_report"
     principals = [{
@@ -57,19 +58,9 @@ module cost_report_delivery_bucket {
       identifiers = ["billingreports.amazonaws.com"]
     }]
   }]
-  prefix_list_permissions = [{
-    prefix = ""
-    arns = [
-      module.cost_report_function.role.arn
-    ]
-  }]
-  prefix_object_permissions = [{
-    permission_type = "read_and_tag_known"
-    prefix = ""
-    arns = [
-      module.cost_report_function.role.arn
-    ]
-  }]
+  prefix_list_permissions = []
+  prefix_object_permissions = [
+  ]
 }
 
 resource aws_cur_report_definition cost_report_definition {
@@ -81,23 +72,6 @@ resource aws_cur_report_definition cost_report_definition {
   s3_bucket                  = local.cost_report_bucket
   s3_region                  = var.region
   report_versioning = "OVERWRITE_REPORT"
-}
-
-module cost_report_table {
-  source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
-  partition_key = {
-    name = "reportName",
-    type = "S"
-  }
-  range_key = {
-    name = "time",
-    type = "S"
-  }
-  table_name = local.cost_report_table_name
-  read_permission_role_names = var.cost_table_read_role_names
-  put_item_permission_role_names = [
-    module.cost_report_function.role.name
-  ] 
 }
 
 resource random_id metric_table_suffixes {
@@ -170,16 +144,26 @@ module data_warehouse {
 }
 
 module cost_report_function {
-  source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/cur_report_parser"
   timeout_secs = 15
-  mem_mb = 128
+  mem_mb = 256
   account_id = var.account_id
   region = var.region
   logging_config = local.lambda_logging_config
   log_level = var.log_level
-  action_name = "cost_report_collector"
-  scope_name = "visibility"
+  security_scope = "visibility"
   donut_days_layer = var.donut_days_layer
+  csv_parser_layer = var.csv_parser_layer
+  io_config = {
+    input_config = {
+      bucket = local.cost_report_bucket
+      prefix = ""
+    }
+    output_config = {
+      bucket = local.visibility_data_bucket
+      prefix = "security_scope=cost_reports"
+    }
+  }
 }
 
 module archive_function {
