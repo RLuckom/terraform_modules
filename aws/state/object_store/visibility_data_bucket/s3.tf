@@ -4,6 +4,7 @@ module "bucket" {
   acl    = "private"
   account_id = var.account_id
   region = var.region
+  cors_rules = var.cors_rules
   lambda_notifications = var.lambda_notifications
   lifecycle_rules = var.lifecycle_rules
   prefix_athena_query_permissions = var.prefix_athena_query_permissions
