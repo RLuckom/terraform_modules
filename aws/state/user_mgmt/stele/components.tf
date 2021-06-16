@@ -46,12 +46,19 @@ resource aws_cognito_user_pool_client client {
   write_attributes = [
     "address", "birthdate", "email", "family_name", "gender", "given_name", "locale", "middle_name", "name", "nickname", "phone_number", "picture", "preferred_username", "profile", "updated_at", "website", "zoneinfo"
   ]
+  access_token_validity = var.token_validities.access.value
+  id_token_validity = var.token_validities.id.value
   supported_identity_providers = ["COGNITO"]
   generate_secret = true
   callback_urls = local.callback_urls
   logout_urls = local.logout_urls
   allowed_oauth_scopes = local.allowed_oauth_scopes
   allowed_oauth_flows_user_pool_client = local.allowed_oauth_flows_user_pool_client
+  token_validity_units {
+    access_token = var.token_validities.access.unit
+    id_token = var.token_validities.id.unit
+    refresh_token = var.token_validities.refresh.unit
+  }
 }
 
 resource aws_cognito_user_pool_domain domain {

@@ -24,6 +24,37 @@ variable user_email {
   type = string
 }
 
+variable token_validities {
+  type = object({
+    access = object({
+      value = number
+      unit = string
+    })
+    id = object({
+      value = number
+      unit = string
+    })
+    refresh = object({
+      value = number
+      unit = string
+    })
+  })
+  default = {
+    access = {
+      value = 5
+      unit = "minutes"
+    }
+    id = {
+      value = 60
+      unit = "minutes"
+    }
+    refresh = {
+      value = 2
+      unit = "days"
+    }
+  }
+}
+
 variable aws_credentials_file {
   type = string
   default = "/.aws/credentials"
