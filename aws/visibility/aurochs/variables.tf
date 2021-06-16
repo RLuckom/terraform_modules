@@ -150,6 +150,11 @@ variable csv_parser_layer {
   }
 }
 
+variable cost_report_summary_reader_arns {
+  type = list(string)
+  default = []
+}
+
 locals {
   lambda_logging_config = {
     bucket = local.visibility_data_bucket

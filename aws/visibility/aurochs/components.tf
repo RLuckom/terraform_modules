@@ -17,7 +17,14 @@ module visibility_bucket {
   prefix_object_permissions = concat(
     local.archive_function_visibility_bucket_permissions,
     local.visibility_prefix_object_permissions, 
-    [module.cost_report_function.destination_permission_needed]
+    [
+      module.cost_report_function.destination_permission_needed,
+      {
+        permission_type = "read_known_objects"
+        prefix = local.cost_report_prefix
+        arns = var.cost_report_summary_reader_arns
+      }
+    ]
   )
   lifecycle_rules = local.visibility_lifecycle_rules
 }
