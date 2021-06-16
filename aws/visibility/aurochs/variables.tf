@@ -85,6 +85,17 @@ variable supported_system_clients {
   default = {}
 }
 
+variable visibility_bucket_cors_rules {
+  type = list(object({
+    allowed_headers = list(string)
+    allowed_methods = list(string)
+    allowed_origins = list(string)
+    expose_headers = list(string)
+    max_age_seconds = number
+  }))
+  default = []
+}
+
 locals {
   cost_report_prefix = "security_scope=cost_reports"
   metric_table_configs = zipmap(

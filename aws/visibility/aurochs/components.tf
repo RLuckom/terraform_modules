@@ -14,6 +14,7 @@ module visibility_bucket {
     local.visibility_prefix_athena_query_permissions,
     local.archive_function_visibility_prefix_athena_query_permissions
   )
+  cors_rules = var.visibility_bucket_cors_rules
   prefix_object_permissions = concat(
     local.archive_function_visibility_bucket_permissions,
     local.visibility_prefix_object_permissions, 
