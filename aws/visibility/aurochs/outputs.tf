@@ -41,3 +41,10 @@ output metric_table_configs {
 output cost_report_prefix {
   value = local.cost_report_prefix
 }
+
+output cost_report_summary_location {
+  value = {
+    bucket = local.visibility_data_bucket
+    key = module.cost_report_function.report_summary_key
+  }
+}

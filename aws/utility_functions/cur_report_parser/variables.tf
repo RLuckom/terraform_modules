@@ -19,6 +19,11 @@ variable io_config {
   })
 }
 
+variable report_summary_filename {
+  type = string
+  default = "report_summary.json"
+}
+
 variable csv_parser_layer {
   type = object({
     present = bool
@@ -86,4 +91,8 @@ variable lambda_event_configs {
     }))
   }))
   default = []
+}
+
+locals {
+  report_summary_key = "${trimsuffix(var.io_config.output_config.prefix, "/")}/${var.report_summary_filename}"
 }

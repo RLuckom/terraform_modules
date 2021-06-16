@@ -17,6 +17,7 @@ module cur_parser_lambda {
   config_contents = templatefile("${path.module}/src/config.js",
   {
     destination = var.io_config.output_config
+    report_summary_key = local.report_summary_key
   })
   additional_helpers = [{
     file_contents = file("${path.module}/src/parse_report_utils.js")

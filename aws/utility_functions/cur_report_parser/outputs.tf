@@ -25,3 +25,7 @@ output destination_permission_needed {
     arns = [module.cur_parser_lambda.role.arn]
   }
 }
+
+output report_summary_key {
+  value = local.report_summary_key
+}

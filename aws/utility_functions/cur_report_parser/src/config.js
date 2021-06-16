@@ -50,7 +50,7 @@ module.exports = {
                 },
               },
               ContentType: { value: 'application/json'},
-              Key: { value: '${trimsuffix(destination.prefix, "/")}/report_summary.json'}
+              Key: { value: '${report_summary_key}'}
             }
           }
         }
