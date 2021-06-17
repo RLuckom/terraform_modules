@@ -61,7 +61,7 @@ variable plugin_config {
 }
 
 variable config_values {
-  type = map(string)
+  type = any
   default = {}
 }
 
