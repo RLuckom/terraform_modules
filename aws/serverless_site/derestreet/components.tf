@@ -1,6 +1,7 @@
 module cognito_user_management {
   source = "github.com/RLuckom/terraform_modules//aws/state/user_mgmt/stele"
   system_id = var.system_id
+  token_validities = var.token_validities
   protected_domain_routing = var.coordinator_data.routing
   additional_protected_domains = var.additional_protected_domains
   user_group_name = var.user_group_name
