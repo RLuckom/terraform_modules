@@ -334,6 +334,9 @@ function domNode(el) {
   } else if (_.isArray(el)) {
     return _.map(el, domNode)
   }
+  if (!el) {
+    return el
+  }
   const {accept, width, height, span, onKeyUp, src, value, innerText, onKeyDown, onInput, placeholder, onChange, tagName, type, isFor, name, href, onClick, children} = el
   if (tagName === 'svg') {
     return svgNode(el)
@@ -369,6 +372,14 @@ function domNode(el) {
   if (tagName === "button") {
     if (_.isString(name)) {
       newElement.name = name
+    }
+  }
+  if (tagName === 'textarea') {
+    if (_.isFunction(onInput)) {
+      newElement.addEventListener('input', onInput)
+    }
+    if (value) {
+      newElement.value = value
     }
   }
   if (tagName === 'input') {
