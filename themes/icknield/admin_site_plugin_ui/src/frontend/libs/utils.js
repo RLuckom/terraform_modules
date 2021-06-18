@@ -354,6 +354,12 @@ function domNode(el) {
     if (_.isString(height)) {
       newElement.height = height
     }
+    if (_.isString(el.alt)) {
+      newElement.alt = el.alt
+    }
+    if (_.isString(el.title)) {
+      newElement.title = el.title
+    }
   }
   if (tagName === 'label') {
     if (_.isString(isFor)) {
