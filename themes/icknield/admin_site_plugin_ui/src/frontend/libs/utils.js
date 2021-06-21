@@ -381,6 +381,9 @@ function domNode(el) {
     if (value) {
       newElement.value = value
     }
+    if (_.isString(placeholder)) {
+      newElement.placeholder = placeholder
+    }
   }
   if (tagName === 'input') {
     if (_.isFunction(onKeyUp)) {
