@@ -366,7 +366,7 @@ variable default_static_headers {
 
 variable root_csp {
   type = string
-  default = "default-src 'none'; style-src 'self'; object-src 'none'; img-src 'self' data:;"
+  default = "default-src 'none'; style-src 'self'; font-src 'self'; object-src 'none'; img-src 'self' data:;"
 }
 
 variable archive_storage_class {
