@@ -1,6 +1,8 @@
 const _ = require('lodash'); 
 const {parseResultsAccessSchema, athenaRequestsQuery} = require('./helpers/parse_cloudfront_logs')
 
+const metricConfigs = ${site_metric_configs}
+
 module.exports = {
   stages: {
     query: {
@@ -16,24 +18,19 @@ module.exports = {
                 QueryString: {
                   helper: 'transform',
                   params: {
-                    arg: {
-                      all: {
-                        glueDb: {value: "${db_name}"},
-                        glueTable: {value: "${table_name}"},
-                      },
-                    },
+                    arg: { value: metricConfigs }
                     func: athenaRequestsQuery,
                   }
                 },
                 QueryExecutionContext: {
-                  all: {
-                    Catalog: {value: '${athena_catalog}'},
-                    Database: {value: '${db_name}'},
-                  }
+                  value: _.map(metricConfigs, ({athena_catalog, glue_db}) => ({
+                    Catalog: athena_catalog,
+                    Database: glue_db,
+                  })
                 },
                 ResultConfiguration: {
                   all: {
-                    OutputLocation: { value: 's3://${result_bucket}/${result_path}' }
+                    OutputLocation: { value: _.map(metricConfigs, (config) => config.result_location }
                   }
                 }
               },

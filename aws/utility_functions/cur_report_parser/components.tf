@@ -39,3 +39,4 @@ locals {
   donut_days_layer_config = local.need_donut_days_layer ? module.donut_days[0].layer_config : var.donut_days_layer
   csv_parser_layer_config = local.need_csv_parser_layer ? module.csv_parser[0].layer_config : var.csv_parser_layer
 }
+

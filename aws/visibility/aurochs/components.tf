@@ -109,12 +109,44 @@ module metric_tables {
           query_permission_names = []
           query_permission_arns = []
         }
-        serverless_site_configs = {}
+        site_metric_table_read_role_name_map = {}
         scoped_logging_functions = [module.archive_function.role.arn, module.cost_report_function.role.arn]
       }
     }
-    metric_table_read_role_names = []
+    function_metric_table_read_role_names = []
   }).subsystems).*.scoped_logging_functions) : split("/", arn)[1]] 
+}
+
+module site_metric_tables {
+  for_each = toset(keys(local.serverless_site_configs))
+  source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  partition_key = {
+    name = "metricType",
+    type = "S"
+  }
+  range_key = {
+    name = "metricId",
+    type = "S"
+  }
+  table_name = "${each.key}-metrics"
+  read_permission_role_names = lookup(var.supported_system_clients[local.serverless_site_configs[each.key].system_id.security_scope].subsystems[local.serverless_site_configs[each.key].subsystem_name].site_metric_table_read_role_name_map, each.key, [])
+  put_item_permission_role_names = [module.site_metric_function.role.name]
+}
+
+module site_metric_function {
+  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/cloudfront_request_summarizer"
+  account_id = var.account_id
+  region = var.region
+  logging_config = local.lambda_logging_config
+  security_scope = "visibility"
+  donut_days_layer = var.donut_days_layer
+  csv_parser_layer = var.csv_parser_layer
+  site_metric_configs = [ for site_name, config in local.serverless_site_configs : {
+    glue_db = config.glue_database_name
+    glue_table = config.glue_table_name
+    catalog = local.athena_catalog
+    result_location = config.lambda_athena_result_location
+  }]
 }
 
 module data_warehouse {
@@ -129,7 +161,7 @@ module data_warehouse {
       flatten([for k, table_config in each.value.glue_table_configs : 
       lookup(lookup(var.supported_system_clients, each.value.security_scope, {
         subsystems = {}
-        metric_table_read_role_names = []
+        function_metric_table_read_role_names = []
       }).subsystems, table_config.subsystem_name, {
         glue_permission_name_map = {
           add_partition_permission_names = []
@@ -139,6 +171,7 @@ module data_warehouse {
         }
         serverless_site_configs = {}
         scoped_logging_functions = []
+        site_metric_table_read_role_name_map = {}
       }).glue_permission_name_map.query_permission_names
     ]))
     add_partition_permission_names = distinct(concat(
@@ -146,7 +179,7 @@ module data_warehouse {
       flatten([for k, table_config in each.value.glue_table_configs : 
       lookup(lookup(var.supported_system_clients, each.value.security_scope, {
         subsystems = {}
-        metric_table_read_role_names = []
+        function_metric_table_read_role_names = []
       }).subsystems, table_config.subsystem_name, {
         glue_permission_name_map = {
           add_partition_permission_names = []
@@ -156,6 +189,7 @@ module data_warehouse {
         }
         serverless_site_configs = {}
         scoped_logging_functions = []
+        site_metric_table_read_role_name_map = {}
       }).glue_permission_name_map.add_partition_permission_names
     ])))
   }
@@ -194,7 +228,7 @@ module archive_function {
     athena_region = var.athena_region
     glue_db_map = jsonencode(local.archive_function_destination_maps.glue_db_map)
     glue_table_map = jsonencode(local.archive_function_destination_maps.glue_table_map)
-    athena_catalog = "AwsDataCatalog"
+    athena_catalog = local.athena_catalog
     athena_destinations_map = jsonencode(local.archive_function_destination_maps.athena_destinations_map)
     log_destinations_map = jsonencode(local.archive_function_destination_maps.log_destination_map)
     partition_bucket = local.visibility_data_bucket

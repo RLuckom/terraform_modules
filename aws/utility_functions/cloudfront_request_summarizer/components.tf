@@ -1,62 +1,41 @@
-module request_record_lambda {
+module donut_days {
+  count = local.need_donut_days_layer ? 1 : 0
+  source = "github.com/RLuckom/terraform_modules//aws/layers/donut_days"
+}
+
+module csv_parser {
+  count = local.need_csv_parser_layer ? 1 : 0
+  source = "github.com/RLuckom/terraform_modules//aws/layers/csv_parser"
+}
+
+module site_metric_summarizer {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   account_id = var.account_id
   region = var.region
-  cron_notifications = [{
-    period_expression = "01 * * * ? *"
-  }]
-  config_contents = templatefile("${path.module}/src/backend/parse_requests_config.js",
+  cron_notifications = var.cron_notifications
+  config_contents = templatefile("${path.module}/src/config.js",
   {
-    athena_result_bucket = ""
-    athena_region = ""
-    athena_catalog = ""
-    result_bucket = ""
-    result_path = ""
-    table_name = var.posts_table_name
-    db_name = var.posts_table_name
-    table_region = var.region
+    athena_region = local.athena_region
+    site_metric_configs = jsonencode(var.site_metric_configs)
   })
+  additional_helpers = [{
+    file_contents = file("${path.module}/src/parse_cloudfront_logs.js")
+    helper_name = "parse_cloudfront_logs"
+  }]
   logging_config = var.logging_config
   lambda_event_configs = var.lambda_event_configs
-  action_name = "post_entry"
-  scope_name = var.coordinator_data.system_id.security_scope
-  donut_days_layer = var.donut_days_layer
-  additional_layers = [var.markdown_tools_layer]
+  action_name = var.action_name
+  scope_name = var.security_scope
+  donut_days_layer = local.donut_days_layer_config
+  additional_layers = [
+    local.csv_parser_layer_config
+  ]
 }
 
-module ui {
-  source = "github.com/RLuckom/terraform_modules//themes/icknield/admin_site_plugin_ui"
-  name = var.name
-  region = var.region
-  account_id = var.account_id
-  gopher_config_contents = file("${path.module}/src/frontend/libs/gopher_config.js")
-  admin_site_resources = var.admin_site_resources
-  plugin_config = var.plugin_config
-  config_values = {
-    cost_report_summary_storage_bucket = var.cost_report_summary_location.bucket
-    cost_report_summary_storage_key = var.cost_report_summary_location.key 
-    data_warehouse_configs = var.data_warehouse_configs
-    serverless_site_configs = var.serverless_site_configs
-  }
-  default_css_paths = [
-    local.plugin_default_styles_path,
-  ]
-  default_script_paths = []
-  default_deferred_script_paths = []
-  page_configs = {
-    index = {
-      css_paths = []
-      script_paths = []
-      deferred_script_paths = []
-      render_config_path = "${path.module}/src/frontend/libs/index.js"
-    }
-  }
-  plugin_file_configs = [
-    {
-      key = local.plugin_default_styles_path
-      file_path = ""
-      file_contents = file("${path.module}/src/frontend/styles/default.css")
-      content_type = "text/css"
-    },
-  ]
+locals {
+  athena_region = var.athena_region == "" ? var.region : var.athena_region
+  need_donut_days_layer = var.donut_days_layer.present == false
+  need_csv_parser_layer = var.csv_parser_layer.present == false
+  donut_days_layer_config = local.need_donut_days_layer ? module.donut_days[0].layer_config : var.donut_days_layer
+  csv_parser_layer_config = local.need_csv_parser_layer ? module.csv_parser[0].layer_config : var.csv_parser_layer
 }

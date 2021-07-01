@@ -71,7 +71,7 @@ variable supported_system_definitions {
 
 variable supported_system_clients {
   type = map(object({
-    metric_table_read_role_names = list(string)
+    function_metric_table_read_role_names = list(string)
     subsystems = map(object({
       glue_permission_name_map = object({
         add_partition_permission_names = list(string)
@@ -79,6 +79,7 @@ variable supported_system_clients {
         query_permission_names = list(string)
         query_permission_arns = list(string)
       })
+      site_metric_table_read_role_name_map = map(list(string))
       scoped_logging_functions = list(string)
     }))
   }))
@@ -109,8 +110,8 @@ locals {
     [for sys in local.system_ids.*.security_scope : {
       read_role_names = lookup(var.supported_system_clients, sys, {
         subsystems = {}
-        metric_table_read_role_names = []
-      }).metric_table_read_role_names
+        function_metric_table_read_role_names = []
+      }).function_metric_table_read_role_names
     }]
   )
   systems_with_subsystems = [ for sys_name, sys_config in var.supported_system_definitions : {
@@ -478,6 +479,7 @@ locals {
 }
 
 locals {
+  athena_catalog = "AwsDataCatalog"
   visibility_lifecycle_rules = concat(
     local.cloudfront_log_path_lifecycle_rules,
     local.lambda_log_path_lifecycle_rules,
