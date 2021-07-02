@@ -157,7 +157,7 @@ module data_warehouse {
   database_name = each.value.glue_database_name
   table_configs = each.value.glue_table_configs
   table_permission_names = {
-    query_permission_names = distinct(
+    query_permission_names = distinct(concat(
       flatten([for k, table_config in each.value.glue_table_configs : 
       lookup(lookup(var.supported_system_clients, each.value.security_scope, {
         subsystems = {}
@@ -173,7 +173,7 @@ module data_warehouse {
         scoped_logging_functions = []
         site_metric_table_read_role_name_map = {}
       }).glue_permission_name_map.query_permission_names
-    ]))
+    ]), [module.site_metric_function.role.name]))
     add_partition_permission_names = distinct(concat(
       [module.archive_function.role.name],
       flatten([for k, table_config in each.value.glue_table_configs : 

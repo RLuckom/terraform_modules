@@ -18,7 +18,7 @@ module.exports = {
                 QueryString: {
                   helper: 'transform',
                   params: {
-                    arg: { value: metricConfigs }
+                    arg: { value: metricConfigs },
                     func: athenaRequestsQuery,
                   }
                 },
@@ -26,11 +26,11 @@ module.exports = {
                   value: _.map(metricConfigs, ({athena_catalog, glue_db}) => ({
                     Catalog: athena_catalog,
                     Database: glue_db,
-                  })
+                  }))
                 },
                 ResultConfiguration: {
                   all: {
-                    OutputLocation: { value: _.map(metricConfigs, (config) => config.result_location }
+                    OutputLocation: { value: _.map(metricConfigs, (config) => config.result_location) }
                   }
                 }
               },
