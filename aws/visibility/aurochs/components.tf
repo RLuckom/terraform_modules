@@ -18,14 +18,15 @@ module visibility_bucket {
   prefix_object_permissions = concat(
     local.archive_function_visibility_bucket_permissions,
     local.visibility_prefix_object_permissions, 
-    [
+    flatten([
       module.cost_report_function.destination_permission_needed,
+      module.site_metric_function.destination_permission_needed,
       {
         permission_type = "read_known_objects"
         prefix = local.cost_report_prefix
         arns = var.cost_report_summary_reader_arns
       }
-    ]
+    ]),
   )
   lifecycle_rules = local.visibility_lifecycle_rules
 }
@@ -110,7 +111,11 @@ module metric_tables {
           query_permission_arns = []
         }
         site_metric_table_read_role_name_map = {}
-        scoped_logging_functions = [module.archive_function.role.arn, module.cost_report_function.role.arn]
+        scoped_logging_functions = [
+          module.archive_function.role.arn, 
+          module.cost_report_function.role.arn,
+          module.site_metric_function.role.arn,
+        ]
       }
     }
     function_metric_table_read_role_names = []
@@ -146,6 +151,7 @@ module site_metric_function {
     glue_table = config.glue_table_name
     catalog = local.athena_catalog
     result_location = config.lambda_athena_result_location
+    result_prefix = config.lambda_result_prefix
   }]
 }
 

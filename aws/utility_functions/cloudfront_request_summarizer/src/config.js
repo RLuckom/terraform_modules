@@ -29,10 +29,10 @@ module.exports = {
                   }))
                 },
                 ResultConfiguration: {
-                  all: {
-                    OutputLocation: { value: _.map(metricConfigs, (config) => config.result_location) }
-                  }
-                }
+                  value: _.map(metricConfigs, (config) => ({
+                    OutputLocation: config.result_location
+                  }))
+                },
               },
             },
           },
@@ -49,7 +49,7 @@ module.exports = {
             params: {
               explorandaParams: {
                 apiConfig: {value: {region: '${athena_region}'}},
-                QueryExecutionId: { ref: 'quesry.results.records'} 
+                QueryExecutionId: { ref: 'query.results.records'} 
               },
             },
             behaviors: {

@@ -22,6 +22,7 @@ variable site_metric_configs {
     glue_table = string
     catalog = string
     result_location = string
+    result_prefix = string
   }))
   default = []
 }
@@ -72,12 +73,12 @@ variable donut_days_layer {
 
 variable function_time_limit {
   type = number
-  default = 10
+  default = 30
 }
 
 variable function_memory_size {
   type = number
-  default = 1024
+  default = 512
 }
 
 variable security_scope {
