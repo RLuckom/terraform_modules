@@ -23,6 +23,7 @@ variable site_metric_configs {
     catalog = string
     result_location = string
     result_prefix = string
+    data_prefix = string
   }))
   default = []
 }

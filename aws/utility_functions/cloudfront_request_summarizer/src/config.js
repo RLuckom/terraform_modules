@@ -44,6 +44,21 @@ module.exports = {
       dependencies: {
         completion: {
           action: 'exploranda',
+          formatter: ({completion}) => {
+            const ret = _.map(completion, (c) => {
+              const loc = _.get(c, 'ResultConfiguration.OutputLocation')
+              return {
+                key: loc.split('/').slice(3).join('/'),
+                bucket: loc.split('/')[2]
+              }
+            })
+            const arrays = {
+              buckets: _.map(ret, 'bucket'),
+              keys: _.map(ret, 'key')
+            }
+            console.log(arrays)
+            return arrays
+          },
           params: {
             accessSchema: { value: 'dataSources.AWS.athena.getQueryExecution' },
             params: {
@@ -79,22 +94,37 @@ module.exports = {
     getResults: {
       index: 2,
       dependencies: {
-        partitionResults: {
-          formatter: (args) => {
-            console.log(args)
-            return args
+        results: {
+          formatter: ({results}) => {
+            return _.map(results, 'Body')
           },
           action: 'exploranda',
           params: {
-            accessSchema: {value: 'dataSources.AWS.athena.getQueryResults'},
-            params: {
-              explorandaParams: {
-                apiConfig: {value: {region: '${athena_region}'}},
-                QueryExecutionId: { ref: 'query.results.records'} 
-              },
-            },
+            accessSchema: {value: 'dataSources.AWS.s3.getObject'},
+            explorandaParams: {
+              Bucket: { ref: 'waitForResults.results.completion.buckets'}, 
+              Key: { ref: 'waitForResults.results.completion.keys'} 
+            }
           }
-        },
+        }
+      },
+    },
+    parseResults: {
+      index: 3,
+      dependencies: {
+        results: {
+          formatter: ({results}) => {
+            console.log(results[0].hits)
+            return results
+          },
+          action: 'exploranda',
+          params: {
+            accessSchema: {value: parseResultsAccessSchema},
+            explorandaParams: {
+              buf: { ref: 'getResults.results.results'}, 
+            }
+          }
+        }
       },
     },
   }

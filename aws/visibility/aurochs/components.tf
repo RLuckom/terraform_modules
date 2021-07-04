@@ -12,7 +12,8 @@ module visibility_bucket {
   // ensure that writes to any incorrect location will fail.
   prefix_athena_query_permissions = concat(
     local.visibility_prefix_athena_query_permissions,
-    local.archive_function_visibility_prefix_athena_query_permissions
+    local.archive_function_visibility_prefix_athena_query_permissions,
+    module.site_metric_function.prefix_athena_query_permissions,
   )
   cors_rules = var.visibility_bucket_cors_rules
   prefix_object_permissions = concat(
@@ -20,7 +21,6 @@ module visibility_bucket {
     local.visibility_prefix_object_permissions, 
     flatten([
       module.cost_report_function.destination_permission_needed,
-      module.site_metric_function.destination_permission_needed,
       {
         permission_type = "read_known_objects"
         prefix = local.cost_report_prefix
@@ -152,6 +152,7 @@ module site_metric_function {
     catalog = local.athena_catalog
     result_location = config.lambda_athena_result_location
     result_prefix = config.lambda_result_prefix
+    data_prefix = config.cloudfront_log_storage_prefix
   }]
 }
 

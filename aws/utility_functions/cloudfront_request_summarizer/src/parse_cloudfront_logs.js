@@ -1,4 +1,5 @@
 const { Readable } = require('stream');
+const moment = require('moment')
 
 const csv = require('csv-parser')
 const _ = require('lodash')
@@ -86,14 +87,14 @@ function parseResults({buf}, callback) {
 }
 
 function athenaRequestsQuery(args) {
-  const now = new Date()
+  const t = moment().subtract({hours: 1})
   return _.map(args, ({glue_db, glue_table}) => {
     return `SELECT time, location, requestIp, uri, referrer, status, useragent
     FROM "${glue_db}"."${glue_table}"
-    WHERE year = '${now.getUTCFullYear()}'
-    AND month = '${now.getUTCMonth()}'
-    AND day = '${now.getUTCDate()}'
-    AND hour = '${now.getUTCHours()}'
+    WHERE year = '${t.year()}'
+    AND month = '${_.padStart(t.month() + 1, 2, '0')}'
+    AND day = '${_.padStart(t.date(), 2, '0')}'
+    AND hour = '${_.padStart(t.hour(), 2, '0')}'
     AND uri LIKE '/posts/%'
     AND uri NOT LIKE '%favicon.ico%'
     AND method = 'GET'
