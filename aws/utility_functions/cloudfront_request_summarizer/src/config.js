@@ -1,5 +1,5 @@
 const _ = require('lodash'); 
-const {update, makeDynamoUpdates, parseResultsAccessSchema, athenaRequestsQuery} = require('./helpers/parse_cloudfront_logs')
+const {update, batchExecuteStatement, makeDynamoUpdates, parseResultsAccessSchema, athenaRequestsQuery} = require('./helpers/parse_cloudfront_logs')
 
 const metricConfigs = ${site_metric_configs}
 
@@ -127,11 +127,14 @@ module.exports = {
         }
       },
     },
-    parseResults: {
+    updateDynamo: {
       index: 4,
       transformers: {
-        dynamoPuts: {
+        dynamoUpdates: {
           helper: ({parseResults}) => {
+            return _.flatten(_.map(parseResults, ({hits}, idx) => {
+              return makeDynamoUpdates(hits, metricConfigs[idx].dynamo_table_name)
+            }))
           },
           params: {
             parseResults: { ref: 'parseResults.results.results' },
@@ -139,16 +142,15 @@ module.exports = {
         }
       },
       dependencies: {
-        dynamoPuts: {
+        dynamoUpdates: {
           action: 'exploranda',
-          condition: { ref: 'stage.dynamoPuts.length' },
+          condition: { ref: 'stage.dynamoUpdates.length' },
           params: {
-            accessSchema: {value: update },
+            accessSchema: {value: batchExecuteStatement },
             params: {
               explorandaParams: {
-                apiConfig: { ref: 'stage.dynamoPuts.apiConfigs' },
-                TableName: { ref: 'stage.dynamoPuts.TableNames' },
-                Item: { ref: 'stage.dynamoPuts.Items' },
+                apiConfig: { value: {region: '${dynamo_region}' }},
+                Statements: { ref: 'stage.dynamoUpdates' },
               }
             }
           }

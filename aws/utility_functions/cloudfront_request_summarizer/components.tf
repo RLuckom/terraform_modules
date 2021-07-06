@@ -18,6 +18,7 @@ module site_metric_summarizer {
   config_contents = templatefile("${path.module}/src/config.js",
   {
     athena_region = local.athena_region
+    dynamo_region = local.dynamo_region
     site_metric_configs = jsonencode(var.site_metric_configs)
   })
   additional_helpers = [{
@@ -36,6 +37,7 @@ module site_metric_summarizer {
 
 locals {
   athena_region = var.athena_region == "" ? var.region : var.athena_region
+  dynamo_region = var.dynamo_region == "" ? var.region : var.dynamo_region
   need_donut_days_layer = var.donut_days_layer.present == false
   need_csv_parser_layer = var.csv_parser_layer.present == false
   donut_days_layer_config = local.need_donut_days_layer ? module.donut_days[0].layer_config : var.donut_days_layer

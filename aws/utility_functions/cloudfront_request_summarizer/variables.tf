@@ -7,6 +7,11 @@ variable region {
   type = string
 }
 
+variable dynamo_region {
+  type = string
+  default = ""
+}
+
 variable account_id {
   type = string
 }
@@ -24,6 +29,7 @@ variable site_metric_configs {
     result_location = string
     result_prefix = string
     data_prefix = string
+    dynamo_table_name = string
   }))
   default = []
 }

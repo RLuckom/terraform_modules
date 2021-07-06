@@ -85,7 +85,11 @@ const batchExecuteStatement = {
     path: _.identity,
   },
   requiredParams: {
-    Statements: {},
+    Statements: {
+      detectArray: (statements) => {
+        return _.isArray(_.get(statements, 0))
+      }
+    },
   },
   optionalParams: {
     ConsistentRead: {},
@@ -154,19 +158,17 @@ function parseResults({buf}, callback) {
 }
 
 function makeDynamoUpdates(hits, tableName) {
-  return {
-    Statements: _.map(hits, (v, k) => {
-      return {
-        Statement: `UPDATE ${tableName}
-        SET hits = hits + ?
+  return _.map(hits, (v, k) => {
+    return {
+      Statement: `UPDATE "${tableName}"
+      SET hits = hits + ?
         WHERE metricType = 'pageHits' AND metricId = ?`,
         Parameters: [
-          { N : `${v}`},
-          { S : k}
-        ]
-      }
-    })
-  }
+        { N : `${v}`},
+        { S : k}
+      ]
+    }
+  })
 }
 
 function athenaRequestsQuery(args) {

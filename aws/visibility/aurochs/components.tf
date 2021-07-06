@@ -153,6 +153,7 @@ module site_metric_function {
     result_location = config.lambda_athena_result_location
     result_prefix = config.lambda_result_prefix
     data_prefix = config.cloudfront_log_storage_prefix
+    dynamo_table_name = "${site_name}-metrics"
   }]
 }
 
