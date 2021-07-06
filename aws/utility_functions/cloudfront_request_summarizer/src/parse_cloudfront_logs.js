@@ -27,76 +27,6 @@ const parseResultsAccessSchema = {
   }
 };
 
-const update = {
-  dataSource: 'AWS',
-  namespaceDetails: {
-    name: 'DynamoDB',
-    constructorArgs: {}
-  },
-  name: 'Update',
-  value: {
-    path: (arg) => {
-      if (_.get(arg, 'AttributeValues')) {
-       arg.AttributeValues = converter.unmarshall(arg.AttributeValues)
-      }
-      return arg
-    }
-  },
-  requiredParams: {
-    TableName: {},
-    Key: {},
-    ReturnValues: {},
-    UpdateExpression: {},
-  },
-  optionalParams: {
-    ConditionExpression: {},
-    ExpressionAttributeNames: {},
-    ExpressionAttributeValues: {
-      formatter: (i) => _.reduce(i, (a, v, k) => {
-        if (_.isString(v)) {
-          a[k] = {'S': v}
-        } else if (_.isNumber(v)) {
-          a[k] = {'N': v}
-        } else if (v === true || v === false) {
-          a[k] = {'BOOL': v}
-        } else {
-          a[k] = converter.marshall(v)
-        }
-        return a
-      }, {})
-    },
-    ReturnConsumedCapacity: {},
-    ReturnItemCollectionMetrics: {},
-  },
-  params: {
-    ReturnValues: 'NONE',
-  },
-  apiMethod: 'updateItem',
-};
-
-const batchExecuteStatement = {
-  dataSource: 'AWS',
-  namespaceDetails: {
-    name: 'DynamoDB',
-    constructorArgs: {}
-  },
-  name: 'ExecuteStatement',
-  value: {
-    path: _.identity,
-  },
-  requiredParams: {
-    Statements: {
-      detectArray: (statements) => {
-        return _.isArray(_.get(statements, 0))
-      }
-    },
-  },
-  optionalParams: {
-    ConsistentRead: {},
-  },
-  apiMethod: 'batchExecuteStatement',
-};
-
 function parseResults({buf}, callback) {
   const metrics = {
     ips: {}
@@ -157,18 +87,38 @@ function parseResults({buf}, callback) {
   })
 }
 
-function makeDynamoUpdates(hits, tableName) {
-  return _.map(hits, (v, k) => {
-    return {
-      Statement: `UPDATE "${tableName}"
-      SET hits = hits + ?
-        WHERE metricType = 'pageHits' AND metricId = ?`,
-        Parameters: [
-        { N : `${v}`},
-        { S : k}
-      ]
-    }
-  })
+function makeDynamoQuery(tableName) {
+  return {
+    TableNames: [tableName],
+    KeyConditionExpressions: ["metricType = :ty"],
+    ExpressionAttributeValues: { ':ty': 'pageHits'},
+  }
+}
+
+function makeDynamoUpdates(hits, tableName, queryResults) {
+  console.log(JSON.stringify(queryResults))
+  return {
+    TableNames: _.map(hits, (v, k) => {
+      return tableName
+    }),
+    Keys: _.map(hits, (v, k) => {
+      return {
+        metricType: 'pageHits',
+        metricId: k,
+      }
+    }),
+    UpdateExpressions: _.map(hits, (v, k) => {
+      return _.find(queryResults, (r) => {
+        console.log(r)
+        return r.metricId === k
+      }) ? 'SET hits = hits + :incr' : 'SET hits = :incr'
+    }),
+    ExpressionAttributeValues: _.map(hits, (v, k) => {
+      return {
+        ':incr': v
+      }
+    }),
+  }
 }
 
 function athenaRequestsQuery(args) {
@@ -180,8 +130,6 @@ function athenaRequestsQuery(args) {
     AND month = '${_.padStart(t.month() + 1, 2, '0')}'
     AND day = '${_.padStart(t.date(), 2, '0')}'
     AND hour = '${_.padStart(t.hour(), 2, '0')}'
-    AND uri LIKE '/posts/%'
-    AND uri NOT LIKE '%favicon.ico%'
     AND method = 'GET'
     AND useragent != '-'
     AND useragent NOT LIKE '%facebookexternalhit%'
@@ -269,7 +217,6 @@ module.exports = {
   parseResults,
   parseResultsAccessSchema,
   athenaRequestsQuery,
-  update,
-  batchExecuteStatement,
   makeDynamoUpdates,
+  makeDynamoQuery,
 }

@@ -1,7 +1,13 @@
 const _ = require('lodash'); 
-const {update, batchExecuteStatement, makeDynamoUpdates, parseResultsAccessSchema, athenaRequestsQuery} = require('./helpers/parse_cloudfront_logs')
+const {makeDynamoUpdates, makeDynamoQuery, parseResultsAccessSchema, athenaRequestsQuery} = require('./helpers/parse_cloudfront_logs')
 
 const metricConfigs = ${site_metric_configs}
+
+function mergeArrayCustomizer(objValue, srcValue) {
+  if (_.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
 
 module.exports = {
   stages: {
@@ -127,14 +133,18 @@ module.exports = {
         }
       },
     },
-    updateDynamo: {
+    getDynamoRecords: {
       index: 4,
+      formatter: ({dynamoRecords}) => {
+        console.log(JSON.stringify(dynamoRecords))
+        return dynamoRecords
+      },
       transformers: {
-        dynamoUpdates: {
+        dynamoRecords: {
           helper: ({parseResults}) => {
-            return _.flatten(_.map(parseResults, ({hits}, idx) => {
-              return makeDynamoUpdates(hits, metricConfigs[idx].dynamo_table_name)
-            }))
+            return _.mergeWith({}, ..._.map(parseResults, ({hits}, idx) => {
+              return makeDynamoQuery(metricConfigs[idx].dynamo_table_name)
+            }), mergeArrayCustomizer)
           },
           params: {
             parseResults: { ref: 'parseResults.results.results' },
@@ -142,15 +152,60 @@ module.exports = {
         }
       },
       dependencies: {
-        dynamoUpdates: {
+        dynamoRecords: {
           action: 'exploranda',
-          condition: { ref: 'stage.dynamoUpdates.length' },
           params: {
-            accessSchema: {value: batchExecuteStatement },
+            accessSchema: {value: 'dataSources.AWS.dynamodb.query'},
             params: {
               explorandaParams: {
                 apiConfig: { value: {region: '${dynamo_region}' }},
-                Statements: { ref: 'stage.dynamoUpdates' },
+                TableName: { ref: 'stage.dynamoRecords.TableNames' },
+                KeyConditionExpression: { ref: 'stage.dynamoRecords.KeyConditionExpressions' },
+                ExpressionAttributeValues: { ref: 'stage.dynamoRecords.ExpressionAttributeValues' },
+              }
+            }
+          }
+        },
+      },
+    },
+    updateDynamo: {
+      index: 5,
+      transformers: {
+        dynamoUpdates: {
+          helper: ({parseResults, queryResults, tableNames}) => {
+            console.log(queryResults)
+            const ret = _.mergeWith({}, ..._.map(parseResults, ({hits}, idx) => {
+              return makeDynamoUpdates(hits, metricConfigs[idx].dynamo_table_name, _.filter(queryResults, (result, indx) => {
+                return tableNames[indx] === metricConfigs[idx].dynamo_table_name
+              }))
+            }), mergeArrayCustomizer)
+            console.log(JSON.stringify(ret))
+            return ret
+          },
+          params: {
+            parseResults: { ref: 'parseResults.results.results' },
+            queryResults: { ref: 'getDynamoRecords.results.dynamoRecords' },
+            tableNames: { ref: 'getDynamoRecords.vars.dynamoRecords.TableNames' },
+          }
+        }
+      },
+      dependencies: {
+        dynamoUpdates: {
+          action: 'exploranda',
+          formatter: ({dynamoUpdates}) => {
+            console.log(dynamoUpdates)
+            return dynamoUpdates
+          },
+          condition: { ref: 'stage.dynamoUpdates.TableNames.length' },
+          params: {
+            accessSchema: {value: 'dataSources.AWS.dynamodb.update' },
+            params: {
+              explorandaParams: {
+                apiConfig: { value: {region: '${dynamo_region}' }},
+                TableName: { ref: 'stage.dynamoUpdates.TableNames' },
+                Key: { ref: 'stage.dynamoUpdates.Keys' },
+                UpdateExpression: { ref: 'stage.dynamoUpdates.UpdateExpressions' },
+                ExpressionAttributeValues: { ref: 'stage.dynamoUpdates.ExpressionAttributeValues' },
               }
             }
           }
