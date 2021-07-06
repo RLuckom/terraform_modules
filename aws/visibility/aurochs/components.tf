@@ -135,7 +135,7 @@ module site_metric_tables {
   }
   table_name = "${each.key}-metrics"
   read_permission_role_names = lookup(var.supported_system_clients[local.serverless_site_configs[each.key].system_id.security_scope].subsystems[local.serverless_site_configs[each.key].subsystem_name].site_metric_table_read_role_name_map, each.key, [])
-  put_item_permission_role_names = [module.site_metric_function.role.name]
+  write_permission_role_names = [module.site_metric_function.role.name]
 }
 
 module site_metric_function {

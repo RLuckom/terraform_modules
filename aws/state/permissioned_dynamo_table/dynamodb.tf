@@ -75,7 +75,13 @@ module dynamo_table_read_permissions {
   role_names = var.read_permission_role_names
   policy_statements = [
     {
-      actions   = ["dynamodb:GetItem", "dynamodb:Query", "dynamodb:Scan", "dynamodb:BatchGetItem"]
+      actions   = [
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchGetItem",
+        "dynamodb:PartiQLSelect",
+      ]
       resources = local.table_and_index_arns
     }
   ]
@@ -87,7 +93,14 @@ module dynamo_table_write_permissions {
   role_names = var.write_permission_role_names
   policy_statements = [
     {
-      actions   = ["dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:BatchWriteItem"]
+      actions   = [
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PartiQLDelete",
+        "dynamodb:PartiQLInsert",
+        "dynamodb:PartiQLUpdate",
+      ]
       resources = local.table_and_index_arns
     }
   ]
