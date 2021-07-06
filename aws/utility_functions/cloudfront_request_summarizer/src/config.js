@@ -1,5 +1,5 @@
 const _ = require('lodash'); 
-const {parseResultsAccessSchema, athenaRequestsQuery} = require('./helpers/parse_cloudfront_logs')
+const {update, makeDynamoUpdates, parseResultsAccessSchema, athenaRequestsQuery} = require('./helpers/parse_cloudfront_logs')
 
 const metricConfigs = ${site_metric_configs}
 
@@ -125,6 +125,34 @@ module.exports = {
             }
           }
         }
+      },
+    },
+    parseResults: {
+      index: 4,
+      transformers: {
+        dynamoPuts: {
+          helper: ({parseResults}) => {
+          },
+          params: {
+            parseResults: { ref: 'parseResults.results.results' },
+          }
+        }
+      },
+      dependencies: {
+        dynamoPuts: {
+          action: 'exploranda',
+          condition: { ref: 'stage.dynamoPuts.length' },
+          params: {
+            accessSchema: {value: update },
+            params: {
+              explorandaParams: {
+                apiConfig: { ref: 'stage.dynamoPuts.apiConfigs' },
+                TableName: { ref: 'stage.dynamoPuts.TableNames' },
+                Item: { ref: 'stage.dynamoPuts.Items' },
+              }
+            }
+          }
+        },
       },
     },
   }

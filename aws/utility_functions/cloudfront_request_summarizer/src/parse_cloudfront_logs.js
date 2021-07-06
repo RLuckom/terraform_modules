@@ -3,6 +3,7 @@ const moment = require('moment')
 
 const csv = require('csv-parser')
 const _ = require('lodash')
+const converter = require('aws-sdk').DynamoDB.Converter;
 
 function toSecs(s) {
   return _.parseInt(s.slice(0, 2)) * 3600 + _.parseInt(s.slice(3, 5)) * 60 + _.parseInt(s.slice(6, 8))
@@ -24,6 +25,72 @@ const parseResultsAccessSchema = {
       apiObject: parseResults,
     },
   }
+};
+
+const update = {
+  dataSource: 'AWS',
+  namespaceDetails: {
+    name: 'DynamoDB',
+    constructorArgs: {}
+  },
+  name: 'Update',
+  value: {
+    path: (arg) => {
+      if (_.get(arg, 'AttributeValues')) {
+       arg.AttributeValues = converter.unmarshall(arg.AttributeValues)
+      }
+      return arg
+    }
+  },
+  requiredParams: {
+    TableName: {},
+    Key: {},
+    ReturnValues: {},
+    UpdateExpression: {},
+  },
+  optionalParams: {
+    ConditionExpression: {},
+    ExpressionAttributeNames: {},
+    ExpressionAttributeValues: {
+      formatter: (i) => _.reduce(i, (a, v, k) => {
+        if (_.isString(v)) {
+          a[k] = {'S': v}
+        } else if (_.isNumber(v)) {
+          a[k] = {'N': v}
+        } else if (v === true || v === false) {
+          a[k] = {'BOOL': v}
+        } else {
+          a[k] = converter.marshall(v)
+        }
+        return a
+      }, {})
+    },
+    ReturnConsumedCapacity: {},
+    ReturnItemCollectionMetrics: {},
+  },
+  params: {
+    ReturnValues: 'NONE',
+  },
+  apiMethod: 'updateItem',
+};
+
+const batchExecuteStatement = {
+  dataSource: 'AWS',
+  namespaceDetails: {
+    name: 'DynamoDB',
+    constructorArgs: {}
+  },
+  name: 'ExecuteStatement',
+  value: {
+    path: _.identity,
+  },
+  requiredParams: {
+    Statements: {},
+  },
+  optionalParams: {
+    ConsistentRead: {},
+  },
+  apiMethod: 'batchExecuteStatement',
 };
 
 function parseResults({buf}, callback) {
@@ -84,6 +151,22 @@ function parseResults({buf}, callback) {
     }, {})
     callback(null, {hits, metrics})
   })
+}
+
+function makeDynamoUpdates(hits, tableName) {
+  return {
+    Statements: _.map(hits, (v, k) => {
+      return {
+        Statement: `UPDATE ${tableName}
+        SET hits = hits + ?
+        WHERE metricType = 'pageHits' AND metricId = ?`,
+        Parameters: [
+          { N : `${v}`},
+          { S : k}
+        ]
+      }
+    })
+  }
 }
 
 function athenaRequestsQuery(args) {
@@ -184,4 +267,7 @@ module.exports = {
   parseResults,
   parseResultsAccessSchema,
   athenaRequestsQuery,
+  update,
+  batchExecuteStatement,
+  makeDynamoUpdates,
 }
