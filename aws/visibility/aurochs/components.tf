@@ -133,7 +133,7 @@ module site_metric_tables {
     name = "metricId",
     type = "S"
   }
-  table_name = "${each.key}-metrics"
+  table_name = local.serverless_site_configs[each.key].site_metrics_table
   read_permission_role_names = concat(
     lookup(var.supported_system_clients[local.serverless_site_configs[each.key].system_id.security_scope].subsystems[local.serverless_site_configs[each.key].subsystem_name].site_metric_table_read_role_name_map, each.key, []),
     [module.site_metric_function.role.name]
@@ -156,7 +156,7 @@ module site_metric_function {
     result_location = config.lambda_athena_result_location
     result_prefix = config.lambda_result_prefix
     data_prefix = config.cloudfront_log_storage_prefix
-    dynamo_table_name = "${site_name}-metrics"
+    dynamo_table_name = config.site_metrics_table
   }]
 }
 

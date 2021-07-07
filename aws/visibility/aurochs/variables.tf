@@ -385,6 +385,7 @@ locals {
       lambda_source_bucket = var.lambda_source_bucket
       log_delivery_bucket = local.cloudfront_delivery_bucket
       metric_table = local.metric_table_configs[v.system_id.security_scope].table_name
+      site_metrics_table = "${k}-metrics"
       cloudfront_log_delivery_bucket = local.cloudfront_delivery_bucket
       log_partition_bucket = local.visibility_data_bucket
       lambda_log_delivery_bucket = local.visibility_data_bucket
