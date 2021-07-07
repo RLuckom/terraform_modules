@@ -130,6 +130,7 @@ function athenaRequestsQuery(args) {
     AND month = '${_.padStart(t.month() + 1, 2, '0')}'
     AND day = '${_.padStart(t.date(), 2, '0')}'
     AND hour = '${_.padStart(t.hour(), 2, '0')}'
+    AND uri LIKE '%.html'
     AND method = 'GET'
     AND useragent != '-'
     AND useragent NOT LIKE '%facebookexternalhit%'
@@ -209,7 +210,8 @@ function athenaRequestsQuery(args) {
     AND useragent NOT LIKE '%DuckDuckGo-Favicons-Bot%'
     AND useragent NOT LIKE '%komodia%'
     AND useragent NOT LIKE '%discordapp%'
-    AND useragent NOT LIKE '%Dataprovider.com%'`
+    AND useragent NOT LIKE '%Dataprovider.com%'
+    ORDER BY time desc`
   })
 }
 
