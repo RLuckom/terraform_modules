@@ -109,7 +109,6 @@ function makeDynamoUpdates(hits, tableName, queryResults) {
     }),
     UpdateExpressions: _.map(hits, (v, k) => {
       return _.find(queryResults, (r) => {
-        console.log(r)
         return r.metricId === k
       }) ? 'SET hits = hits + :incr' : 'SET hits = :incr'
     }),

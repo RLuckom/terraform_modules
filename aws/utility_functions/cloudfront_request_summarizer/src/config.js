@@ -156,6 +156,11 @@ module.exports = {
           action: 'exploranda',
           params: {
             accessSchema: {value: 'dataSources.AWS.dynamodb.query'},
+            behaviors: {
+              value: {
+                mergeIndividual: _.identity
+              }
+            },
             params: {
               explorandaParams: {
                 apiConfig: { value: {region: '${dynamo_region}' }},
@@ -175,9 +180,7 @@ module.exports = {
           helper: ({parseResults, queryResults, tableNames}) => {
             console.log(queryResults)
             const ret = _.mergeWith({}, ..._.map(parseResults, ({hits}, idx) => {
-              return makeDynamoUpdates(hits, metricConfigs[idx].dynamo_table_name, _.filter(queryResults, (result, indx) => {
-                return tableNames[indx] === metricConfigs[idx].dynamo_table_name
-              }))
+              return makeDynamoUpdates(hits, metricConfigs[idx].dynamo_table_name, queryResults[idx])
             }), mergeArrayCustomizer)
             console.log(JSON.stringify(ret))
             return ret

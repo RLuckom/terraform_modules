@@ -51,7 +51,7 @@ describe('parseResults', () => {
       done()
     })
   })
-  it('test1', (done) => {
+  it('test2', (done) => {
     const csvFilename = __dirname + '/support/42c72cdd-54d7-41c3-be1e-57f1c0a8125f.csv' 
     parseResults({buf: fs.readFileSync(csvFilename)}, (e, r) => {
       if (e) {
@@ -59,6 +59,29 @@ describe('parseResults', () => {
       }
       expect(r.hits).toEqual(results2)
       expect(_.reduce(r.hits, (t, v) => t + v, 0)).toEqual(17)
+      done()
+    })
+  })
+  it('test3', (done) => {
+    const csvFilenames = _.map([...Array(24).keys()], (i) => __dirname + `/support/3407a00b-eebd-4bf4-88a6-4e5bf7be05e6/${_.padStart(i, 2, '0')}.csv`)
+    _.map(csvFilenames, (csvFilename, indx) => {
+      parseResults({buf: fs.readFileSync(csvFilename)}, (e, r) => {
+        if (e) {
+          console.log(e)
+        }
+      })
+      if (indx === 23) {
+        done()
+      }
+    })
+  })
+  it('test4', (done) => {
+    const csvFilename = __dirname + '/support/fc472d8d-2a5c-4095-b848-e4e1de2965cb.csv' 
+    parseResults({buf: fs.readFileSync(csvFilename)}, (e, r) => {
+      if (e) {
+        console.log(e)
+      }
+      console.log(r.hits)
       done()
     })
   })
