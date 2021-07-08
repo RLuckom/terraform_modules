@@ -62,7 +62,6 @@ module.exports = {
               buckets: _.map(ret, 'bucket'),
               keys: _.map(ret, 'key')
             }
-            console.log(arrays)
             return arrays
           },
           params: {
@@ -120,7 +119,6 @@ module.exports = {
       dependencies: {
         results: {
           formatter: ({results}) => {
-            console.log(results[0].hits)
             return results
           },
           action: 'exploranda',
@@ -136,7 +134,6 @@ module.exports = {
     getDynamoRecords: {
       index: 4,
       formatter: ({dynamoRecords}) => {
-        console.log(JSON.stringify(dynamoRecords))
         return dynamoRecords
       },
       transformers: {
@@ -178,11 +175,9 @@ module.exports = {
       transformers: {
         dynamoUpdates: {
           helper: ({parseResults, queryResults, tableNames}) => {
-            console.log(queryResults)
             const ret = _.mergeWith({}, ..._.map(parseResults, ({hits}, idx) => {
               return makeDynamoUpdates(hits, metricConfigs[idx].dynamo_table_name, queryResults[idx])
             }), mergeArrayCustomizer)
-            console.log(JSON.stringify(ret))
             return ret
           },
           params: {
@@ -196,7 +191,6 @@ module.exports = {
         dynamoUpdates: {
           action: 'exploranda',
           formatter: ({dynamoUpdates}) => {
-            console.log(dynamoUpdates)
             return dynamoUpdates
           },
           condition: { ref: 'stage.dynamoUpdates.TableNames.length' },

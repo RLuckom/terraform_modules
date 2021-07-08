@@ -54,7 +54,7 @@ function parseResults({buf}, callback) {
   }).on('end', () => {
     _.each(metrics.ips, (p) => {
       if (p.atsl) {
-        p.full = 300 * p.hits 
+        p.full = 30 * p.hits
         p.score = p.hits * p.atsl / p.full
         p.dist = _.countBy(p.tsls, (tsl) => {
           if (tsl < 2) {
@@ -96,7 +96,6 @@ function makeDynamoQuery(tableName) {
 }
 
 function makeDynamoUpdates(hits, tableName, queryResults) {
-  console.log(JSON.stringify(queryResults))
   return {
     TableNames: _.map(hits, (v, k) => {
       return tableName
