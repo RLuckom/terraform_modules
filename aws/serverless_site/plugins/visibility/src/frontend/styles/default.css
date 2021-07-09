@@ -1,0 +1,98 @@
+:root {
+  --background: #fff;
+  --encourage: lightgreen;
+  --encourage-neutral: lightblue;
+  --neutral: rgba(0, 0, 0, 0.2);
+  --hazard: #ff6666;
+  --default-border-width: 2px;
+  --editor-font-family: Georgia Palatino serif; 
+}
+
+sup {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+input[type=text] {
+  padding-top: 7px;
+  padding-right: 7px;
+  padding-left: 7px;
+  padding-bottom: 3px;
+  margin:10px 0;
+  font-family: inherit;
+  outline: none;
+  border-color: var(--neutral);
+  border-style: solid;
+  border-top-width: 0;
+  border-left-width: 0;
+  border-right-width: 0;
+  border-bottom-width: 0;
+}
+
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0.7em;
+}
+
+button {
+  min-height: 2.5em;
+  font-weight: bold;
+  font-family: inherit;
+  border-radius: 7px;
+  border-width: var(--default-border-width);
+  border-color: var(--encourage-neutral);
+  border-style: solid;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.metric-container {
+  border: 1px solid black;
+  position: relative;
+  font-family: inherit;
+  padding: 10px;
+  margin: 15px;
+}
+
+.metric-container-title {
+  position: absolute;
+  top: -15px;
+  background-color: white;
+  font-family: inherit;
+  font-size: 18px;
+}
+
+.metric-scalar-value {
+  font-family: inherit;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 767px) {
+  textarea,
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"] {
+    outline: none;
+    font-size: 16px;
+    font-family: inherit;
+    border-color: var(--neutral);
+    border-style: solid;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+  }
+
+  .metric-container {
+    width: 100%;
+  }
+}
