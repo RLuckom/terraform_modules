@@ -65,6 +65,11 @@ variable config_values {
   default = {}
 }
 
+variable i18n_config_values {
+  type = any
+  default = {}
+}
+
 variable default_css_paths {
   type = list(string)
   default = []
@@ -106,7 +111,7 @@ locals {
   utils_js_path = "${local.file_prefix}/assets/js/utils-${filemd5("${path.module}/src/frontend/libs/utils.js")}.js"
   gopher_config_js_path = "${local.file_prefix}/assets/js/gopher_config-${md5(var.gopher_config_contents)}.js"
   js_prefix = "${local.file_prefix}assets/js/"
-
+  i18n_config = var.i18n_config_values
   plugin_config = merge({
     name = var.name
     domain = var.plugin_config.domain
@@ -167,6 +172,7 @@ locals {
       key = local.config_path
       file_contents = <<EOF
 window.CONFIG = ${jsonencode(local.plugin_config)}
+window.I18N_CONFIG = ${jsonencode(local.i18n_config)}
 EOF
       file_path = null
       content_type = "application/javascript"
