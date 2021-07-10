@@ -225,10 +225,6 @@ input.new-post.expanded {
   opacity: 1;
 }
 
-.save-status, .publish-status {
-  font-weight: 400;
-}
-
 .post-status, .post-status-headers {
   display: flex;
   width: 100%;
@@ -240,6 +236,7 @@ input.new-post.expanded {
 
 .post-status-headers {
   flex: 2;
+  padding-bottom: 0.6em;
 }
 
 .footnote-title-bar {
@@ -262,6 +259,7 @@ button.delete-footnote {
   display: inline-block;
   flex: 1;
   margin: auto 0;
+  text-align: center;
 }
 
 .post-id.edit {
@@ -281,6 +279,8 @@ button.delete-footnote {
 .post-id {
   flex: 0 1 46%;
   margin: auto 0;
+  padding-right: 5px;
+  word-wrap: anywhere;
 }
 
 .post-id-header {
