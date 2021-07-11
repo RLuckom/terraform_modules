@@ -124,6 +124,7 @@ locals {
       actions   =  [
         "glue:GetDatabase",
         "glue:GetPartitions",
+        "glue:GetPartition",
         "glue:GetTable"
       ]
       resources = flatten([

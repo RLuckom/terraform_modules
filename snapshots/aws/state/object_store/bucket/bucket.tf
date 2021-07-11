@@ -210,6 +210,11 @@ locals {
     "s3:GetBucketLocation"
   ]
 
+  allow_billing_report_bucket_actions = [
+    "s3:GetBucketAcl",
+    "s3:GetBucketPolicy"
+  ]
+
   list_bucket_action = [
     "s3:ListBucket",
   ]
@@ -252,6 +257,7 @@ locals {
 
   bucket_permission_set_actions = {
     list_bucket = local.list_bucket_actions
+    allow_billing_report = local.allow_billing_report_bucket_actions
     list_bucket_prefix = local.list_prefix_bucket_actions
     list_bucket_action = local.list_bucket_action
     athena_query_execution = local.list_bucket_actions

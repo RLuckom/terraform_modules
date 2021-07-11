@@ -118,7 +118,7 @@ resource "aws_lambda_function" "lambda" {
   reserved_concurrent_executions = var.self_invoke.allowed ? var.self_invoke.concurrent_executions : var.reserved_concurrent_executions
 	memory_size = var.mem_mb
 
-  runtime = "nodejs12.x"
+  runtime = var.runtime
   dynamic "environment" {
     for_each = length(values(var.environment_var_map)) > 0 ? [1] : []
     content {

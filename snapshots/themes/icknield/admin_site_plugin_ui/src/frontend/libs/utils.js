@@ -334,6 +334,9 @@ function domNode(el) {
   } else if (_.isArray(el)) {
     return _.map(el, domNode)
   }
+  if (!el) {
+    return el
+  }
   const {accept, width, height, span, onKeyUp, src, value, innerText, onKeyDown, onInput, placeholder, onChange, tagName, type, isFor, name, href, onClick, children} = el
   if (tagName === 'svg') {
     return svgNode(el)
@@ -354,6 +357,12 @@ function domNode(el) {
     if (_.isString(height)) {
       newElement.height = height
     }
+    if (_.isString(el.alt)) {
+      newElement.alt = el.alt
+    }
+    if (_.isString(el.title)) {
+      newElement.title = el.title
+    }
   }
   if (tagName === 'label') {
     if (_.isString(isFor)) {
@@ -363,6 +372,17 @@ function domNode(el) {
   if (tagName === "button") {
     if (_.isString(name)) {
       newElement.name = name
+    }
+  }
+  if (tagName === 'textarea') {
+    if (_.isFunction(onInput)) {
+      newElement.addEventListener('input', onInput)
+    }
+    if (value) {
+      newElement.value = value
+    }
+    if (_.isString(placeholder)) {
+      newElement.placeholder = placeholder
     }
   }
   if (tagName === 'input') {

@@ -1,6 +1,7 @@
 module cognito_user_management {
   source = "../../state/user_mgmt/stele"
   system_id = var.system_id
+  token_validities = var.token_validities
   protected_domain_routing = var.coordinator_data.routing
   additional_protected_domains = var.additional_protected_domains
   user_group_name = var.user_group_name
@@ -114,7 +115,7 @@ module admin_site {
   )
 
   website_bucket_cors_rules = [{
-    allowed_headers = ["authorization", "content-md5", "content-type", "cache-control", "x-amz-content-sha256", "x-amz-date", "x-amz-security-token", "x-amz-user-agent"]
+    allowed_headers = ["authorization", "content-md5", "content-type", "x-amz-copy-source", "cache-control", "x-amz-content-sha256", "x-amz-date", "x-amz-security-token", "x-amz-user-agent"]
     allowed_methods = ["PUT", "GET"]
     allowed_origins = ["https://${var.coordinator_data.routing.domain}"]
     expose_headers = ["ETag"]

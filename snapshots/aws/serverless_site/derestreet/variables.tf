@@ -41,6 +41,37 @@ variable coordinator_data {
   })
 }
 
+variable token_validities {
+  type = object({
+    access = object({
+      value = number
+      unit = string
+    })
+    id = object({
+      value = number
+      unit = string
+    })
+    refresh = object({
+      value = number
+      unit = string
+    })
+  })
+  default = {
+    access = {
+      value = 5
+      unit = "minutes"
+    }
+    id = {
+      value = 60
+      unit = "minutes"
+    }
+    refresh = {
+      value = 2
+      unit = "days"
+    }
+  }
+}
+
 variable user_email {
   type = string
 }
@@ -335,7 +366,7 @@ variable default_static_headers {
 
 variable root_csp {
   type = string
-  default = "default-src 'none'; style-src 'self'; object-src 'none'; img-src 'self' data:;"
+  default = "default-src 'none'; style-src 'self'; font-src 'self'; script-src 'self'; object-src 'none'; img-src 'self' data:;"
 }
 
 variable archive_storage_class {
