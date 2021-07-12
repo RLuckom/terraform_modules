@@ -6,6 +6,8 @@ variable account_id {
   type = string
 }
 
+// Note that the lambdas will be created in us-east-1 regardless of this region,
+// because only us-east-1 lambdas can be used in cloudfront request hooks
 variable region {
   type = string
 }

@@ -28,6 +28,11 @@ variable need_policy_override {
   default = true
 }
 
+variable really_allow_delete {
+  type = bool
+  default = false
+}
+
 variable account_id {
   type = string
 }
@@ -143,6 +148,7 @@ module replication_lambda {
 module replica_bucket_1 {
   source = "../bucket"
   name = local.buckets[0]
+  force_destroy = var.really_allow_delete
   account_id = var.account_id
   region = var.region1
   need_policy_override = var.need_policy_override
@@ -158,6 +164,7 @@ module replica_bucket_1 {
 module replica_bucket_2 {
   source = "../bucket"
   name = local.buckets[1]
+  force_destroy = var.really_allow_delete
   account_id = var.account_id
   region = var.region2
   need_policy_override = var.need_policy_override
@@ -173,6 +180,7 @@ module replica_bucket_2 {
 module replica_bucket_3 {
   source = "../bucket"
   name = local.buckets[2]
+  force_destroy = var.really_allow_delete
   account_id = var.account_id
   region = var.region3
   need_policy_override = var.need_policy_override

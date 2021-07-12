@@ -35,7 +35,8 @@ module check_auth {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
-  region = var.region
+  // because only us-east-1 lambdas can be used in cloudfront request hooks
+  region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.check_auth
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -52,7 +53,8 @@ module move_cookie_to_auth_header {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
-  region = var.region
+  // because only us-east-1 lambdas can be used in cloudfront request hooks
+  region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.move_cookie_to_auth_header
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -69,7 +71,8 @@ module http_headers {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
-  region = var.region
+  // because only us-east-1 lambdas can be used in cloudfront request hooks
+  region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.http_headers
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -86,7 +89,8 @@ module sign_out {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
-  region = var.region
+  // because only us-east-1 lambdas can be used in cloudfront request hooks
+  region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.sign_out
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -103,7 +107,8 @@ module refresh_auth {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
-  region = var.region
+  // because only us-east-1 lambdas can be used in cloudfront request hooks
+  region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.refresh_auth
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -120,7 +125,8 @@ module parse_auth {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
-  region = var.region
+  // because only us-east-1 lambdas can be used in cloudfront request hooks
+  region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.parse_auth
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
