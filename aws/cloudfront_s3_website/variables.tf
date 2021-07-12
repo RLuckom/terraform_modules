@@ -16,6 +16,11 @@ variable system_id {
   })
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable access_control_function_qualified_arns {
   type = list(object({
     refresh_auth = string

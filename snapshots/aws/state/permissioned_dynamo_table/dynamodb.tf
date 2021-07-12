@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "standard_table" {
-  name             = var.table_name
+  name             = local.table_name
   hash_key         = var.partition_key.name
   billing_mode     = "PAY_PER_REQUEST"
   stream_enabled   = false

@@ -1,5 +1,23 @@
+variable account_id {
+  type = string
+}
+
+variable region {
+  type = string
+}
+
 variable bucket_prefix {
   type = string
+}
+
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
+variable allow_bucket_delete {
+  type = bool
+  default = false
 }
 
 variable cloudfront_delivery_bucket {
@@ -20,14 +38,6 @@ variable visibility_data_bucket {
 variable athena_results_bucket {
   type = string
   default = ""
-}
-
-variable account_id {
-  type = string
-}
-
-variable region {
-  type = string
 }
 
 variable lambda_source_bucket {

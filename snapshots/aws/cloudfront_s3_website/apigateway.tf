@@ -1,5 +1,6 @@
 module "lambda_api_gateway" {
   count = length(local.apigateway_configs)
+  unique_suffix = var.unique_suffix
   source = "../apigatewayv2"
   name_stem = local.apigateway_configs[count.index][0].gateway_name_stem
   system_id = var.system_id

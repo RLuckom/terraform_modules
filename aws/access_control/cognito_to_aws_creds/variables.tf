@@ -18,6 +18,11 @@ variable client_id {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable aws_sdk_layer {
   type = object({
     present = bool

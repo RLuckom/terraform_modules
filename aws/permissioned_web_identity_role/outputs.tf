@@ -1,8 +1,8 @@
 output "role" {
   value = {
-    arn = "arn:aws:iam::${var.account_id}:role/${var.role_name}"
-    id = var.role_name
-    name = var.role_name
+    arn = "arn:aws:iam::${var.account_id}:role/${local.role_name}"
+    id = local.role_name
+    name = local.role_name
   }
 }
 

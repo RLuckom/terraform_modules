@@ -106,6 +106,7 @@ locals {
 
 module site_render {
   source = "../../donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = 40
   mem_mb = 256
   account_id = var.account_id
@@ -130,6 +131,7 @@ module site_render {
 
 module site {
   source = "../../cloudfront_s3_website"
+  unique_suffix = var.unique_suffix
   enable_distribution = var.enable
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
@@ -190,6 +192,7 @@ locals {
 
 module trails_table {
   source = "../../state/permissioned_dynamo_table"
+  unique_suffix = var.unique_suffix
   table_name = local.trails_table_name
   delete_item_permission_role_names = local.trails_table_delete_role_names
   write_permission_role_names = local.trails_table_write_permission_role_names
@@ -206,6 +209,7 @@ module trails_table {
 
 module website_bucket {
   source = "../../state/object_store/website_bucket"
+  unique_suffix = var.unique_suffix
   name = local.site_bucket
   account_id = var.account_id
   region = var.region

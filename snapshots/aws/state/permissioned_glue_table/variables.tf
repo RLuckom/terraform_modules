@@ -13,7 +13,13 @@ variable "db" {
   })
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable "stored_as_sub_directories" {
+  type = bool
   default = false
 }
 
@@ -74,4 +80,8 @@ variable "partition_keys" {
 variable "partition_prefix" {
   type = string
   default = ""
+}
+
+locals {
+  table_name = var.unique_suffix == "" ? var.table_name : "${var.table_name}-${var.unique_suffix}"
 }

@@ -48,6 +48,11 @@ variable user_group_name {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable auth_domain_prefix {
   type = string
   default = "auth"

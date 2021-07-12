@@ -29,6 +29,11 @@ variable provider_endpoint {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable allow_unauthenticated_identities {
   type = bool
   default = false

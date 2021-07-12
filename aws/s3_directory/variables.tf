@@ -1,3 +1,7 @@
+variable bucket_name {
+  type = string
+}
+
 variable file_configs {
   type = list(object({
     content_type = string
@@ -7,8 +11,9 @@ variable file_configs {
   default = []
 }
 
-variable bucket_name {
+variable unique_suffix {
   type = string
+  default = ""
 }
 
 resource "aws_s3_bucket_object" "assets" {

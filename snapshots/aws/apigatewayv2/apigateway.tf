@@ -6,6 +6,7 @@ data "aws_route53_zone" "selected" {
 module "domain_cert" {
   count = length(var.domain_record) == 0 ? 0 : 1
   source = "../validated_cert"
+  unique_suffix = var.unique_suffix
   route53_zone_name = data.aws_route53_zone.selected[0].name
   domain_name = var.domain_record[0].domain_name
 }
@@ -40,9 +41,12 @@ resource "aws_apigatewayv2_api_mapping" "api_mapping" {
   domain_name = aws_apigatewayv2_domain_name.api_domain_name[0].id
   stage       = aws_apigatewayv2_stage.stage.id 
 }
+locals {
+  api_name   = var.unique_suffix == "" ? "${var.name_stem}_api" : "${var.name_stem}_api_${var.unique_suffix}"
+}
 
 resource "aws_apigatewayv2_api" "api" {
-  name                       = "${var.name_stem}_api"
+  name                       = local.api_name
   protocol_type              = var.protocol
   route_selection_expression = var.route_selection_expression
 

@@ -28,6 +28,11 @@ variable region {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable need_website_bucket_policy_override {
   type = bool
   default = false

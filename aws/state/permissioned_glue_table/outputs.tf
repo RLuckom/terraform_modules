@@ -4,6 +4,10 @@ output "table" {
   value = aws_glue_catalog_table.table
 }
 
+output table_name {
+  value = local.table_name
+}
+
 output "permission_sets" {
   value = {
     create_partition_glue_permissions = [{

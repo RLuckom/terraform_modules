@@ -8,6 +8,23 @@ terraform {
   }
 }
 
+variable account_id {
+  type = string
+}
+
+variable region {
+  type = string
+}
+
+variable bucket_prefix {
+  type = string
+}
+
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable region1 {
   type = string
   default = "eu-central-1"
@@ -31,18 +48,6 @@ variable need_policy_override {
 variable really_allow_delete {
   type = bool
   default = false
-}
-
-variable account_id {
-  type = string
-}
-
-variable region {
-  type = string
-}
-
-variable bucket_prefix {
-  type = string
 }
 
 variable security_scope {
@@ -131,6 +136,7 @@ locals {
 
 module replication_lambda {
   source = "../../../utility_functions/replicator"
+  unique_suffix = var.unique_suffix
   logging_config = var.replication_function_logging_config
   account_id = var.account_id
   region = var.region
@@ -147,6 +153,7 @@ module replication_lambda {
 
 module replica_bucket_1 {
   source = "../bucket"
+  unique_suffix = var.unique_suffix
   name = local.buckets[0]
   force_destroy = var.really_allow_delete
   account_id = var.account_id
@@ -163,6 +170,7 @@ module replica_bucket_1 {
 
 module replica_bucket_2 {
   source = "../bucket"
+  unique_suffix = var.unique_suffix
   name = local.buckets[1]
   force_destroy = var.really_allow_delete
   account_id = var.account_id
@@ -179,6 +187,7 @@ module replica_bucket_2 {
 
 module replica_bucket_3 {
   source = "../bucket"
+  unique_suffix = var.unique_suffix
   name = local.buckets[2]
   force_destroy = var.really_allow_delete
   account_id = var.account_id

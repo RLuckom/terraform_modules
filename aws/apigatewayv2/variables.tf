@@ -2,6 +2,11 @@ variable "name_stem" {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable "protocol" {
   type = string
   default = "HTTP"

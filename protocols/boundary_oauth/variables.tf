@@ -2,6 +2,11 @@ variable token_issuer {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable bucket_config {
   type = object({
     supplied = bool

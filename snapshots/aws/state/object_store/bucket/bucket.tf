@@ -1,6 +1,7 @@
 module splitter_lambda {
   source = "../../../utility_functions/event_splitter"
-  action_name = "split-${var.name}"
+  unique_suffix = var.unique_suffix
+  action_name = "split-${local.bucket_name}"
   account_id = var.account_id
   region = var.region
   logging_config = var.utility_function_logging_config
@@ -10,7 +11,7 @@ module splitter_lambda {
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket = var.name
+  bucket = local.bucket_name
   acl = var.acl
   request_payer = var.request_payer
   force_destroy = var.force_destroy

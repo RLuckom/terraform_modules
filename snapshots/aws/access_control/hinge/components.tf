@@ -57,6 +57,7 @@ resource "aws_cognito_identity_pool_roles_attachment" "main" {
 module authenticated_role {
   for_each = var.plugin_configs
   source = "../../permissioned_web_identity_role"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   role_name = "${local.name}-${each.value.role_name_stem}-auth"
   role_policy = []
@@ -65,6 +66,7 @@ module authenticated_role {
 
 module parent_authenticated_role {
   source = "../../permissioned_web_identity_role"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   role_name = "${local.name}-parent-auth"
   role_policy = [{ 
@@ -76,6 +78,7 @@ module parent_authenticated_role {
 
 module empty_authenticated_role {
   source = "../../permissioned_web_identity_role"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   role_name = "${local.name}-empty-auth"
   identity_pool_id = aws_cognito_identity_pool.id_pool.id

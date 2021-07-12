@@ -10,6 +10,11 @@ variable identity_pool_id {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable "role_policy" {
   type = list(object({
     actions = list(string)
@@ -21,4 +26,8 @@ variable "role_policy" {
 variable "require_authenticated" {
   type = bool
   default = true
+}
+
+locals {
+  role_name = var.unique_suffix != "" ? "${var.role_name}-${var.unique_suffix}" : var.role_name
 }

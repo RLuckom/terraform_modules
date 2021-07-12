@@ -1,8 +1,3 @@
-variable source_bucket {
-  type = string
-  default = ""
-}
-
 variable account_id {
   type = string
 }
@@ -13,6 +8,16 @@ variable region {
 
 variable action_name {
   type = string
+}
+
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
+variable source_bucket {
+  type = string
+  default = ""
 }
 
 variable scope_name {

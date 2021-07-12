@@ -14,6 +14,11 @@ variable gopher_config_contents {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable admin_site_resources {
   type = object({
     default_styles_path = string

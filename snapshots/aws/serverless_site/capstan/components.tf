@@ -32,6 +32,7 @@ locals {
 
 module site {
   source = "../../cloudfront_s3_website"
+  unique_suffix = var.unique_suffix
   enable_distribution = var.enable
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
@@ -63,6 +64,7 @@ locals {
 
 module website_bucket {
   source = "../../state/object_store/website_bucket"
+  unique_suffix = var.unique_suffix
   name = local.site_bucket
   need_policy_override = var.need_website_bucket_policy_override
   account_id = var.account_id

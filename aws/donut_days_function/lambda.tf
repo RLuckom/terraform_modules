@@ -40,6 +40,7 @@ module donut_days_layer {
 
 module function {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
+  unique_suffix = var.unique_suffix
   timeout_secs = var.timeout_secs
   account_id = var.account_id
   region = var.region

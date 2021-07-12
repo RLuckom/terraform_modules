@@ -3,5 +3,5 @@ output "bucket" {
 }
 
 output bucket_name {
-  value = var.name
+  value = local.bucket_name
 }

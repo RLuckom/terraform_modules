@@ -11,6 +11,11 @@ variable name {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable need_policy_override {
   type = bool
   default = false
@@ -230,6 +235,7 @@ variable utility_function_event_configs {
 }
 
 locals {
+  bucket_name = var.unique_suffix == "" ? var.name : "${var.name}-${var.unique_suffix}"
   lambda_notifications = var.lambda_notifications
   effective_notifications = module.splitter_lambda.manual_notifications ? module.splitter_lambda.bucket_notifications : local.lambda_notifications
   lambda_invoke_permissions_needed = distinct([for notif in local.effective_notifications : notif.lambda_name])

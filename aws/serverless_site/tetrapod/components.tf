@@ -17,6 +17,7 @@ locals {
 
 module default_assets {
   source = "github.com/RLuckom/terraform_modules//themes/trails"
+  unique_suffix = var.unique_suffix
 }
 
 locals {
@@ -49,6 +50,7 @@ module asset_file_configs {
 
 module site_static_assets {
   source = "github.com/RLuckom/terraform_modules//aws/s3_directory"
+  unique_suffix = var.unique_suffix
   bucket_name = local.site_bucket
   file_configs = module.asset_file_configs.file_configs
   depends_on = [module.website_bucket]
@@ -103,6 +105,7 @@ locals {
 
 module site_render {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = 40
   mem_mb = 256
   account_id = var.account_id
@@ -140,6 +143,7 @@ module site_render {
 
 module deletion_cleanup {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = 40
   mem_mb = 128
   region = var.region
@@ -173,6 +177,7 @@ module deletion_cleanup {
 
 module trails_updater {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = 40
   account_id = var.account_id
   region = var.region
@@ -212,6 +217,7 @@ module trails_updater {
 
 module trails_resolver {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = 5
   account_id = var.account_id
   region = var.region
@@ -233,6 +239,7 @@ module trails_resolver {
 
 module site {
   source = "github.com/RLuckom/terraform_modules//aws/cloudfront_s3_website"
+  unique_suffix = var.unique_suffix
   enable_distribution = var.enable
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
@@ -321,6 +328,7 @@ locals {
 
 module trails_table {
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  unique_suffix = var.unique_suffix
   table_name = local.trails_table_name
   delete_item_permission_role_names = local.trails_table_delete_role_names
   write_permission_role_names = local.trails_table_write_permission_role_names
@@ -348,6 +356,7 @@ module trails_table {
 
 module website_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/website_bucket"
+  unique_suffix = var.unique_suffix
   name = local.site_bucket
   account_id = var.account_id
   region = var.region

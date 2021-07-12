@@ -13,6 +13,11 @@ variable region {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable need_policy_override {
   type = bool
   default = false

@@ -1,10 +1,14 @@
-variable athena_region {
+variable account_id {
   type = string
-  default = ""
 }
 
 variable region {
   type = string
+}
+
+variable unique_suffix {
+  type = string
+  default = ""
 }
 
 variable dynamo_region {
@@ -12,8 +16,9 @@ variable dynamo_region {
   default = ""
 }
 
-variable account_id {
+variable athena_region {
   type = string
+  default = ""
 }
 
 variable action_name {

@@ -1,3 +1,16 @@
+variable account_id {
+  type = string
+}
+
+variable region {
+  type = string
+}
+
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable action_name {
   type = string
   default = "splitter"
@@ -19,14 +32,6 @@ variable logging_config {
 variable time_limit {
   type = number
   default = 10
-}
-
-variable account_id {
-  type = string
-}
-
-variable region {
-  type = string
 }
 
 variable memory_size {

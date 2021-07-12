@@ -12,6 +12,7 @@ module site_metric_summarizer {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
   account_id = var.account_id
   region = var.region
+  unique_suffix = var.unique_suffix
   mem_mb = var.function_memory_size
   timeout_secs = var.function_time_limit
   cron_notifications = var.cron_notifications

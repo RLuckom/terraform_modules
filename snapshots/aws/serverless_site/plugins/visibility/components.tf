@@ -1,5 +1,6 @@
 module ui {
   source = "../../../../themes/icknield/admin_site_plugin_ui"
+  unique_suffix = var.unique_suffix
   name = var.name
   region = var.region
   account_id = var.account_id

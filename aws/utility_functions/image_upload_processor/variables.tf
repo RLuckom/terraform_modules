@@ -1,3 +1,11 @@
+variable account_id {
+  type = string
+}
+
+variable region {
+  type = string
+}
+
 variable io_config {
   type = object({
     input_bucket = string
@@ -12,12 +20,9 @@ variable io_config {
   })
 }
 
-variable account_id {
+variable unique_suffix {
   type = string
-}
-
-variable region {
-  type = string
+  default = ""
 }
 
 variable image_layer {

@@ -10,6 +10,7 @@ resource aws_s3_bucket stage_login_functions {
 
 module cognito_fn_template {
   source = "github.com/RLuckom/terraform_modules//protocols/boundary_oauth"
+  unique_suffix = var.unique_suffix
   token_issuer = var.token_issuer
   http_header_values = var.http_header_values
   plugin_root = var.plugin_root
@@ -35,6 +36,7 @@ module check_auth {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.check_auth
@@ -53,6 +55,7 @@ module move_cookie_to_auth_header {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.move_cookie_to_auth_header
@@ -71,6 +74,7 @@ module http_headers {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.http_headers
@@ -89,6 +93,7 @@ module sign_out {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.sign_out
@@ -107,6 +112,7 @@ module refresh_auth {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.refresh_auth
@@ -125,6 +131,7 @@ module parse_auth {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   publish = true
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.parse_auth

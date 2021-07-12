@@ -24,6 +24,11 @@ variable user_email {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable token_validities {
   type = object({
     access = object({

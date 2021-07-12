@@ -17,6 +17,11 @@ variable cost_report_summary_location {
   })
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable data_warehouse_configs {
   type = any
   default = {}

@@ -2,6 +2,11 @@ variable table_name {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable delete_item_permission_role_names {
   type = list(string)
   default = []
@@ -76,4 +81,8 @@ variable "additional_keys" {
 variable "replica_regions" {
   type = list(string)
   default = []
+}
+
+locals {
+  table_name = var.unique_suffix == "" ? var.table_name : "${var.table_name}-${var.unique_suffix}"
 }

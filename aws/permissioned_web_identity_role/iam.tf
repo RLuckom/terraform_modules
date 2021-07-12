@@ -11,7 +11,7 @@ data aws_iam_policy_document policy {
 
 resource aws_iam_policy role_policy {
   count = length(var.role_policy) > 0 ? 1 : 0
-  name = "${var.role_name}-policy"
+  name = "${local.role_name}-policy"
   policy = data.aws_iam_policy_document.policy[0].json
 }
 
@@ -44,7 +44,7 @@ data aws_iam_policy_document assume_role_policy {
 }
 
 resource aws_iam_role role {
-  name = var.role_name
+  name = local.role_name
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 

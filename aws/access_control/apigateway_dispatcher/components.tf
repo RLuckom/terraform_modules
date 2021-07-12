@@ -123,6 +123,7 @@ EOF
 module apigateway_dispatcher {
   source = "github.com/RLuckom/terraform_modules//aws/permissioned_lambda"
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   region = var.region
   timeout_secs = 5
   mem_mb = 128

@@ -3,9 +3,11 @@ The visibility bucket is where we keep query-able data like cloudfront and lambd
 */
 module visibility_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/visibility_data_bucket"
+  unique_suffix = var.unique_suffix
   name = local.visibility_data_bucket
   account_id = var.account_id
   region = var.region
+  force_destroy = var.allow_bucket_delete
   // In the following list, the `prefix` of each record comes from the visibility data
   // coordinator. This protects us from cases where an error in the logging module
   // sets the log prefix incorrectly. By using the prefix from the coordinator, we
@@ -40,17 +42,21 @@ and moves them into the visibility bucket.
 */
 module log_delivery_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/logging_bucket"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
   name = local.cloudfront_delivery_bucket
   lambda_notifications = local.archive_function_cloudfront_delivery_bucket_notifications
+  force_destroy = var.allow_bucket_delete
 }
 
 module cost_report_delivery_bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   region = var.region
   name = local.cost_report_bucket
+  force_destroy = var.allow_bucket_delete
   lambda_notifications = [module.cost_report_function.lambda_notification_config]
   principal_bucket_permissions = [{
     permission_type = "allow_billing_report"
@@ -91,6 +97,7 @@ resource random_id metric_table_suffixes {
 module metric_tables {
   for_each = toset(keys(local.metric_table_configs))
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  unique_suffix = var.unique_suffix
   partition_key = {
     name = "invokedFunctionArn",
     type = "S"
@@ -125,6 +132,7 @@ module metric_tables {
 module site_metric_tables {
   for_each = toset(keys(local.serverless_site_configs))
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  unique_suffix = var.unique_suffix
   partition_key = {
     name = "metricType",
     type = "S"
@@ -143,6 +151,7 @@ module site_metric_tables {
 
 module site_metric_function {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/cloudfront_request_summarizer"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
   logging_config = local.lambda_logging_config
@@ -163,6 +172,7 @@ module site_metric_function {
 module data_warehouse {
   source = "github.com/RLuckom/terraform_modules//aws/state/data_warehouse"
   for_each = local.data_warehouse_configs
+  unique_suffix = var.unique_suffix
   data_bucket = local.visibility_data_bucket
   scope = each.value.security_scope
   database_name = each.value.glue_database_name
@@ -208,6 +218,7 @@ module data_warehouse {
 
 module cost_report_function {
   source = "github.com/RLuckom/terraform_modules//aws/utility_functions/cur_report_parser"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
   logging_config = local.lambda_logging_config
@@ -228,6 +239,7 @@ module cost_report_function {
 
 module archive_function {
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = 15
   mem_mb = 128
   account_id = var.account_id

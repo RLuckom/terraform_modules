@@ -19,6 +19,11 @@ variable io_config {
   })
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable report_summary_filename {
   type = string
   default = "report_summary.json"

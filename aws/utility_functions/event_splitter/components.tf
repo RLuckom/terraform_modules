@@ -6,6 +6,7 @@ module "donut_days" {
 module lambda {
   count = local.need_lambda ? 1 : 0
   source = "github.com/RLuckom/terraform_modules//aws/donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = var.time_limit
   account_id = var.account_id
   region = var.region

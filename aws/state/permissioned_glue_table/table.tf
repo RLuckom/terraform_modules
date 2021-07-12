@@ -1,5 +1,5 @@
 resource "aws_glue_catalog_table" "table" {
-  name          = var.table_name
+  name          = local.table_name
   database_name = var.db.name
 
   table_type = "EXTERNAL_TABLE"

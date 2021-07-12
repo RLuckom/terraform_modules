@@ -1,3 +1,16 @@
+variable account_id {
+  type = string
+}
+
+variable region {
+  type = string
+}
+
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable action_name {
   type = string
   default = "replication"
@@ -29,14 +42,6 @@ variable logging_config {
 variable replication_time_limit {
   type = number
   default = 10
-}
-
-variable account_id {
-  type = string
-}
-
-variable region {
-  type = string
 }
 
 variable replication_memory_size {

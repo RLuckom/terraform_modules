@@ -11,6 +11,7 @@ module ui {
   name = var.name
   region = var.region
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   gopher_config_contents = file("${path.module}/src/frontend/libs/gopher_config.js")
   admin_site_resources = var.admin_site_resources
   plugin_config = var.plugin_config
@@ -70,6 +71,7 @@ module ui {
 module post_entry_lambda {
   source = "../../../donut_days_function"
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   region = var.region
   config_contents = templatefile("${path.module}/src/backend/post_entry_config.js",
   {
@@ -99,6 +101,7 @@ module post_entry_lambda {
 
 module posts_table {
   source = "../../../state/permissioned_dynamo_table"
+  unique_suffix = var.unique_suffix
   table_name = local.posts_table_name
   delete_item_permission_role_names = [module.post_entry_lambda.role.name]
   write_permission_role_names = [module.post_entry_lambda.role.name]
@@ -119,6 +122,7 @@ module posts_table {
 module process_image_uploads {
   source = "../../../utility_functions/image_upload_processor"
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   region = var.region
   logging_config = var.logging_config
   lambda_event_configs = var.lambda_event_configs
@@ -138,6 +142,7 @@ module process_image_uploads {
 module blog_site {
   source = "../../cyanobacteria"
   account_id = var.account_id
+  unique_suffix = var.unique_suffix
   region = var.region
   nav_links = var.nav_links
   site_title = var.site_title

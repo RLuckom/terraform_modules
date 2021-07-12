@@ -10,6 +10,11 @@ variable database_name {
   type = string
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable table_configs {
   type = map(object({
     bucket_prefix = string
@@ -49,6 +54,7 @@ resource aws_glue_catalog_database database {
 module table {
   source = "../permissioned_glue_table"
   for_each = var.table_configs
+  unique_suffix = var.unique_suffix
   table_name          = each.key
   external_storage_bucket_id = var.data_bucket
   partition_prefix = each.value.bucket_prefix

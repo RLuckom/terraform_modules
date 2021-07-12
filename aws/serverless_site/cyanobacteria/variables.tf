@@ -21,6 +21,11 @@ variable coordinator_data {
   })
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable forbidden_website_paths {
   type = list(string)
   default = []

@@ -6,6 +6,7 @@ module "donut_days" {
 module replication_lambda {
   count = local.need_replication_lambda ? 1 : 0
   source = "../../donut_days_function"
+  unique_suffix = var.unique_suffix
   timeout_secs = var.replication_time_limit
   account_id = var.account_id
   region = var.region

@@ -9,6 +9,11 @@ variable lambda_details {
   })
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable role_service_principal_ids {
   type = list(string)
   default = ["lambda.amazonaws.com"]
@@ -52,7 +57,7 @@ variable preuploaded_source {
 locals {
   deployment_package_local_path = "${path.root}/functions/zip/${local.scoped_lambda_name}/lambda.zip"
   deployment_package_key = "${local.scoped_lambda_name}/lambda.zip"
-  scoped_lambda_name = "${var.lambda_details.action_name}${var.lambda_details.scope_name == "" ? "" : "-"}${var.lambda_details.scope_name}"
+  scoped_lambda_name = "${var.lambda_details.action_name}${var.lambda_details.scope_name == "" ? "" : "-"}${var.lambda_details.scope_name}${var.unique_suffix == "" ? "" : "-"}${var.unique_suffix}"
 }
 
 variable invoking_principals {

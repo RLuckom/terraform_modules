@@ -14,6 +14,7 @@ locals {
 
 module bucket {
   source = "github.com/RLuckom/terraform_modules//aws/state/object_store/bucket"
+  unique_suffix = var.unique_suffix
   name = var.name == "" ? "${var.domain_parts.controlled_domain_part}.${var.domain_parts.top_level_domain}" : var.name
   account_id = var.account_id
   region = var.region

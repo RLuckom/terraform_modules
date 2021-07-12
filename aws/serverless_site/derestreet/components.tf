@@ -1,5 +1,6 @@
 module cognito_user_management {
   source = "github.com/RLuckom/terraform_modules//aws/state/user_mgmt/stele"
+  unique_suffix = var.unique_suffix
   system_id = var.system_id
   token_validities = var.token_validities
   protected_domain_routing = var.coordinator_data.routing
@@ -10,6 +11,7 @@ module cognito_user_management {
 
 module cognito_identity_management {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/hinge"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
   system_id = var.system_id
@@ -26,6 +28,7 @@ resource random_password nonce_signing_secret {
 
 module access_control_functions {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/gattice"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
   token_issuer = "https://${module.cognito_user_management.user_pool.endpoint}"
@@ -47,6 +50,7 @@ module access_control_functions {
 
 module get_access_creds {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/cognito_to_aws_creds"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
   identity_pool_id = module.cognito_identity_management.identity_pool.id
@@ -60,6 +64,7 @@ module get_access_creds {
 
 module apigateway_dispatcher {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/apigateway_dispatcher"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
   identity_pool_id = module.cognito_identity_management.identity_pool.id
@@ -72,6 +77,7 @@ module apigateway_dispatcher {
 
 module admin_site_frontpage {
   source = "github.com/RLuckom/terraform_modules//themes/icknield/admin_site_ui"
+  unique_suffix = var.unique_suffix
   plugin_configs = [for name, config in var.plugin_static_configs : {
     name = name
     slug = config.display_name
@@ -90,6 +96,7 @@ module admin_site_frontpage {
 
 module admin_site {
   source = "github.com/RLuckom/terraform_modules//aws/serverless_site/capstan"
+  unique_suffix = var.unique_suffix
   account_id = var.account_id
   need_website_bucket_policy_override = var.need_website_bucket_policy_override
   region = var.region

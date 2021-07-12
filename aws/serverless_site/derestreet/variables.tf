@@ -41,6 +41,11 @@ variable coordinator_data {
   })
 }
 
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable token_validities {
   type = object({
     access = object({

@@ -1,3 +1,8 @@
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
 variable file_prefix {
   type = string
   default = ""

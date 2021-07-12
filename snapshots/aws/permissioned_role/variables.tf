@@ -1,11 +1,3 @@
-variable "role_policy" {
-  type = list(object({
-    actions = list(string)
-    resources = list(string)
-  }))
-  default = []
-}
-
 variable "account_id" {
   type = string
 }
@@ -20,4 +12,21 @@ variable "principals" {
     identifiers = list(string)
   }))
   default = []
+}
+
+variable "role_policy" {
+  type = list(object({
+    actions = list(string)
+    resources = list(string)
+  }))
+  default = []
+}
+
+variable unique_suffix {
+  type = string
+  default = ""
+}
+
+locals {
+  role_name = var.unique_suffix != "" ? "${var.role_name}-${var.unique_suffix}" : var.role_name
 }
