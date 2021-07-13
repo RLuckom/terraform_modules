@@ -22,3 +22,7 @@ output routing {
 output system_id {
   value = local.system_id
 }
+
+output table_name {
+  value = module.trails_table.table_name
+}

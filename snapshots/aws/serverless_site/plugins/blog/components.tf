@@ -2,10 +2,6 @@ resource "random_id" "table_suffix" {
   byte_length = 3
 }
 
-locals {
-  posts_table_name = "${var.coordinator_data.system_id.security_scope}-${var.coordinator_data.system_id.subsystem_name}-posts_table-${random_id.table_suffix.b64_url}"
-}
-
 module ui {
   source = "../../../../themes/icknield/admin_site_plugin_ui"
   name = var.name
@@ -76,7 +72,7 @@ module post_entry_lambda {
   config_contents = templatefile("${path.module}/src/backend/post_entry_config.js",
   {
     website_bucket = module.blog_site.website_bucket_name
-    table_name = local.posts_table_name
+    table_name = module.posts_table.table_name
     table_region = var.region
     plugin_image_hosting_prefix = local.plugin_image_hosting_prefix
     plugin_post_hosting_prefix = local.plugin_post_hosting_prefix 
