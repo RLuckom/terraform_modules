@@ -92,7 +92,7 @@ module get_access_creds {
   ]
   lambda_details = {
     action_name = "get_access_creds"
-    scope_name = "test"
+    scope_name = var.scope_name
     policy_statements = []
   }
   layers = [local.aws_sdk_layer_config]

@@ -53,6 +53,7 @@ module get_access_creds {
   unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
+  scope_name = var.system_id.security_scope
   identity_pool_id = module.cognito_identity_management.identity_pool.id
   user_pool_endpoint = module.cognito_user_management.user_pool.endpoint
   api_path = var.get_access_creds_path_for_lambda_origin
@@ -67,6 +68,7 @@ module apigateway_dispatcher {
   unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
+  scope_name = var.system_id.security_scope
   identity_pool_id = module.cognito_identity_management.identity_pool.id
   user_pool_endpoint = module.cognito_user_management.user_pool.endpoint
   client_id = module.cognito_user_management.user_pool_client.id

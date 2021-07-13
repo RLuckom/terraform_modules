@@ -61,7 +61,7 @@ locals {
 
 module site_static_assets {
   source = "../../s3_directory"
-  bucket_name = local.site_bucket
+  bucket_name = module.website_bucket.bucket_name
   file_configs = var.asset_file_configs == null ? local.default_asset_file_configs : var.asset_file_configs 
   depends_on = [module.website_bucket]
 }
@@ -136,7 +136,7 @@ module site {
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
-    regional_domain_name = "${local.site_bucket}.s3.${var.region == "us-east-1" ? "" : "${var.region}."}amazonaws.com"
+    regional_domain_name = "${module.website_bucket.bucket_name}.s3.${var.region == "us-east-1" ? "" : "${var.region}."}amazonaws.com"
   }]
   routing = local.routing
   system_id = local.system_id

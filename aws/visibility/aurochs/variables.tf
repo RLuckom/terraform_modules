@@ -35,11 +35,6 @@ variable visibility_data_bucket {
   default = ""
 }
 
-variable athena_results_bucket {
-  type = string
-  default = ""
-}
-
 variable lambda_source_bucket {
   type = string
   default = ""
@@ -179,7 +174,7 @@ variable cost_report_summary_reader_arns {
 
 locals {
   lambda_logging_config = {
-    bucket = local.visibility_data_bucket
+    bucket = module.visibility_bucket.bucket_name
     prefix = local.scoped_log_prefixes[var.visibility_system_id.security_scope][var.visibility_system_id.subsystem_name].lambda_log_prefix
     metric_table = local.metric_table_configs[var.visibility_system_id.security_scope].table_name
   }
@@ -193,7 +188,6 @@ locals {
   cloudfront_delivery_bucket = var.cloudfront_delivery_bucket == "" ? "${var.bucket_prefix}-cloudfront-delivery" : var.cloudfront_delivery_bucket
   visibility_data_bucket = var.visibility_data_bucket == "" ? "${var.bucket_prefix}-visibility-data" : var.visibility_data_bucket
   cost_report_bucket = var.cost_report_bucket == "" ? "${var.bucket_prefix}-cost-report" : var.cost_report_bucket
-  athena_results_bucket = var.athena_results_bucket == "" ? var.visibility_data_bucket : var.athena_results_bucket
 }
 
 variable athena_prefix {
@@ -387,22 +381,22 @@ locals {
       cloudfront_log_delivery_prefix = "${local.cloudfront_delivery_prefix}/${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
       cloudfront_log_storage_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.cloudfront_prefix}/domain=${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}/"
       cloudfront_result_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
-      cloudfront_athena_result_location = "s3://${local.visibility_data_bucket}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
+      cloudfront_athena_result_location = "s3://${module.visibility_bucket.bucket_name}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.cloudfront_prefix}/"
       lambda_log_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.lambda_prefix}/"
       lambda_log_delivery_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.lambda_prefix}/"
       lambda_result_prefix = "security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
-      lambda_athena_result_location = "s3://${local.visibility_data_bucket}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
+      lambda_athena_result_location = "s3://${module.visibility_bucket.bucket_name}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
       lambda_source_bucket = var.lambda_source_bucket
-      log_delivery_bucket = local.cloudfront_delivery_bucket
+      log_delivery_bucket = module.log_delivery_bucket.bucket_name
       metric_table = local.metric_table_configs[v.system_id.security_scope].table_name
       site_metrics_table = "${k}-metrics"
-      cloudfront_log_delivery_bucket = local.cloudfront_delivery_bucket
-      log_partition_bucket = local.visibility_data_bucket
-      lambda_log_delivery_bucket = local.visibility_data_bucket
-      athena_result_bucket = local.visibility_data_bucket
+      cloudfront_log_delivery_bucket = module.log_delivery_bucket.bucket_name
+      log_partition_bucket = module.visibility_bucket.bucket_name
+      lambda_log_delivery_bucket = module.visibility_bucket.bucket_name
+      athena_result_bucket = module.visibility_bucket.bucket_name
       athena_region = var.athena_region
       glue_table_name = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
-      glue_database_name = replace("${v.system_id.security_scope}-${local.visibility_data_bucket}", "-", "_")
+      glue_database_name = replace("${v.system_id.security_scope}-${module.visibility_bucket.bucket_name}", "-", "_")
       routing = {
         domain = "${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
         domain_parts = v.domain_parts
@@ -416,10 +410,10 @@ locals {
   data_warehouse_configs = zipmap(
     local.system_ids.*.security_scope,
     [for system_id in local.system_ids : {
-      log_delivery_bucket = local.cloudfront_delivery_bucket
-      data_bucket = local.visibility_data_bucket
+      log_delivery_bucket = module.log_delivery_bucket.bucket_name
+      data_bucket = module.visibility_bucket.bucket_name
       metric_table = local.metric_table_configs[system_id.security_scope].table_name
-      glue_database_name = replace("${system_id.security_scope}-${local.visibility_data_bucket}", "-", "_")
+      glue_database_name = replace("${system_id.security_scope}-${module.visibility_bucket.bucket_name}", "-", "_")
       athena_region = var.athena_region
       security_scope = system_id.security_scope
       glue_table_configs = merge(zipmap(
@@ -470,11 +464,11 @@ locals {
       system_id.subsystem_names,
       [for subsystem_name in system_id.subsystem_names : {
         log_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
-        log_bucket = local.visibility_data_bucket
+        log_bucket = module.visibility_bucket.bucket_name
         metric_table = local.metric_table_configs[system_id.security_scope].table_name
         config = {
           prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
-          bucket = local.visibility_data_bucket
+          bucket = module.visibility_bucket.bucket_name
           metric_table = local.metric_table_configs[system_id.security_scope].table_name
         }
         system_id = {

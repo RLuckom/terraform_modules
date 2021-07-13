@@ -7,15 +7,11 @@ output visibility_lifecycle_rules {
 }
 
 output visibility_data_bucket {
-  value = local.visibility_data_bucket
-}
-
-output athena_results_bucket {
-  value = local.athena_results_bucket
+  value = module.visibility_bucket.bucket_name
 }
 
 output cloudfront_delivery_bucket {
-  value = local.cloudfront_delivery_bucket
+  value = module.log_delivery_bucket.bucket_name
 }
 
 output data_warehouse_configs {
@@ -44,7 +40,7 @@ output cost_report_prefix {
 
 output cost_report_summary_location {
   value = {
-    bucket = local.visibility_data_bucket
+    bucket = module.visibility_bucket.bucket_name
     key = module.cost_report_function.report_summary_key
   }
 }

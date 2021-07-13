@@ -79,12 +79,12 @@ module cost_report_delivery_bucket {
 }
 
 resource aws_cur_report_definition cost_report_definition {
-  report_name                = "overall-cost-report"
+  report_name                = var.unique_suffix == "" ? "overall-cost-report" : "overall-cost-report-${var.unique_suffix}"
   time_unit                  = "HOURLY"
   format                     = "textORcsv"
   compression                = "GZIP"
   additional_schema_elements = ["RESOURCES"]
-  s3_bucket                  = local.cost_report_bucket
+  s3_bucket                  = module.cost_report_delivery_bucket.bucket_name
   s3_region                  = var.region
   report_versioning = "OVERWRITE_REPORT"
 }
@@ -173,7 +173,7 @@ module data_warehouse {
   source = "github.com/RLuckom/terraform_modules//aws/state/data_warehouse"
   for_each = local.data_warehouse_configs
   unique_suffix = var.unique_suffix
-  data_bucket = local.visibility_data_bucket
+  data_bucket = module.visibility_bucket.bucket_name
   scope = each.value.security_scope
   database_name = each.value.glue_database_name
   table_configs = each.value.glue_table_configs
@@ -227,11 +227,11 @@ module cost_report_function {
   csv_parser_layer = var.csv_parser_layer
   io_config = {
     input_config = {
-      bucket = local.cost_report_bucket
+      bucket = module.cost_report_delivery_bucket.bucket_name
       prefix = ""
     }
     output_config = {
-      bucket = local.visibility_data_bucket
+      bucket = module.visibility_bucket.bucket_name
       prefix = local.cost_report_prefix
     }
   }
@@ -254,7 +254,7 @@ module archive_function {
     athena_catalog = local.athena_catalog
     athena_destinations_map = jsonencode(local.archive_function_destination_maps.athena_destinations_map)
     log_destinations_map = jsonencode(local.archive_function_destination_maps.log_destination_map)
-    partition_bucket = local.visibility_data_bucket
+    partition_bucket = module.visibility_bucket.bucket_name
   })
   lambda_event_configs = var.lambda_event_configs
   additional_helpers = [

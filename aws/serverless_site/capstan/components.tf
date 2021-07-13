@@ -6,7 +6,7 @@ locals {
 module site_static_assets {
   count = length(var.asset_paths)
   source = "github.com/RLuckom/terraform_modules//aws/local_directory_to_s3"
-  bucket_name = local.site_bucket
+  bucket_name = module.website_bucket.bucket_name
   asset_directory_root = var.asset_paths[count.index].local_path
   s3_asset_prefix = var.asset_paths[count.index].s3_prefix
   depends_on = [module.website_bucket]
@@ -14,7 +14,7 @@ module site_static_assets {
 
 resource "aws_s3_bucket_object" "assets" {
   count = length(var.file_configs)
-  bucket = local.site_bucket
+  bucket = module.website_bucket.bucket_name
   key    = var.file_configs[count.index].key
   content_type = var.file_configs[count.index].content_type
   content = var.file_configs[count.index].file_contents
@@ -37,7 +37,7 @@ module site {
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
-    regional_domain_name = "${local.site_bucket}.s3.${var.region == "us-east-1" ? "" : "${var.region}."}amazonaws.com"
+    regional_domain_name = "${module.website_bucket.bucket_name}.s3.${var.region == "us-east-1" ? "" : "${var.region}."}amazonaws.com"
   }]
   routing = local.routing
   system_id = local.system_id

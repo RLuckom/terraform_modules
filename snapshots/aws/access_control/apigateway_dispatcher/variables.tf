@@ -18,6 +18,10 @@ variable client_id {
   type = string
 }
 
+variable scope_name {
+  type = string
+}
+
 variable unique_suffix {
   type = string
   default = ""

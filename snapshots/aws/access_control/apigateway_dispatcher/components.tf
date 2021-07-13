@@ -135,7 +135,7 @@ module apigateway_dispatcher {
   ]
   lambda_details = {
     action_name = "apigateway_dispatcher"
-    scope_name = "test"
+    scope_name = var.scope_name
     policy_statements = []
   }
   layers = [local.aws_sdk_layer_config]

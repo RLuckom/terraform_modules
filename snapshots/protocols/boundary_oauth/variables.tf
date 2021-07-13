@@ -336,6 +336,7 @@ resource null_resource uploaded_objects {
 locals {
   source_hash = sha256(jsonencode({
     config = local.full_config_json
+    files = fileset("${path.module}/nodejs", "**")
     code = [
       local.http_headers.source_contents,
       local.check_auth.source_contents,
