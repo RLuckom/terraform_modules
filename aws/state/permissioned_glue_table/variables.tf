@@ -83,5 +83,5 @@ variable "partition_prefix" {
 }
 
 locals {
-  table_name = var.unique_suffix == "" ? var.table_name : "${var.table_name}-${var.unique_suffix}"
+  table_name = var.unique_suffix == "" ? var.table_name : "${var.table_name}_${var.unique_suffix}"
 }

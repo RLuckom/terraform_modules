@@ -30,7 +30,7 @@ locals {
       site_title = var.site_title
       nav_links = local.nav_links
       aws_region = var.region
-      table_name = local.trails_table_name
+      table_name = module.trails_table.table_name
       post_template_key = "assets/templates/post.tmpl"
       trail_template_key = "assets/templates/trail.tmpl"
     }

@@ -2,10 +2,9 @@
 full_config='${full_config}'
 headers_config='${headers_config}'
 
-
 mkdir -p ./workdir
+cp -r ./src/shared ./workdir/
 cp -r ./nodejs/node_modules ./workdir/
-cp -r ./src/shared ./workdir
 
 # headers
 cp ./src/http_headers.js workdir/index.js

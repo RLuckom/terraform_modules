@@ -249,6 +249,7 @@ variable logging_config {
 }
 
 locals {
+  posts_table_name = "${var.coordinator_data.system_id.security_scope}-${var.coordinator_data.system_id.subsystem_name}-posts_table-${random_id.table_suffix.b64_url}"
   blog_image_hosting_root = "/img/"
   blog_image_hosting_prefix = "img/"
   blog_post_hosting_root = "/posts/"
@@ -262,7 +263,7 @@ locals {
   libs_js_path = "${local.file_prefix}/assets/js/pkg-${filemd5("${path.module}/src/frontend/libs/libs.js")}.js"
   prosemirror_setup_js_path = "${local.file_prefix}/assets/js/prosemirror-setup-${filemd5("${path.module}/src/frontend/libs/prosemirror-setup.js")}.js"
   plugin_config = {
-    posts_table = local.posts_table_name
+    posts_table = module.posts_table.table_name
     site_metrics_table = var.coordinator_data.site_metrics_table
     table_region = var.region
     website_bucket = module.blog_site.website_bucket_name

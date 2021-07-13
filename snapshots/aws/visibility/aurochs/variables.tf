@@ -176,7 +176,7 @@ locals {
   lambda_logging_config = {
     bucket = module.visibility_bucket.bucket_name
     prefix = local.scoped_log_prefixes[var.visibility_system_id.security_scope][var.visibility_system_id.subsystem_name].lambda_log_prefix
-    metric_table = local.metric_table_configs[var.visibility_system_id.security_scope].table_name
+    metric_table = var.unique_suffix == "" ? "${local.metric_table_configs[var.visibility_system_id.security_scope].table_name}" : "${local.metric_table_configs[var.visibility_system_id.security_scope].table_name}-${var.unique_suffix}"
   }
 }
 
@@ -388,14 +388,16 @@ locals {
       lambda_athena_result_location = "s3://${module.visibility_bucket.bucket_name}/security_scope=${v.system_id.security_scope}/subsystem=${v.system_id.subsystem_name}/${local.athena_prefix}/${local.lambda_prefix}/"
       lambda_source_bucket = var.lambda_source_bucket
       log_delivery_bucket = module.log_delivery_bucket.bucket_name
-      metric_table = local.metric_table_configs[v.system_id.security_scope].table_name
-      site_metrics_table = "${k}-metrics"
+      metric_table = var.unique_suffix == "" ? "${local.metric_table_configs[v.system_id.security_scope].table_name}" : "${local.metric_table_configs[v.system_id.security_scope].table_name}-${var.unique_suffix}"
+      site_metrics_table = var.unique_suffix == "" ? "${k}-metrics" : "${k}-metrics-${var.unique_suffix}"
       cloudfront_log_delivery_bucket = module.log_delivery_bucket.bucket_name
       log_partition_bucket = module.visibility_bucket.bucket_name
       lambda_log_delivery_bucket = module.visibility_bucket.bucket_name
       athena_result_bucket = module.visibility_bucket.bucket_name
       athena_region = var.athena_region
-      glue_table_name = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
+      glue_table_name_prefix = replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")
+      glue_table_name = "${replace("${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}", ".", "_")}${var.unique_suffix == "" ? "" : "_${var.unique_suffix}"}"
+      // the vis bkt name happens to append the unique suffix correctly.
       glue_database_name = replace("${v.system_id.security_scope}-${module.visibility_bucket.bucket_name}", "-", "_")
       routing = {
         domain = "${trimsuffix(v.domain_parts.controlled_domain_part, ".")}.${trimprefix(v.domain_parts.top_level_domain, ".")}"
@@ -412,7 +414,8 @@ locals {
     [for system_id in local.system_ids : {
       log_delivery_bucket = module.log_delivery_bucket.bucket_name
       data_bucket = module.visibility_bucket.bucket_name
-      metric_table = local.metric_table_configs[system_id.security_scope].table_name
+      metric_table = var.unique_suffix == "" ? "${local.metric_table_configs[system_id.security_scope].table_name}" : "${local.metric_table_configs[system_id.security_scope].table_name}-${var.unique_suffix}"
+      // the vis bkt name happens to append the unique suffix correctly.
       glue_database_name = replace("${system_id.security_scope}-${module.visibility_bucket.bucket_name}", "-", "_")
       athena_region = var.athena_region
       security_scope = system_id.security_scope
@@ -465,11 +468,11 @@ locals {
       [for subsystem_name in system_id.subsystem_names : {
         log_prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
         log_bucket = module.visibility_bucket.bucket_name
-        metric_table = local.metric_table_configs[system_id.security_scope].table_name
+        metric_table = var.unique_suffix == "" ? "${local.metric_table_configs[system_id.security_scope].table_name}" : "${local.metric_table_configs[system_id.security_scope].table_name}-${var.unique_suffix}"
         config = {
           prefix = "security_scope=${system_id.security_scope}/subsystem=${subsystem_name}/${local.lambda_prefix}/"
           bucket = module.visibility_bucket.bucket_name
-          metric_table = local.metric_table_configs[system_id.security_scope].table_name
+          metric_table = var.unique_suffix == "" ? "${local.metric_table_configs[system_id.security_scope].table_name}" : "${local.metric_table_configs[system_id.security_scope].table_name}-${var.unique_suffix}"
         }
         system_id = {
           security_scope = system_id.security_scope
