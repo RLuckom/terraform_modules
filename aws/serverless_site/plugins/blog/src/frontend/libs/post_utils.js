@@ -503,7 +503,18 @@ function getImageIds({ content, footnotes, postId}) {
 
 const imageKeyRegexp = new RegExp('https://' + CONFIG.domain + '/' +CONFIG.plugin_image_hosting_path + '([^/]*)/([0-9a-f-]{36})/([0-9]*).(.*)')
 function parseImageUrl(url) {
-  const [originalUrl, encodedPostId, imageId, size, canonicalExt] = url.match(imageKeyRegexp)
+  if (!_.isString(url)) {
+    return {
+      originalUrl: url
+    }
+  }
+  const parts = url.match(imageKeyRegexp)
+  if (!parts) {
+    return {
+      originalUrl: url
+    }
+  }
+  const [originalUrl, encodedPostId, imageId, size, canonicalExt] = parts
   if (encodedPostId && imageId && size && canonicalExt) {
     return {originalUrl, imageId, postId: decodeURIComponent(encodedPostId), size, canonicalExt}
   }

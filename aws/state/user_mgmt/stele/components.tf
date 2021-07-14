@@ -24,7 +24,7 @@ Note that if you are using terraform to set up the system for the first time, th
 not have finished being set up at the time you received this email. The site may not work at all until
 you see terraform complete successfully.
 
-Terraform works additively (or, when deploying, subtractively). That means that if it completes some steps
+Terraform works additively (or, when destroying, subtractively). That means that if it completes some steps
 before failing, either during the "apply" (create) or "destroy" steps, it will skip those steps the next time
 it runs. Before entering 'yes' at the confirmation prompt, note the number of resources terraform says it will
 create, update, and delete. If the run fails, try running it again. If the create / update / destroy numbers are
