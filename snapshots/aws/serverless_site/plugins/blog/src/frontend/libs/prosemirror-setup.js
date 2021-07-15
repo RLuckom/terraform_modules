@@ -523,6 +523,7 @@ class ImageView {
     this.isSelected = true
     const self = this
     this.dom.classList.add("ProseMirror-selectednode")
+    this.dom.querySelector('.image-text-description').focus()
   }
 
   deselectNode() {
