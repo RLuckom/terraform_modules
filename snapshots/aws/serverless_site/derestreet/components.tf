@@ -102,6 +102,7 @@ module admin_site {
   account_id = var.account_id
   need_website_bucket_policy_override = var.need_website_bucket_policy_override
   region = var.region
+  force_destroy = var.allow_delete_buckets
   file_configs = concat(
     module.admin_site_frontpage.files,
     flatten(values(local.plugin_configs).*.file_configs)

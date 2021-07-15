@@ -46,6 +46,11 @@ variable unique_suffix {
   default = ""
 }
 
+variable allow_delete_buckets {
+  type = bool
+  default = false
+}
+
 variable token_validities {
   type = object({
     access = object({

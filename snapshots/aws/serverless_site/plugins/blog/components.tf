@@ -143,6 +143,7 @@ module blog_site {
   nav_links = var.nav_links
   site_title = var.site_title
   coordinator_data = var.coordinator_data
+  force_destroy = var.allow_delete_buckets
   website_bucket_cors_rules = [{
     allowed_headers = ["authorization", "content-md5", "content-type", "cache-control", "x-amz-content-sha256", "x-amz-date", "x-amz-security-token", "x-amz-user-agent"]
     allowed_methods = ["GET"]

@@ -10,6 +10,11 @@ variable account_id {
   type = string
 }
 
+variable allow_delete_buckets {
+  type = bool
+  default = false
+}
+
 variable unique_suffix {
   type = string
   default = ""
