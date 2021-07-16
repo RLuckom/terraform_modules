@@ -311,7 +311,7 @@ output files {
   value = module.ui.files 
 }
 
-output plugin_config {
+output plugin_running_material {
   value = {
     name = var.name
     slug = "manage blog posts"

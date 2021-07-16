@@ -109,6 +109,10 @@ output static_config {
   }
 }
 
+output plugin_config {
+  value = var.plugin_config
+}
+
 output blog_site_bucket_name {
   value = module.blog_site.website_bucket_name
 }
