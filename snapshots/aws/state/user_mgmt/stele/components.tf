@@ -16,15 +16,15 @@ resource aws_cognito_user_pool user_pool {
     allow_admin_create_user_only = true
     invite_message_template {
       email_message = <<EOF
-Here we go! This email contains your login details for <a href="https://${var.protected_domain_routing.domain}/">${var.protected_domain_routing.domain}</a>
+<p>Here we go! This email contains your login details for <a href="https://${var.protected_domain_routing.domain}/">${var.protected_domain_routing.domain}</a></p>
 
-Your username is {username} and your temporary password is {####}
+<p>Your username is {username} and your temporary password is {####} </p>
 
-Note that if you are using terraform to set up the system for the first time, the complete system may
+<p>Note that if you are using terraform to set up the system for the first time, the complete system may
 not have finished being set up at the time you received this email. The site may not work at all until
-you see terraform complete successfully.
+you see terraform complete successfully.</p>
 
-Terraform works additively (or, when destroying, subtractively). That means that if it completes some steps
+<p>Terraform works additively (or, when destroying, subtractively). That means that if it completes some steps
 before failing, either during the "apply" (create) or "destroy" steps, it will skip those steps the next time
 it runs. Before entering 'yes' at the confirmation prompt, note the number of resources terraform says it will
 create, update, and delete. If the run fails, try running it again. If the create / update / destroy numbers are
@@ -32,7 +32,7 @@ the same the next time, then you're stuck and further debugging is needed. If th
 you run terraform, then continue to run it until a run completes successfully. Initial failures can be caused by
 terraform trying to delete or create a resource before the things it relies on are completely ready. If you give it
 a few moments between runs, these things often resolve themselves. Note that certain resources may take up to 15 minutes
-to be operational.
+to be operational.</p>
 EOF
       email_subject = "Personal cloud system account created"
       sms_message = "Your username for https://${var.protected_domain_routing.domain}/ is {username} and your temporary password is {####}"
