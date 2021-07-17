@@ -523,7 +523,6 @@ class ImageView {
     this.isSelected = true
     const self = this
     this.dom.classList.add("ProseMirror-selectednode")
-    this.dom.querySelector('.image-text-description').focus()
   }
 
   deselectNode() {
@@ -1051,7 +1050,7 @@ function buildMenuItems({schema, insertImageItem, footnotes, addFootnote}) {
   r.insertMenu = new prosemirror.Dropdown(cut([r.insertImage, r.insertHorizontalRule, r.footnoteMenu, r.addFootnote]), {label: I18N_CONFIG.ui.insert})
   r.typeMenu = new prosemirror.Dropdown(cut([r.makeParagraph, r.makeCodeBlock, r.makeHead1 && new prosemirror.DropdownSubmenu(cut([
     r.makeHead1, r.makeHead2, r.makeHead3,
-  ]), {label: I18N_CONFIG.ui.Heading})]), {label: I18N_CONFIG.ui.type + I18N_CONFIG.ui.ellipsis})
+  ]), {label: I18N_CONFIG.ui.heading})]), {label: I18N_CONFIG.ui.type + I18N_CONFIG.ui.ellipsis})
 
   r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
   r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, prosemirror.joinUpItem,
