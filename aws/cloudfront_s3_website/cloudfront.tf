@@ -263,6 +263,29 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     }
   }
 
+  dynamic "ordered_cache_behavior" {
+    for_each = var.no_access_control_s3_path_patterns
+    content {
+      path_pattern = ordered_cache_behavior.value.path
+      target_origin_id = local.s3_origin_id
+      allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+      cached_methods   = ["GET", "HEAD"]
+      compress = var.compress
+      default_ttl = 0
+      min_ttl = 0
+      max_ttl = 0
+      forwarded_values {
+        query_string = false
+        headers = ["Content-Type", "Access-Control-Request-Headers", "Access-Control-Request-Method", "Origin"]
+
+        cookies {
+          forward = "none"
+        }
+      }
+      viewer_protocol_policy = "redirect-to-https"
+    }
+  }
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
