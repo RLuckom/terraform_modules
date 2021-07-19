@@ -203,7 +203,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       viewer_protocol_policy = "redirect-to-https"
 
       dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.authorizer != "NONE" ? [1] : []
+        for_each = ordered_cache_behavior.value.authorizer != "NONE" && length(var.access_control_function_qualified_arns) > 0 && var.access_control_function_qualified_arns[0].move_cookie_to_auth_header != "" ? [1] : []
         content {
           event_type   = "origin-request"
           lambda_arn   = var.access_control_function_qualified_arns[0].move_cookie_to_auth_header
