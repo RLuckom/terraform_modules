@@ -53,7 +53,6 @@ main {
 }
 
 .metric-container {
-  border: 1px solid black;
   position: relative;
   font-family: inherit;
   padding: 10px;
