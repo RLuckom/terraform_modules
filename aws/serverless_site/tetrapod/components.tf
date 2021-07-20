@@ -329,6 +329,8 @@ locals {
 module trails_table {
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
   unique_suffix = var.unique_suffix
+  account_id = var.account_id
+  region = var.region
   table_name = local.trails_table_name
   delete_item_permission_role_names = local.trails_table_delete_role_names
   write_permission_role_names = local.trails_table_write_permission_role_names

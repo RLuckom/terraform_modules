@@ -26,6 +26,14 @@ variable action_name {
   default = "request_record_parser"
 }
 
+variable policy_statements {
+  type = list(object({
+    actions = list(string)
+    resources = list(string)
+  }))
+  default = []
+}
+
 variable site_metric_configs {
   type = list(object({
     glue_db = string

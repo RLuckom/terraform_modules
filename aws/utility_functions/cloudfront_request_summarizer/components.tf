@@ -13,6 +13,7 @@ module site_metric_summarizer {
   account_id = var.account_id
   region = var.region
   unique_suffix = var.unique_suffix
+  policy_statements = var.policy_statements
   mem_mb = var.function_memory_size
   timeout_secs = var.function_time_limit
   cron_notifications = var.cron_notifications

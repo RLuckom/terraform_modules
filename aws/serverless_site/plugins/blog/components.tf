@@ -97,6 +97,8 @@ module post_entry_lambda {
 
 module posts_table {
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  region = var.region
+  account_id = var.account_id
   unique_suffix = var.unique_suffix
   table_name = local.posts_table_name
   delete_item_permission_role_names = [module.post_entry_lambda.role.name]

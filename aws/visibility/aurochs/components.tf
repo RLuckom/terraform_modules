@@ -97,6 +97,8 @@ resource random_id metric_table_suffixes {
 module metric_tables {
   for_each = toset(keys(local.metric_table_configs))
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  account_id = var.account_id
+  region = var.region
   unique_suffix = var.unique_suffix
   partition_key = {
     name = "invokedFunctionArn",
@@ -132,6 +134,8 @@ module metric_tables {
 module site_metric_tables {
   for_each = toset(keys(local.serverless_site_configs))
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  account_id = var.account_id
+  region = var.region
   unique_suffix = var.unique_suffix
   partition_key = {
     name = "metricType",
@@ -144,9 +148,9 @@ module site_metric_tables {
   table_name = "${each.key}-metrics"
   read_permission_role_names = concat(
     lookup(var.supported_system_clients[local.serverless_site_configs[each.key].system_id.security_scope].subsystems[local.serverless_site_configs[each.key].subsystem_name].site_metric_table_read_role_name_map, each.key, []),
-    [module.site_metric_function.role.name]
+    []
   )
-  write_permission_role_names = [module.site_metric_function.role.name]
+  write_permission_role_names = []
 }
 
 module site_metric_function {
@@ -155,6 +159,25 @@ module site_metric_function {
   account_id = var.account_id
   region = var.region
   logging_config = local.lambda_logging_config
+  // Ordinarily this would be in the dynamo module, but roles can only have 10 policies attached, and this allows us to use only one for all the tables
+  policy_statements = [ 
+    {
+      actions = [
+        "dynamodb:GetItem",
+        "dynamodb:Query",
+        "dynamodb:Scan",
+        "dynamodb:BatchGetItem",
+        "dynamodb:PartiQLSelect",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PartiQLDelete",
+        "dynamodb:PartiQLInsert",
+        "dynamodb:PartiQLUpdate",
+      ]
+      resources = [for k in keys(local.serverless_site_configs) : module.site_metric_tables[k].table_arn]
+    }
+  ]
   security_scope = "visibility"
   donut_days_layer = var.donut_days_layer
   csv_parser_layer = var.csv_parser_layer
