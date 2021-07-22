@@ -95,3 +95,11 @@ module "csv_parser" {
   bucket = module.layer_bucket.bucket.id
   output_path = "${path.root}/src/aws/layers/csv_parser/layer.zip"
 }
+
+module "archive_utils" {
+  source = "github.com/RLuckom/terraform_modules//aws/s3_archive"
+  key = "archive_utils"
+  path = "${path.root}/src/aws/layers/archive_utils/"
+  bucket = module.layer_bucket.bucket.id
+  output_path = "${path.root}/src/aws/layers/archive_utils/layer.zip"
+}
