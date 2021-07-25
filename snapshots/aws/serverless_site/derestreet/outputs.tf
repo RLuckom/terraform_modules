@@ -28,6 +28,7 @@ output plugin_config {
     source_root = "${local.plugin_root}/${replace(k, "/", "")}/"
     api_root = "${local.api_root}/${local.plugin_root}/${replace(k, "/", "")}/"
     upload_root = "${local.upload_root}/${local.plugin_root}/${replace(k, "/", "")}/"
+    backend_readonly_root = "${local.backend_readonly_root}/${local.plugin_root}/${replace(k, "/", "")}/"
     hosting_root = "${local.asset_hosting_root}/${local.plugin_root}/${replace(k, "/", "")}/"
   }])
 }

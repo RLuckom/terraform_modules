@@ -118,6 +118,11 @@ variable plugin_configs {
       role_arn = string
       permission_type = string
     }))
+    plugin_relative_bucket_backend_readonly_root_permissions_needed = list(object({
+      plugin_relative_key = string
+      role_arn = string
+      permission_type = string
+    }))
     plugin_relative_bucket_list_permissions_needed = list(object({
       plugin_relative_key = string
       role_arn = string
@@ -218,6 +223,11 @@ variable upload_root {
   default = "/uploads/"
 }
 
+variable backend_readonly_root {
+  type = string
+  default = "/backend-readonly/"
+}
+
 variable asset_hosting_root {
   type = string
   default = "/hosted-assets/"
@@ -243,6 +253,7 @@ locals {
   plugin_root = trim(var.plugin_root, "/")
   api_root = trim(var.api_root, "/")
   upload_root = trim(var.upload_root, "/")
+  backend_readonly_root = trim(var.backend_readonly_root, "/")
   asset_hosting_root = trim(var.asset_hosting_root, "/")
   need_aws_sdk_layer = var.aws_sdk_layer.present == false
   aws_sdk_layer_config = local.need_aws_sdk_layer ? module.aws_sdk[0].layer_config : var.aws_sdk_layer
@@ -264,6 +275,11 @@ locals {
         [for permission in config.plugin_relative_bucket_upload_permissions_needed : {
         prefix = "${local.upload_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(permission.plugin_relative_key, "/")}/"
         permission_type = permission.permission_type
+        arns = permission.role_arn == null ? [module.cognito_identity_management.authenticated_role[name].arn] : [permission.role_arn]
+      }],
+        [for permission in config.plugin_relative_bucket_backend_readonly_root_permissions_needed : {
+        prefix = "${local.backend_readonly_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(permission.plugin_relative_key, "/")}/"
+        permission_type = "read_known_objects"
         arns = permission.role_arn == null ? [module.cognito_identity_management.authenticated_role[name].arn] : [permission.role_arn]
       }],
         [for permission in config.plugin_relative_bucket_host_permissions_needed : {
@@ -300,6 +316,7 @@ locals {
         var.default_static_headers
       )
       upload_prefix = "${local.upload_root}/${local.plugin_root}/${replace(name, "/", "")}/"
+      backend_readonly_prefix = "${local.backend_readonly_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       asset_hosting_prefix = "${local.asset_hosting_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       lambda_origins = [ for origin in config.plugin_relative_lambda_origins : {
         path = "/${local.api_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"

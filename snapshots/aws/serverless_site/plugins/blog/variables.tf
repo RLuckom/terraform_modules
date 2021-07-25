@@ -50,6 +50,7 @@ variable plugin_config {
     domain = string
     bucket_name = string
     upload_root = string
+    backend_readonly_root = string
     api_root = string
     aws_credentials_endpoint = string
     hosting_root = string
