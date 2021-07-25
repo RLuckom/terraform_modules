@@ -1,5 +1,13 @@
 locals {
   s3_origin_id = local.routing.domain_parts.controlled_domain_part
+  default_access_control_functions = length(var.access_control_function_qualified_arns) > 0 ? var.access_control_function_qualified_arns[0] : {
+    refresh_auth = ""
+    parse_auth = ""
+    check_auth = ""
+    sign_out = ""
+    http_headers = ""
+    move_cookie_to_auth_header = ""
+  }
   access_control_paths = {
     sign_out = "/signout"
     parse_auth = "/parseauth"
@@ -89,7 +97,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = length(var.access_control_function_qualified_arns) > 0 ? [var.access_control_function_qualified_arns[0]] : []
+    for_each = local.default_access_control_functions.sign_out != "" ? [1] : []
     content {
       path_pattern = local.access_control_paths.sign_out
       target_origin_id   = local.dummy_origin.origin_id
@@ -116,7 +124,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = length(var.access_control_function_qualified_arns) > 0 ? [var.access_control_function_qualified_arns[0]] : []
+    for_each = local.default_access_control_functions.refresh_auth != "" ? [1] : []
     content {
       path_pattern = local.access_control_paths.refresh_auth
       target_origin_id   = local.dummy_origin.origin_id
@@ -143,7 +151,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = length(var.access_control_function_qualified_arns) > 0 ? [var.access_control_function_qualified_arns[0]] : []
+    for_each = local.default_access_control_functions.parse_auth != "" ? [1] : []
     content {
       path_pattern = local.access_control_paths.parse_auth
       target_origin_id   = local.dummy_origin.origin_id
@@ -203,7 +211,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       viewer_protocol_policy = "redirect-to-https"
 
       dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.authorizer != "NONE" && length(var.access_control_function_qualified_arns) > 0 && var.access_control_function_qualified_arns[0].move_cookie_to_auth_header != "" ? [1] : []
+        for_each = ordered_cache_behavior.value.authorizer != "NONE" && local.default_access_control_functions.move_cookie_to_auth_header != "" ? [1] : []
         content {
           event_type   = "origin-request"
           lambda_arn   = var.access_control_function_qualified_arns[0].move_cookie_to_auth_header
@@ -212,7 +220,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       }
 
       dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.authorizer != "NONE" ? [1] : []
+        for_each = ordered_cache_behavior.value.authorizer != "NONE" && local.default_access_control_functions.http_headers != "" ? [1] : []
         content {
           event_type   = "origin-response"
           lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
@@ -244,7 +252,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       viewer_protocol_policy = "redirect-to-https"
 
       dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.access_controlled ? [1] : []
+        for_each = ordered_cache_behavior.value.access_controlled && local.default_access_control_functions.check_auth != "" ? [1] : []
         content {
           event_type   = "viewer-request"
           lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
@@ -253,7 +261,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       }
 
       dynamic "lambda_function_association" {
-        for_each = ordered_cache_behavior.value.access_controlled ? [1] : []
+        for_each = ordered_cache_behavior.value.access_controlled && local.default_access_control_functions.http_headers != "" ? [1] : []
         content {
           event_type   = "origin-response"
           lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
@@ -307,7 +315,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     viewer_protocol_policy = "redirect-to-https"
 
     dynamic "lambda_function_association" {
-      for_each = length(var.access_control_function_qualified_arns) > 0  && var.secure_default_origin ? [var.access_control_function_qualified_arns[0]] : []
+      for_each = var.secure_default_origin && local.default_access_control_functions.check_auth != "" ? [1] : []
       content {
         event_type   = "viewer-request"
         lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
@@ -316,7 +324,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     }
 
     dynamic "lambda_function_association" {
-      for_each = length(var.access_control_function_qualified_arns) > 0  && var.secure_default_origin ? [var.access_control_function_qualified_arns[0]] : []
+      for_each = var.secure_default_origin && local.default_access_control_functions.http_headers != "" ? [1] : []
       content {
         event_type   = "origin-response"
         lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
