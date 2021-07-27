@@ -135,6 +135,7 @@ variable plugin_configs {
     plugin_relative_lambda_origins = list(object({
       plugin_relative_path = string
       forwarded_headers = list(string)
+      authorizer = string
       lambda = object({
         arn = string
         name = string
@@ -320,7 +321,7 @@ locals {
       asset_hosting_prefix = "${local.asset_hosting_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       lambda_origins = [ for origin in config.plugin_relative_lambda_origins : {
         path = "/${local.api_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"
-        authorizer = "default"
+        authorizer = origin.authorizer == "NONE" ? "NONE" : "default"
         gateway_name_stem = local.gateway_name_stem
         allowed_methods = ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"]
         cached_methods = ["GET", "HEAD"]
@@ -336,7 +337,7 @@ locals {
           headers = origin.forwarded_headers
           cookie_names = ["ID-TOKEN"]
         }
-        lambda = {
+        lambda = origin.authorizer == "NONE" ? origin.lambda : {
           arn = module.apigateway_dispatcher.apigateway_dispatcher_lambda.arn
           name = module.apigateway_dispatcher.apigateway_dispatcher_lambda.function_name
         }
