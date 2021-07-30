@@ -229,6 +229,11 @@ variable backend_readonly_root {
   default = "/backend-readonly/"
 }
 
+variable setup_storage_root {
+  type = string
+  default = "/backend-setup/"
+}
+
 variable asset_hosting_root {
   type = string
   default = "/hosted-assets/"
@@ -255,6 +260,7 @@ locals {
   api_root = trim(var.api_root, "/")
   upload_root = trim(var.upload_root, "/")
   backend_readonly_root = trim(var.backend_readonly_root, "/")
+  setup_storage_root = trim(var.setup_storage_root, "/")
   asset_hosting_root = trim(var.asset_hosting_root, "/")
   need_aws_sdk_layer = var.aws_sdk_layer.present == false
   aws_sdk_layer_config = local.need_aws_sdk_layer ? module.aws_sdk[0].layer_config : var.aws_sdk_layer
@@ -318,6 +324,7 @@ locals {
       )
       upload_prefix = "${local.upload_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       backend_readonly_prefix = "${local.backend_readonly_root}/${local.plugin_root}/${replace(name, "/", "")}/"
+      setup_storage_prefix = "${local.setup_storage_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       asset_hosting_prefix = "${local.asset_hosting_root}/${local.plugin_root}/${replace(name, "/", "")}/"
       lambda_origins = [ for origin in config.plugin_relative_lambda_origins : {
         path = "/${local.api_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(origin.plugin_relative_path, "/")}"
