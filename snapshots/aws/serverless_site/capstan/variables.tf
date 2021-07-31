@@ -164,6 +164,13 @@ variable subject_alternative_names {
   default = null
 }
 
+variable no_access_control_s3_path_patterns {
+  type = list(object({
+    path = string
+  }))
+  default = []
+}
+
 locals {
   subject_alternative_names = var.subject_alternative_names == null ? ["www.${local.routing.domain}"] : var.subject_alternative_names
   site_bucket = var.site_bucket == null ? replace(local.routing.domain, ".", "-") : var.site_bucket

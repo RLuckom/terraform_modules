@@ -35,6 +35,7 @@ module site {
   unique_suffix = var.unique_suffix
   enable_distribution = var.enable
   access_control_function_qualified_arns = var.access_control_function_qualified_arns
+  no_access_control_s3_path_patterns = var.no_access_control_s3_path_patterns
   website_buckets = [{
     origin_id = local.routing.domain_parts.controlled_domain_part
     regional_domain_name = "${module.website_bucket.bucket_name}.s3.${var.region == "us-east-1" ? "" : "${var.region}."}amazonaws.com"

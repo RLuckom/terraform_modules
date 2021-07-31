@@ -69,7 +69,7 @@ variable "no_cache_s3_path_patterns" {
   default = []
 }
 
-variable "no_access_control_s3_path_patterns" {
+variable no_access_control_s3_path_patterns {
   type = list(object({
     path = string
   }))

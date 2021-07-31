@@ -7,7 +7,6 @@ resource null_resource uploaded_objects {
   provisioner "local-exec" {
     command = templatefile("${path.module}/upload_populated.sh",
     {
-      // CSP headers include single-quotes, this shepherds them through bash
       rendered_index = local.rendered_index
       bucket = var.bucket_config.bucket
       prefix = var.bucket_config.prefix
