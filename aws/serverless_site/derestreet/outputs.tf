@@ -30,6 +30,7 @@ output plugin_config {
     upload_root = "${local.upload_root}/${local.plugin_root}/${replace(k, "/", "")}/"
     setup_storage_root = "${local.setup_storage_root}/${local.plugin_root}/${replace(k, "/", "")}/"
     backend_readonly_root = "${local.backend_readonly_root}/${local.plugin_root}/${replace(k, "/", "")}/"
+    backend_readwrite_root = "${local.backend_readwrite_root}/${local.plugin_root}/${replace(k, "/", "")}/"
     hosting_root = "${local.asset_hosting_root}/${local.plugin_root}/${replace(k, "/", "")}/"
   }])
 }
