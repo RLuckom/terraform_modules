@@ -19,6 +19,10 @@ output s3_objects {
   }
 }
 
+output role {
+  value = module.check_auth.role
+}
+
 output access_control_function_qualified_arns {
   value = {
     check_auth   = module.check_auth.lambda.qualified_arn

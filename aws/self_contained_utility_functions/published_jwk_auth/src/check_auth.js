@@ -8,8 +8,10 @@ const _ = require('lodash')
 const { flattenedVerify } = require('jose-node-cjs-runtime/jws/flattened/verify')
 const { parseJwk } = require('jose-node-cjs-runtime/jwk/parse')
 const { FlattenedVerify } = require('jose-node-cjs-runtime/jws/flattened/verify')
-const { createHash } = require('crypto')
 const AXIOS = require('axios')
+const AWS = require('aws-sdk')
+let dynamo = new AWS.DynamoDB({region: '${dynamo_region}'})
+const converter = require('aws-sdk').DynamoDB.Converter
 
 function accessDeniedResponse(message) {
   return {
@@ -35,35 +37,44 @@ const statusMessages = {
 let CONNECTIONS
 
 let domain = "${domain}"
-let connectionSalt = "${connection_list_salt}"
-let connectionPassword = "${connection_list_password}"
-let connectionEndpoint = "${connection_endpoint}"
 
 function keyLocation(domain) {
   return "https://" + domain + `/.well-known/microburin-social/keys/social-signing-public-key.jwk`
 }
 
 async function refreshConnections() {
-  const connections = await AXIOS.request({
-    method: 'get',
-    url: connectionEndpoint,
-    headers: {
-      authorization: "Bearer: " + connectionPassword
-    }
+  const queryStructure = {
+    ExpressionAttributeValues: {
+      ":v1": {
+        S: "${status_code_connected}"
+      }
+    }, 
+    KeyConditionExpression: "connection_state = :v1", 
+    TableName: "${dynamo_table_name}"
+  };
+  const items = await new Promise((resolve, reject) => {
+    dynamo.query(queryStructure, (e, r) => {
+      if (e) {
+        return reject(e)
+      } else {
+        return resolve(r)
+      }
+    })
   })
-  return connections.data
+  return {
+    origins: _.map(items.Items, (i) => {
+      return converter.unmarshall(i).origin
+    })
+  }
 }
 
 async function getSigningKey(domain) {
-  const connections = await AXIOS.request({
+  const signingKey = await AXIOS.request({
     method: 'get',
     url: keyLocation(domain),
     timeout: 1000,
-    headers: {
-      authorization: "Bearer: " + connectionPassword
-    }
   })
-  return connections.data
+  return signingKey.data
 }
 
 async function handler(event) {
@@ -100,10 +111,7 @@ async function handler(event) {
   if (!_.isNumber(_.get(CONNECTIONS, 'timestamp')) || (now - CONNECTIONS.timestamp > 60000)) {
     CONNECTIONS = await refreshConnections()
   }
-  const hash = createHash('sha256');
-  hash.update(origin + connectionSalt)
-  const digest = hash.digest('base64')
-  if (CONNECTIONS.origins.indexOf(digest) === -1) {
+  if (CONNECTIONS.origins.indexOf(origin) === -1) {
     return accessDeniedResponse(statusMessages.unrecognizedOrigin)
   }
   let signingKey

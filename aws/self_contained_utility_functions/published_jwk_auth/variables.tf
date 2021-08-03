@@ -9,9 +9,9 @@ variable security_scope {
 variable auth_config {
   type = object({
     domain = string
-    connection_endpoint = string
-    connection_list_salt = string
-    connection_list_password = string
+    dynamo_table_name = string
+    dynamo_region = string
+    status_code_connected = string
   })
 }
 
@@ -58,9 +58,9 @@ locals {
   version = "0_${local.hash_suffix}"
   rendered_index = templatefile("${path.module}/src/check_auth.js", {
     domain = var.auth_config.domain
-    connection_list_salt = var.auth_config.connection_list_salt
-    connection_list_password = var.auth_config.connection_list_password
-    connection_endpoint = var.auth_config.connection_endpoint
+    dynamo_region = var.auth_config.dynamo_region
+    status_code_connected = var.auth_config.status_code_connected
+    dynamo_table_name = var.auth_config.dynamo_table_name
   })
 }
 
