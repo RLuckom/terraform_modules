@@ -121,12 +121,10 @@ variable plugin_configs {
     plugin_relative_bucket_backend_readonly_root_permissions_needed = list(object({
       plugin_relative_key = string
       role_arn = string
-      permission_type = string
     }))
     plugin_relative_bucket_backend_readwrite_root_permissions_needed = list(object({
       plugin_relative_key = string
       role_arn = string
-      permission_type = string
     }))
     plugin_relative_bucket_list_permissions_needed = list(object({
       plugin_relative_key = string
