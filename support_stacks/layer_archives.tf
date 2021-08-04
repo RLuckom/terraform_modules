@@ -80,6 +80,14 @@ module "cognito_utils" {
   output_path = "${path.root}/src/aws/layers/cognito_utils/layer.zip"
 }
 
+module "node_jose" {
+  source = "github.com/RLuckom/terraform_modules//aws/s3_archive"
+  key = "node_jose"
+  path = "${path.root}/src/aws/layers/node_jose/"
+  bucket = module.layer_bucket.bucket.id
+  output_path = "${path.root}/src/aws/layers/node_jose/layer.zip"
+}
+
 module "aws_sdk" {
   source = "github.com/RLuckom/terraform_modules//aws/s3_archive"
   key = "aws_sdk"
