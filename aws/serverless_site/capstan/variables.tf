@@ -55,8 +55,13 @@ variable lambda_authorizers {
 
 variable lambda_origins {
   type = list(object({
-    # This should only be set to true if the access_control_function_qualified_arns
-    # above are set AND you want the function access-controlled
+    # a value of "NONE" will let the function
+    # handle its own access control. A 
+    # value of "CLOUDFRONT_DISTRIBUTION" will
+    # use the lambda authorizers provided;
+    # this is also the default if there are 
+    # no lambda authorizers. Any other value uses
+    # the lambda authorizers provided.
     authorizer = string
     # unitary path denoting the function's endpoint, e.g.
     # "/meta/relations/trails"

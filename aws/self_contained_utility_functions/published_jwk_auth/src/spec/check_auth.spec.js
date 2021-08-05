@@ -121,8 +121,8 @@ function validateRequestPassThrough(res, evt) {
   expect(res).toEqual(evt.Records[0].cf.request)
 }
 
-function formatToken({sig, timestamp, origin, recipient, protectedHeader}) {
-  return Buffer.from(JSON.stringify({sig, timestamp, origin, recipient, protectedHeader})).toString('base64')
+function formatToken({sig, timestamp, origin, recipient}) {
+  return Buffer.from(JSON.stringify({sig, timestamp, origin, recipient})).toString('base64')
 }
 
 const messages = checkAuth.__get__('statusMessages')
@@ -132,7 +132,6 @@ describe("check auth", () => {
   beforeEach(async () => {
     const serverControls = await startTestServer()
     closeServer = serverControls.closeServer
-    privateKey = await parseJwk(privateKeyObject, 'EdDSA')
     privateKey = await parseJwk(privateKeyObject, 'EdDSA')
     const otherKeys = await generateKeyPair('EdDSA')
     otherKey = otherKeys.privateKey

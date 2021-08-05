@@ -178,7 +178,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   dynamic "ordered_cache_behavior" {
-    for_each = var.lambda_origins
+    for_each = [for origin in var.lambda_origins : origin if origin.authorizer != "CLOUDFRONT_DISTRIBUTION" && length(values(var.lambda_authorizers)) > 0 ]
     content {
       path_pattern = ordered_cache_behavior.value.path
       target_origin_id = ordered_cache_behavior.value.gateway_name_stem
@@ -221,6 +221,59 @@ resource "aws_cloudfront_distribution" "website_distribution" {
 
       dynamic "lambda_function_association" {
         for_each = ordered_cache_behavior.value.authorizer != "NONE" && local.default_access_control_functions.http_headers != "" ? [1] : []
+        content {
+          event_type   = "origin-response"
+          lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
+          include_body = false
+        }
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
+    for_each = [ for origin in var.lambda_origins : origin if origin.authorizer == "CLOUDFRONT_DISTRIBUTION" || length(values(var.lambda_authorizers)) < 1 ]
+    content {
+      path_pattern = ordered_cache_behavior.value.path
+      target_origin_id = ordered_cache_behavior.value.gateway_name_stem
+      allowed_methods = ordered_cache_behavior.value.allowed_methods
+      cached_methods = ordered_cache_behavior.value.cached_methods
+      compress = ordered_cache_behavior.value.compress
+      default_ttl = ordered_cache_behavior.value.ttls.default
+      min_ttl = ordered_cache_behavior.value.ttls.min
+      max_ttl = ordered_cache_behavior.value.ttls.max
+      forwarded_values {
+        query_string = ordered_cache_behavior.value.forwarded_values.query_string
+        query_string_cache_keys = ordered_cache_behavior.value.forwarded_values.query_string_cache_keys
+        headers = ordered_cache_behavior.value.forwarded_values.headers
+
+        dynamic "cookies" {
+          for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) > 0 ? [1] : []
+          content {
+            forward = "whitelist"
+            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names
+          }
+        }
+
+        dynamic "cookies" {
+          for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) == 0 ? [1] : []
+          content {
+            forward = "none"
+          }
+        }
+      }
+      viewer_protocol_policy = "redirect-to-https"
+
+      dynamic "lambda_function_association" {
+        for_each = local.default_access_control_functions.check_auth != "" ? [1] : []
+        content {
+          event_type   = "viewer-request"
+          lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
+          include_body = false
+        }
+      }
+
+      dynamic "lambda_function_association" {
+        for_each = local.default_access_control_functions.http_headers != "" ? [1] : []
         content {
           event_type   = "origin-response"
           lambda_arn   = var.access_control_function_qualified_arns[0].http_headers

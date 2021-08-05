@@ -12,7 +12,7 @@ module "lambda_api_gateway" {
       route_key = "ANY ${route.path}"
       handler_arn = route.lambda.arn
       handler_name = route.lambda.name
-      authorizer = route.authorizer
+      authorizer = route.authorizer == "CLOUDFRONT_DISTRIBUTION" ? "NONE" : route.authorizer
     }
   ]
 }
