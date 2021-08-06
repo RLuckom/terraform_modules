@@ -11,7 +11,8 @@ variable auth_config {
     domain = string
     dynamo_table_name = string
     dynamo_region = string
-    status_code_connected = string
+    connection_state_connected = string
+    connection_state_key = string
   })
 }
 
@@ -59,7 +60,8 @@ locals {
   rendered_index = templatefile("${path.module}/src/check_auth.js", {
     domain = var.auth_config.domain
     dynamo_region = var.auth_config.dynamo_region
-    status_code_connected = var.auth_config.status_code_connected
+    connection_state_connected = var.auth_config.connection_state_connected
+    connection_state_key = var.auth_config.connection_state_key
     dynamo_table_name = var.auth_config.dynamo_table_name
   })
 }

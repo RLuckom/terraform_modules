@@ -46,10 +46,10 @@ async function refreshConnections() {
   const queryStructure = {
     ExpressionAttributeValues: {
       ":v1": {
-        S: "${status_code_connected}"
+        S: "${connection_state_connected}"
       }
     }, 
-    KeyConditionExpression: "connection_state = :v1", 
+    KeyConditionExpression: "${connection_state_key} = :v1", 
     TableName: "${dynamo_table_name}"
   };
   const items = await new Promise((resolve, reject) => {
