@@ -43,6 +43,7 @@ module function {
   unique_suffix = var.unique_suffix
   timeout_secs = var.timeout_secs
   account_id = var.account_id
+  runtime = var.runtime
   region = var.region
   mem_mb = var.mem_mb
   environment_var_map = merge({

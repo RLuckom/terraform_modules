@@ -25,6 +25,11 @@ variable scope_name {
   default = ""
 }
 
+variable runtime {
+  type = string
+  default = ""
+}
+
 variable donut_days_layer {
   type = object({
     present = bool

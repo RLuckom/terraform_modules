@@ -7,8 +7,18 @@ const { FlattenedSign } = require('jose-node-cjs-runtime/jws/flattened/sign')
 const { generateKeyPair } = require('jose-node-cjs-runtime/util/generate_key_pair')
 const converter = new require('aws-sdk').DynamoDB.Converter
 
-const publicKeyObject = {"kty":"OKP","crv":"Ed25519","x":"wxeatbwWtfGpu8QOUIdP6-3NG5JkurcRHhEfQIFxgck"}
-const privateKeyObject = {"kty":"OKP","crv":"Ed25519","x":"wxeatbwWtfGpu8QOUIdP6-3NG5JkurcRHhEfQIFxgck","d":"HmN_oSGvMGjcvbbniIcgc1PfQZBZVBC29MmDb7o9FRc"}
+const publicKeyObject = {
+  "kty":"OKP",
+  "crv":"Ed25519",
+  "x":"wxeatbwWtfGpu8QOUIdP6-3NG5JkurcRHhEfQIFxgck"
+}
+
+const privateKeyObject = {
+  "kty":"OKP",
+  "crv":"Ed25519",
+  "x":"wxeatbwWtfGpu8QOUIdP6-3NG5JkurcRHhEfQIFxgck",
+  "d":"HmN_oSGvMGjcvbbniIcgc1PfQZBZVBC29MmDb7o9FRc"
+}
 
 const fakeDynamo = {
   query: function (config, callback) {

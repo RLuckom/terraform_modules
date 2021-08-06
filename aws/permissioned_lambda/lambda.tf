@@ -108,6 +108,7 @@ resource "aws_s3_bucket_object" "deployment_package_zip" {
 resource "aws_lambda_function" "lambda" {
   function_name = local.scoped_lambda_name
   publish = var.publish
+  runtime = local.runtime
   s3_bucket = var.preuploaded_source.supplied ? var.preuploaded_source.bucket : (local.s3_deployment ? var.source_bucket : null)
   s3_key = var.preuploaded_source.supplied ? var.preuploaded_source.path : (local.s3_deployment ? local.deployment_package_key : null)
   filename = (local.s3_deployment || var.preuploaded_source.supplied) ? null : local.deployment_package_local_path
@@ -119,7 +120,6 @@ resource "aws_lambda_function" "lambda" {
   reserved_concurrent_executions = var.self_invoke.allowed ? var.self_invoke.concurrent_executions : var.reserved_concurrent_executions
 	memory_size = var.mem_mb
 
-  runtime = var.runtime
   dynamic "environment" {
     for_each = length(values(var.environment_var_map)) > 0 ? [1] : []
     content {
