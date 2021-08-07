@@ -35,7 +35,10 @@ const statusMessages = {
   verifyFailed: 'Signature verification failed',
 }
 
-let CONNECTIONS
+let CONNECTIONS = {
+  timestamp: 0,
+  domains: []
+}
 
 let domain = "${domain}"
 
@@ -65,9 +68,10 @@ async function refreshConnections() {
     })
   })
   return {
-    origins: _.map(items.Items, (i) => {
+    domains: _.map(items.Items, (i) => {
       return converter.unmarshall(i).domain
-    })
+    }),
+    timestamp: new Date().getTime(),
   }
 }
 
@@ -118,9 +122,14 @@ async function handler(event) {
   }
   const signedString = Buffer.from(JSON.stringify({timestamp, origin,  recipient}), 'utf8').toString('base64').replace(/=*$/g, "")
   if (!_.isNumber(_.get(CONNECTIONS, 'timestamp')) || (now - CONNECTIONS.timestamp > 60000)) {
-    CONNECTIONS = await refreshConnections()
+    try {
+      CONNECTIONS = await refreshConnections()
+    } catch(e) {
+      writeLog("error getting connections")
+      writeLog(e)
+    }
   }
-  if (CONNECTIONS.origins.indexOf(origin) === -1) {
+  if (CONNECTIONS.domains.indexOf(origin) === -1) {
     return accessDeniedResponse(statusMessages.unrecognizedOrigin)
   }
   let signingKey
