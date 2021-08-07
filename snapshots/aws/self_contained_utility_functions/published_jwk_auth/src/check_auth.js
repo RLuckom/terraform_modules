@@ -149,6 +149,7 @@ async function handler(event) {
   } catch(e) {
     return accessDeniedResponse(statusMessages.verifyFailed)
   }
+  writeLog('auth success; returning request')
   return request
 }
 
