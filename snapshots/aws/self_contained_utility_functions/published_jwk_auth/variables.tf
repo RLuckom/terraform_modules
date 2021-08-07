@@ -55,6 +55,11 @@ variable unique_suffix {
   default = ""
 }
 
+variable log {
+  type = string
+  default = ""
+}
+
 locals {
   version = "0_${local.hash_suffix}"
   rendered_index = templatefile("${path.module}/src/check_auth.js", {
@@ -63,6 +68,7 @@ locals {
     connection_state_connected = var.auth_config.connection_state_connected
     connection_state_key = var.auth_config.connection_state_key
     dynamo_table_name = var.auth_config.dynamo_table_name
+    log = var.log
   })
 }
 

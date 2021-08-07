@@ -14,6 +14,7 @@ let dynamo = new AWS.DynamoDB({region: '${dynamo_region}'})
 const converter = require('aws-sdk').DynamoDB.Converter
 
 function accessDeniedResponse(message) {
+  writeLog('Denying Access: ' + message)
   return {
     status: "401",
     statusDescription: message || "Access Denied",
@@ -37,6 +38,8 @@ const statusMessages = {
 let CONNECTIONS
 
 let domain = "${domain}"
+
+const log = "${log}" === "true"
 
 function keyLocation(domain) {
   return "https://" + domain + `/.well-known/microburin-social/keys/social-signing-public-key.jwk`
@@ -63,7 +66,7 @@ async function refreshConnections() {
   })
   return {
     origins: _.map(items.Items, (i) => {
-      return converter.unmarshall(i).origin
+      return converter.unmarshall(i).domain
     })
   }
 }
@@ -75,6 +78,12 @@ async function getSigningKey(domain) {
     timeout: 1000,
   })
   return signingKey.data
+}
+
+function writeLog(s) {
+  if (log) {
+    console.log(s)
+  }
 }
 
 async function handler(event) {
