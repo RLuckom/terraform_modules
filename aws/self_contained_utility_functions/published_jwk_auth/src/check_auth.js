@@ -22,6 +22,8 @@ function accessDeniedResponse(message) {
   }
 }
 
+let TIMEOUT_SECS = parseInt("${key_timeout_secs}") || 1
+
 const statusMessages = {
   noAuth: 'No auth header present',
   unparseableAuth: 'Auth string was not base64-encoded JSON',
@@ -79,7 +81,7 @@ async function getSigningKey(domain) {
   const signingKey = await AXIOS.request({
     method: 'get',
     url: keyLocation(domain),
-    timeout: 1000,
+    timeout: 1000 * TIMEOUT_SECS,
   })
   return signingKey.data
 }

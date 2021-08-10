@@ -16,6 +16,11 @@ variable auth_config {
   })
 }
 
+variable key_timeout_secs {
+  type = number
+  default = 2
+}
+
 variable bucket_config {
   type = object({
     supplied = bool
@@ -67,6 +72,7 @@ locals {
     dynamo_region = var.auth_config.dynamo_region
     connection_state_connected = var.auth_config.connection_state_connected
     connection_state_key = var.auth_config.connection_state_key
+    key_timeout_secs = var.key_timeout_secs
     dynamo_table_name = var.auth_config.dynamo_table_name
     log = var.log
   })
