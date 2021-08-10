@@ -300,7 +300,7 @@ locals {
       }],
         [for permission in config.plugin_relative_bucket_backend_readwrite_root_permissions_needed : {
         prefix = "${local.backend_readwrite_root}/${local.plugin_root}/${replace(name, "/", "")}/${trim(permission.plugin_relative_key, "/")}/"
-        permission_type = "read_write_objlects"
+        permission_type = "read_write_objects"
         arns = permission.role_arn == null ? [module.cognito_identity_management.authenticated_role[name].arn] : [permission.role_arn]
       }],
         [for permission in config.plugin_relative_bucket_host_permissions_needed : {
