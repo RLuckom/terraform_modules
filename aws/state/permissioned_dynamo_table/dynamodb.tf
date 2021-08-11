@@ -22,15 +22,6 @@ resource "aws_dynamodb_table" "standard_table" {
     }
   }
 
-  dynamic "attribute" {
-    for_each = var.ttl
-
-    content {
-      name               = attribute.value.attribute_name
-      type               = "N" // ttl key must be number
-    }
-  }
-
   dynamic "global_secondary_index" {
     for_each = var.global_indexes
     content {
