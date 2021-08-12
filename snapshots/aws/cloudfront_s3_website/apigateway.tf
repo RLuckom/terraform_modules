@@ -9,7 +9,7 @@ module "lambda_api_gateway" {
   authorizers = var.lambda_authorizers
   lambda_routes = [ for route in local.apigateway_configs[count.index]: 
     {
-      route_key = "ANY ${route.path}"
+      route_key = "ANY /${trimprefix(route.path, "/")}"
       handler_arn = route.lambda.arn
       handler_name = route.lambda.name
       authorizer = route.authorizer == "CLOUDFRONT_DISTRIBUTION" ? "NONE" : route.authorizer
