@@ -4,13 +4,15 @@ output "role" {
 
 output "lambda" {
   value = {
-    function_name = aws_lambda_function.lambda.function_name
-    arn = aws_lambda_function.lambda.arn
-    timeout = aws_lambda_function.lambda.timeout
+    function_name = local.scoped_lambda_name
+    arn = local.lambda_arn
+    timeout = var.timeout_secs
     environment = var.environment_var_map
-    tags = aws_lambda_function.lambda.tags
-    qualified_arn = aws_lambda_function.lambda.qualified_arn
   }
+}
+
+output "qualified_arn" {
+  value = aws_lambda_function.lambda.qualified_arn
 }
 
 output "permission_sets" {

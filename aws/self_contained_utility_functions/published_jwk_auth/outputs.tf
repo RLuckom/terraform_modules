@@ -25,7 +25,7 @@ output role {
 
 output access_control_function_qualified_arns {
   value = {
-    check_auth   = module.check_auth.lambda.qualified_arn
+    check_auth   = module.check_auth.qualified_arn
     refresh_auth   = ""
     parse_auth   = ""
     sign_out   = ""

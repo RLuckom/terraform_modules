@@ -24,11 +24,11 @@ output parse_auth {
 
 output access_control_function_qualified_arns {
   value = {
-    refresh_auth   = module.refresh_auth.lambda.qualified_arn
-    parse_auth   = module.parse_auth.lambda.qualified_arn
-    check_auth   = module.check_auth.lambda.qualified_arn
-    sign_out   = module.sign_out.lambda.qualified_arn
-    http_headers   = module.http_headers.lambda.qualified_arn
-    move_cookie_to_auth_header   = module.move_cookie_to_auth_header.lambda.qualified_arn
+    refresh_auth   = module.refresh_auth.qualified_arn
+    parse_auth   = module.parse_auth.qualified_arn
+    check_auth   = module.check_auth.qualified_arn
+    sign_out   = module.sign_out.qualified_arn
+    http_headers   = module.http_headers.qualified_arn
+    move_cookie_to_auth_header   = module.move_cookie_to_auth_header.qualified_arn
   }
 }
