@@ -27,7 +27,7 @@ const fakeDynamo = {
     } else {
       return setTimeout(() => callback(null, {Items: _.map(connections, (c) => {
         return converter.marshall({
-          origin: c
+          domain: c
         })
       })}), queryTime)
     }
@@ -146,7 +146,10 @@ describe("check auth", () => {
     const otherKeys = await generateKeyPair('EdDSA')
     otherKey = otherKeys.privateKey
     unsetArray = [checkAuth.__set__('connectionEndpoint', 'http://localhost:8000')]
-    unsetArray.push(checkAuth.__set__('CONNECTIONS', null)) 
+    unsetArray.push(checkAuth.__set__('CONNECTIONS', {
+      timeout: 0,
+      connections: []
+    })) 
     unsetArray.push(checkAuth.__set__('keyLocation', replaceKeyLocation)) 
     unsetArray.push(checkAuth.__set__('dynamo', fakeDynamo)) 
   })
