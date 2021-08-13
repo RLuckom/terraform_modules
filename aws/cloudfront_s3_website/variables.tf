@@ -45,6 +45,7 @@ variable enable_distribution {
 
 variable "subject_alternative_names" {
   type = list(string)
+  default = []
 }
 
 variable "cloudfront_priceclass" {
