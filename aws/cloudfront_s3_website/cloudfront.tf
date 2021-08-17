@@ -201,12 +201,6 @@ resource "aws_cloudfront_distribution" "website_distribution" {
           }
         }
 
-        dynamic "cookies" {
-          for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) == 0 ? [1] : []
-          content {
-            forward = "none"
-          }
-        }
       }
       viewer_protocol_policy = "redirect-to-https"
 
@@ -254,12 +248,6 @@ resource "aws_cloudfront_distribution" "website_distribution" {
           }
         }
 
-        dynamic "cookies" {
-          for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) == 0 ? [1] : []
-          content {
-            forward = "none"
-          }
-        }
       }
       viewer_protocol_policy = "redirect-to-https"
 
@@ -307,12 +295,6 @@ resource "aws_cloudfront_distribution" "website_distribution" {
           }
         }
 
-        dynamic "cookies" {
-          for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) == 0 ? [1] : []
-          content {
-            forward = "none"
-          }
-        }
       }
       viewer_protocol_policy = "redirect-to-https"
 
