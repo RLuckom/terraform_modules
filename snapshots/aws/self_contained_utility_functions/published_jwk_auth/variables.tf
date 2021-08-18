@@ -11,6 +11,7 @@ variable auth_config {
     domain = string
     dynamo_table_name = string
     dynamo_region = string
+    dynamo_index_name = string
     connection_state_connected = string
     connection_state_key = string
   })
@@ -74,6 +75,7 @@ locals {
     connection_state_key = var.auth_config.connection_state_key
     key_timeout_secs = var.key_timeout_secs
     dynamo_table_name = var.auth_config.dynamo_table_name
+    dynamo_index_name = var.auth_config.dynamo_index_name
     log = var.log
   })
 }

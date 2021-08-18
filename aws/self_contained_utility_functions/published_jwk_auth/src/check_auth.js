@@ -58,7 +58,8 @@ async function refreshConnections() {
       }
     }, 
     KeyConditionExpression: "${connection_state_key} = :v1", 
-    TableName: "${dynamo_table_name}"
+    TableName: "${dynamo_table_name}",
+    IndexName: "${dynamo_index_name}",
   };
   const items = await new Promise((resolve, reject) => {
     dynamo.query(queryStructure, (e, r) => {
