@@ -117,8 +117,8 @@ const schema = new prosemirror.Schema({
       parseDOM: [{tag: "img[src]", getAttrs(dom) {
         return {
           src: dom.getAttribute("src"),
-          title: dom.getAttribute("title"),
-          alt: dom.getAttribute("alt"),
+          title: dom.getAttribute("title").replaceAll(/\n+/g, "\n"),
+          alt: dom.getAttribute("alt").replaceAll(/\n+/g, "\n"),
         }
       }}],
       toDOM(node) { return ["img", node.attrs] }
@@ -500,8 +500,8 @@ class ImageView {
                 canonicalExt: self.node.attrs.canonicalExt,
                 postId: self.node.attrs.postId,
                 imageId: self.node.attrs.imageId,
-                alt: self.node.attrs.alt,
-                title: self.node.attrs.title,
+                alt: (self.node.attrs.alt || '').replaceAll(/\n+/g, "\n"),
+                title: (self.node.attrs.title || '').replaceAll(/\n+/g, "\n"),
               }
             )
             view.dispatch(tr)
@@ -597,7 +597,7 @@ const footnoteMarkdownSerializer = new prosemirror.MarkdownSerializer({
   },
 
   image(state, node) {
-    state.write("![" + state.esc(node.attrs.alt || "") + "](" + state.esc(node.attrs.src) + (node.attrs.alt ? ` ${state.quote(node.attrs.alt)}` : '') + ')')
+    state.write("![" + state.esc((node.attrs.alt || "").replaceAll(/\n+/g, "\n")) + "](" + state.esc(node.attrs.src) + (node.attrs.alt ? ` ${state.quote(node.attrs.alt.replaceAll(/\n+/g, "\n"))}` : '') + ')')
     state.closeBlock(node)
   },
   hard_break(state, node, parent, index) {
