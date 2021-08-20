@@ -118,7 +118,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       lambda_function_association {
         event_type   = "viewer-request"
         lambda_arn   = var.access_control_function_qualified_arns[0].sign_out
-        include_body = false
+        include_body = var.access_control_function_include_body.sign_out
       }
     }
   }
@@ -145,7 +145,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       lambda_function_association {
         event_type   = "viewer-request"
         lambda_arn   = var.access_control_function_qualified_arns[0].refresh_auth
-        include_body = false
+        include_body = var.access_control_function_include_body.refresh_auth
       }
     }
   }
@@ -172,7 +172,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       lambda_function_association {
         event_type   = "viewer-request"
         lambda_arn   = var.access_control_function_qualified_arns[0].parse_auth
-        include_body = false
+        include_body = var.access_control_function_include_body.parse_auth
       }
     }
   }
@@ -215,7 +215,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         content {
           event_type   = "origin-request"
           lambda_arn   = var.access_control_function_qualified_arns[0].move_cookie_to_auth_header
-          include_body = false
+          include_body = var.access_control_function_include_body.move_cookie_to_auth_header
         }
       }
 
@@ -224,7 +224,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         content {
           event_type   = "origin-response"
           lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
-          include_body = false
+          include_body = var.access_control_function_include_body.http_headers
         }
       }
     }
@@ -268,7 +268,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         content {
           event_type   = "viewer-request"
           lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
-          include_body = false
+          include_body = var.access_control_function_include_body.check_auth
         }
       }
 
@@ -277,7 +277,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         content {
           event_type   = "origin-response"
           lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
-          include_body = false
+          include_body = var.access_control_function_include_body.http_headers
         }
       }
     }
@@ -322,7 +322,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         content {
           event_type   = "origin-response"
           lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
-          include_body = false
+          include_body = var.access_control_function_include_body.http_headers
         }
       }
     }
@@ -354,7 +354,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         content {
           event_type   = "viewer-request"
           lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
-          include_body = false
+          include_body = var.access_control_function_include_body.check_auth
         }
       }
 
@@ -363,7 +363,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         content {
           event_type   = "origin-response"
           lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
-          include_body = false
+          include_body = var.access_control_function_include_body.http_headers
         }
       }
     }
@@ -417,7 +417,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       content {
         event_type   = "viewer-request"
         lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
-        include_body = false
+        include_body = var.access_control_function_include_body.check_auth
       }
     }
 
@@ -426,7 +426,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       content {
         event_type   = "origin-response"
         lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
-        include_body = false
+        include_body = var.access_control_function_include_body.http_headers
       }
     }
   }

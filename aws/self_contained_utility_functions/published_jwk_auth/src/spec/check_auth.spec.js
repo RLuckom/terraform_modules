@@ -6,6 +6,7 @@ const { parseJwk } = require('jose-node-cjs-runtime/jwk/parse')
 const { FlattenedSign } = require('jose-node-cjs-runtime/jws/flattened/sign')
 const { generateKeyPair } = require('jose-node-cjs-runtime/util/generate_key_pair')
 const converter = new require('aws-sdk').DynamoDB.Converter
+const { createHash } = require('crypto');
 
 const publicKeyObject = {
   "kty":"OKP",
@@ -92,8 +93,8 @@ function getEvent(request) {
   }
 }
 
-function authedEvent(authHeaderString) {
-  return getEvent({
+function authedEvent(authHeaderString, body, inputTruncated) {
+  const req = {
     headers: {
       authorization: [
         {
@@ -101,11 +102,18 @@ function authedEvent(authHeaderString) {
         }
       ]
     }
-  })
+  }
+  if (body || inputTruncated) {
+    req.body = {
+      data: body,
+      inputTruncated
+    }
+  }
+  return getEvent(req)
 }
 
-function tokenAuthedEvent(token) {
-  return authedEvent(`Bearer ${formatToken(token)}`)
+function tokenAuthedEvent(token, body, inputTruncated) {
+  return authedEvent(`Bearer ${formatToken(token)}`, body, inputTruncated)
 }
 
 function replaceKeyLocation(domain) {
@@ -116,10 +124,17 @@ let domain = "${domain}"
 let connectionSalt = "${connection_list_salt}"
 let connectionPassword = "${connection_list_password}"
 
-async function validSignedTokenAuthEvent({timestamp, origin, recipient}, signingKey) {
-  const sig = await new FlattenedSign(new TextEncoder().encode(JSON.stringify({timestamp, origin, recipient}))).setProtectedHeader({alg: 'EdDSA'}).sign(signingKey)
-  const ret = {timestamp, origin, recipient, sig}
-  return tokenAuthedEvent(ret)
+async function validSignedTokenAuthEvent({timestamp, origin, body, recipient, inputTruncated, bodySig}, signingKey, options) {
+  options = options || {}
+  if (body && !bodySig) {
+    const hash = createHash('sha256')
+    hash.update(body)
+    const bodySigPayload = options.bodySigPayload || hash.digest('hex')
+    bodySig = await new FlattenedSign(new TextEncoder().encode(bodySigPayload)).setProtectedHeader({alg: 'EdDSA'}).sign(options.bodySigningKey || signingKey)
+  }
+  const sig = await new FlattenedSign(new TextEncoder().encode(options.sigPayload || JSON.stringify({timestamp, origin, recipient, bodySig: bodySig || null }))).setProtectedHeader({alg: 'EdDSA'}).sign(signingKey)
+  const ret = {timestamp, origin, recipient, bodySig: options.noBodySig ? null : bodySig || null, sig}
+  return tokenAuthedEvent(ret, body, inputTruncated)
 }
 
 function validateAccessDenied(res, message) {
@@ -131,8 +146,8 @@ function validateRequestPassThrough(res, evt) {
   expect(res).toEqual(evt.Records[0].cf.request)
 }
 
-function formatToken({sig, timestamp, origin, recipient}) {
-  return Buffer.from(JSON.stringify({sig, timestamp, origin, recipient})).toString('base64')
+function formatToken({sig, timestamp, origin, recipient, bodySig}) {
+  return Buffer.from(JSON.stringify({sig, timestamp, origin, recipient, bodySig: bodySig || null})).toString('base64')
 }
 
 const messages = checkAuth.__get__('statusMessages')
@@ -246,9 +261,25 @@ describe("check auth", () => {
   it("rejects a request if the token can't be parsed", async () => {
     const now = new Date().getTime()
     const evt = await validSignedTokenAuthEvent({recipient: domain, timestamp: now}, privateKey)
-    evt.Records[0].cf.request.headers['authorization'][0].value += "aea"
+    evt.Records[0].cf.request.headers['authorization'][0].value = 'Bearer foo'
     return checkAuth.handler(evt).then((res) => {
       validateAccessDenied(res, messages.unparseableAuth)
+    })
+  })
+
+  it("rejects a request if the body is truncated", async () => {
+    const now = new Date().getTime()
+    const evt = await validSignedTokenAuthEvent({recipient: domain, timestamp: now, inputTruncated: true}, privateKey)
+    return checkAuth.handler(evt).then((res) => {
+      validateAccessDenied(res, messages.bodyTruncated)
+    })
+  })
+
+  it("rejects a request if there is a body but no body signature", async () => {
+    const now = new Date().getTime()
+    const evt = await validSignedTokenAuthEvent({recipient: domain, timestamp: now, body: 'hi'}, privateKey, {noBodySig: true})
+    return checkAuth.handler(evt).then((res) => {
+      validateAccessDenied(res, messages.noBodySig)
     })
   })
 
@@ -259,6 +290,46 @@ describe("check auth", () => {
     const evt = await validSignedTokenAuthEvent({origin: safeOrigin, recipient: domain, timestamp: now}, privateKey)
     return checkAuth.handler(evt).then((res) => {
       validateRequestPassThrough(res, evt)
+    })
+  })
+
+  it("passes through a request with a body with a valid token", async () => {
+    const safeOrigin = "localhost:8001"
+    const now = new Date().getTime()
+    connections.push(safeOrigin)
+    const evt = await validSignedTokenAuthEvent({origin: safeOrigin, recipient: domain, timestamp: now, body: "signme"}, privateKey)
+    return checkAuth.handler(evt).then((res) => {
+      validateRequestPassThrough(res, evt)
+    })
+  })
+
+  it("denies a request with a body signed by the wrong key", async () => {
+    const safeOrigin = "localhost:8001"
+    const now = new Date().getTime()
+    connections.push(safeOrigin)
+    const evt = await validSignedTokenAuthEvent({origin: safeOrigin, recipient: domain, timestamp: now, body: "signme"}, privateKey, { bodySigningKey: otherKey})
+    return checkAuth.handler(evt).then((res) => {
+      validateAccessDenied(res, messages.verifyBodyFailed)
+    })
+  })
+
+  it("denies a request with a body signed by the wrong key", async () => {
+    const safeOrigin = "localhost:8001"
+    const now = new Date().getTime()
+    connections.push(safeOrigin)
+    const evt = await validSignedTokenAuthEvent({origin: safeOrigin, recipient: domain, timestamp: now, body: "signme"}, privateKey, { sigPayload: 'boo'})
+    return checkAuth.handler(evt).then((res) => {
+      validateAccessDenied(res, messages.incorrectSigPayload)
+    })
+  })
+
+  it("denies a request with a body signed by the wrong key", async () => {
+    const safeOrigin = "localhost:8001"
+    const now = new Date().getTime()
+    connections.push(safeOrigin)
+    const evt = await validSignedTokenAuthEvent({origin: safeOrigin, recipient: domain, timestamp: now, body: "signme"}, privateKey, { bodySigPayload: 'boo'})
+    return checkAuth.handler(evt).then((res) => {
+      validateAccessDenied(res, messages.incorrectBodySigPayload)
     })
   })
 

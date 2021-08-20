@@ -12,6 +12,7 @@ const AXIOS = require('axios')
 const AWS = require('aws-sdk')
 let dynamo = new AWS.DynamoDB({region: '${dynamo_region}'})
 const converter = require('aws-sdk').DynamoDB.Converter
+const { createHash } = require('crypto');
 
 function accessDeniedResponse(message) {
   writeLog('Denying Access: ' + message)
@@ -35,6 +36,11 @@ const statusMessages = {
   unrecognizedOrigin: 'origin not found in our connections',
   noSigningKey: 'Could not retrieve signing key within 1s',
   verifyFailed: 'Signature verification failed',
+  verifyBodyFailed: 'Signature verification for body failed',
+  bodyTruncated: 'Body was over 40kb; got truncated; could not hash',
+  noBodySig: "Body present but no body signature",
+  incorrectSigPayload: 'Signature payload did not match auth',
+  incorrectBodySigPayload: 'body signature payload did not match body hash',
 }
 
 let CONNECTIONS = {
@@ -105,11 +111,17 @@ async function handler(event) {
   } catch(e) {
     return accessDeniedResponse(statusMessages.unparseableAuth)
   }
-  const {sig, timestamp, origin, recipient} = parsedAuth
+  const {sig, bodySig, timestamp, origin, recipient} = parsedAuth
+  const body = _.get(request, 'body.data', "") // will be b64
   if (!sig) {
     return accessDeniedResponse(statusMessages.noSig)
   }
-  const { signature, payload, protected } = sig
+  if (_.get(request, 'body.inputTruncated')) {
+    return accessDeniedResponse(statusMessages.bodyTruncated)
+  }
+  if (body && !bodySig) {
+    return accessDeniedResponse(statusMessages.noBodySig)
+  }
   if (!_.isNumber(timestamp)) {
     return accessDeniedResponse(statusMessages.badTimestamp)
   }
@@ -123,7 +135,6 @@ async function handler(event) {
   if (recipient !== domain) {
     return accessDeniedResponse(statusMessages.wrongRecipient)
   }
-  const signedString = Buffer.from(JSON.stringify({timestamp, origin,  recipient}), 'utf8').toString('base64').replace(/=*$/g, "")
   if (!_.isNumber(_.get(CONNECTIONS, 'timestamp')) || (now - CONNECTIONS.timestamp > 60000)) {
     try {
       CONNECTIONS = await refreshConnections()
@@ -135,22 +146,35 @@ async function handler(event) {
   if (CONNECTIONS.domains.indexOf(origin) === -1) {
     return accessDeniedResponse(statusMessages.unrecognizedOrigin)
   }
-  let signingKey
+  let signingKey, parsedSigningKey
   try {
     signingKey = await getSigningKey(origin)
+    parsedSigningKey = await parseJwk(signingKey, 'EdDSA')
   } catch(e) {
     return accessDeniedResponse(statusMessages.noSigningKey)
   }
-  const jws = {
-    signature,
-    payload,
-    protected
-  }
   try {
-    const k = await parseJwk(signingKey, 'EdDSA')
-    await flattenedVerify(jws, k, {algorithms: ["EdDSA"]})
+    const signedString = Buffer.from(JSON.stringify({timestamp, origin, recipient, bodySig: bodySig || null}), 'utf8').toString('base64')
+    const verifiedRequestSignature = await flattenedVerify(sig, parsedSigningKey, {algorithms: ["EdDSA"]})
+    if (verifiedRequestSignature.payload.toString('base64') !== signedString) {
+      return accessDeniedResponse(statusMessages.incorrectSigPayload)
+    }
   } catch(e) {
     return accessDeniedResponse(statusMessages.verifyFailed)
+  }
+  if (body) {
+    let verifiedBodyKey
+    try {
+      const hash = createHash('sha256')
+      hash.update(body)
+      const expectedBodySigPayload = hash.digest('hex')
+      const verifiedBodySignature = await flattenedVerify(bodySig, parsedSigningKey, {algorithms: ["EdDSA"]})
+      if (verifiedBodySignature.payload.toString('utf8') !== expectedBodySigPayload) {
+        return accessDeniedResponse(statusMessages.incorrectBodySigPayload)
+      }
+    } catch(e) {
+      return accessDeniedResponse(statusMessages.verifyBodyFailed)
+    }
   }
   writeLog('auth success; returning request')
   return request

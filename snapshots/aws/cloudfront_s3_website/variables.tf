@@ -33,6 +33,25 @@ variable access_control_function_qualified_arns {
   default = []
 }
 
+variable access_control_function_include_body {
+  type = object({
+    refresh_auth = string
+    parse_auth = string
+    check_auth = string
+    sign_out = string
+    http_headers = string
+    move_cookie_to_auth_header = string
+  })
+  default = {
+    refresh_auth = false
+    parse_auth = false
+    check_auth = false
+    sign_out = false
+    http_headers = false
+    move_cookie_to_auth_header = false
+  }
+}
+
 variable secure_default_origin {
   type = bool
   default = true
