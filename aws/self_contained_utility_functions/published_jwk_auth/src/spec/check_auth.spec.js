@@ -96,7 +96,7 @@ function getEvent(request) {
 function authedEvent(authHeaderString, body, inputTruncated) {
   const req = {
     headers: {
-      authorization: [
+      'microburin-signature': [
         {
           value: authHeaderString
         }
@@ -113,7 +113,7 @@ function authedEvent(authHeaderString, body, inputTruncated) {
 }
 
 function tokenAuthedEvent(token, body, inputTruncated) {
-  return authedEvent(`Bearer ${formatToken(token)}`, body, inputTruncated)
+  return authedEvent(`${formatToken(token)}`, body, inputTruncated)
 }
 
 function replaceKeyLocation(domain) {
@@ -261,7 +261,7 @@ describe("check auth", () => {
   it("rejects a request if the token can't be parsed", async () => {
     const now = new Date().getTime()
     const evt = await validSignedTokenAuthEvent({recipient: domain, timestamp: now}, privateKey)
-    evt.Records[0].cf.request.headers['authorization'][0].value = 'Bearer foo'
+    evt.Records[0].cf.request.headers['microburin-signature'][0].value = 'Bearer foo'
     return checkAuth.handler(evt).then((res) => {
       validateAccessDenied(res, messages.unparseableAuth)
     })

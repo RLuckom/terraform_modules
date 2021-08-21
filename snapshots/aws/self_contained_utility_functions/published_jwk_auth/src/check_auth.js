@@ -101,7 +101,7 @@ function writeLog(s) {
 
 async function handler(event) {
   const request = event.Records[0].cf.request;
-  const auth = _.get(request, 'headers.authorization[0].value', '').substr(7);
+  const auth = _.get(request, 'headers.microburin-signature[0].value', '');
   if (!auth) {
     return accessDeniedResponse(statusMessages.noAuth)
   }
