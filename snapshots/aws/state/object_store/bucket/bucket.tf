@@ -89,7 +89,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 data aws_iam_policy_document bucket_policy_document {
   count = local.need_policy
   dynamic "statement" {
-    for_each = local.prefix_object_permission_sets
+    for_each = local.grouped_prefix_object_permission_sets
     content {
       actions   = statement.value.actions
       resources   = ["${aws_s3_bucket.bucket.arn}/${statement.value.prefix == "" ? "" : "${trimsuffix(statement.value.prefix, "/")}/"}*"]
@@ -199,7 +199,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 locals {
-  need_policy = var.need_policy_override ? 1 : length(var.lambda_notifications) > 0 || length(local.prefix_object_denial_sets) > 0 || length(local.prefix_object_permission_sets) > 0 || length(local.bucket_permission_sets) > 0 ? 1 : 0
+  need_policy = var.need_policy_override ? 1 : length(var.lambda_notifications) > 0 || length(local.prefix_object_denial_sets) > 0 || length(local.grouped_prefix_object_permission_sets) > 0 || length(local.bucket_permission_sets) > 0 ? 1 : 0
   list_bucket_actions = [
     "s3:ListBucket",
     "s3:GetBucketAcl",
@@ -337,23 +337,22 @@ locals {
 }
 
 locals {
-  prefix_object_permission_sets = concat(
-    [ for prefix_config in local.prefix_object_permissions : {
-      prefix = prefix_config.prefix
-      actions = local.object_permission_set_actions[prefix_config.permission_type]
-      principals = [
+  object_permission_set_names = distinct(concat(
+    [ for prefix_config in local.prefix_object_permissions : "${prefix_config.prefix}><${prefix_config.permission_type}"],
+    [ for prefix_config in var.principal_prefix_object_permissions : "${prefix_config.prefix}><${prefix_config.permission_type}"],
+  ))
+  grouped_prefix_object_permission_sets = [ for set in flatten(
+    [ for name in local.object_permission_set_names : {
+      prefix = split("><", name)[0]
+      actions = local.object_permission_set_actions[split("><", name)[1]]
+      principals = concat( length(flatten([for prefix_config in local.prefix_object_permissions : prefix_config.arns if prefix_config.prefix == split("><", name)[0] && prefix_config.permission_type == split("><", name)[1]])) > 0 ? [
         {
           type = "AWS"
-          identifiers = prefix_config.arns 
+          identifiers = distinct(flatten([for prefix_config in local.prefix_object_permissions : prefix_config.arns if prefix_config.prefix == split("><", name)[0] && prefix_config.permission_type == split("><", name)[1]]))
         }
-      ]
-    } if length(prefix_config.arns) > 0],
-    [ for prefix_config in var.principal_prefix_object_permissions : {
-      prefix = prefix_config.prefix
-      actions = local.object_permission_set_actions[prefix_config.permission_type]
-      principals = prefix_config.principals
-    } if length(prefix_config.principals) > 0],
-  )
+      ] : [], flatten([ for prefix_config in var.principal_prefix_object_permissions : prefix_config.prefix == split("><", name)[0] && prefix_config.permission_type == split("><", name)[1] ? prefix_config.principals : []])
+    )}]
+  ) : set if length(set.principals) > 0]
   prefix_object_denial_sets = concat(
     [ for prefix_config in local.prefix_object_denials : {
       prefix = prefix_config.prefix
