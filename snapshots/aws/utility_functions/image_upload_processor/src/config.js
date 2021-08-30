@@ -2,6 +2,20 @@ const _ = require('lodash');
 const ExifReader = require('exifreader');
 const isSvg = require('is-svg')
 
+const fromBuffer = {
+  dataSource: 'FILE_TYPE',
+  name: 'FileTypeFromBuffer',
+  value: {
+    path: (fileType) => {
+      return fileType || {}
+    }
+  },
+  requiredParams: {
+    file: {},
+  },
+  apiMethod: 'fromBuffer',
+};
+
 function exifMeta(img) {
   let meta = {}
   try {
@@ -105,7 +119,7 @@ module.exports = {
         fileType: {
           action: 'exploranda',
           params: {
-            accessSchema: {value: 'dataSources.FILE_TYPE.fromBuffer'},
+            accessSchema: {value: fromBuffer},
             explorandaParams: {
               file: { ref: 'file.results.file[0].Body'}
             }
@@ -118,7 +132,7 @@ module.exports = {
       transformers: {
         imageType: {
           helper: ({image, fileType}) => {
-            if (_.get(fileType, 'ext') === "xml" && isSvg(image)) {
+            if ((_.get(fileType, 'ext') === "xml" || !_.get(fileType, 'ext')) && isSvg(image)) {
               return {
                 ext: 'svg',
                 mime: 'image/svg+xml'
