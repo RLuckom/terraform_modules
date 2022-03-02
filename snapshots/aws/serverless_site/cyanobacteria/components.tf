@@ -28,6 +28,7 @@ locals {
     {
       domain_name = local.routing.domain
       site_title = var.site_title
+      payment_pointer = var.payment_pointer
       nav_links = local.nav_links
       aws_region = var.region
       table_name = module.trails_table.table_name

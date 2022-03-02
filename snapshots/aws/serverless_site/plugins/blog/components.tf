@@ -144,6 +144,7 @@ module blog_site {
   region = var.region
   nav_links = var.nav_links
   site_title = var.site_title
+  payment_pointer = var.payment_pointer
   coordinator_data = var.coordinator_data
   force_destroy = var.allow_delete_buckets
   website_bucket_cors_rules = [{

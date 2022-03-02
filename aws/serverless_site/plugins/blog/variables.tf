@@ -45,6 +45,11 @@ variable admin_site_resources {
   }
 }
 
+variable payment_pointer {
+  type = string
+  default = ""
+}
+
 variable plugin_config {
   type = object({
     domain = string

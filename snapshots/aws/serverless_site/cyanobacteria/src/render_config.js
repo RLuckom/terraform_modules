@@ -30,6 +30,7 @@ module.exports = {
           value: {
             browserRoot: "https://${domain_name}",
             domainName: "${domain_name}",
+            paymentPointer: "${payment_pointer}",
             postListUrl: "https://${domain_name}/index.html",
             title: "${site_title}",
             navLinks: ${nav_links},

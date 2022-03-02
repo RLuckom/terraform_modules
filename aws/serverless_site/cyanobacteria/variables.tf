@@ -204,6 +204,11 @@ variable site_title {
   default = "Test Site"
 }
 
+variable payment_pointer {
+  type = string
+  default = ""
+}
+
 variable website_bucket_prefix_object_permissions {
   type = list(object({
     permission_type = string
