@@ -9,7 +9,7 @@
   "author": "Raphael Luckom",
   "license": "MIT",
   "dependencies": {
-    "exifreader": "^2.6.0",
+    "exifreader": "^4.4.0",
     "file-type": "^16.3.0",
     "is-svg": "^4.3.1",
     "sharp": "^0.26.2"
