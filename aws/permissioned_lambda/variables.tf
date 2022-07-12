@@ -55,8 +55,8 @@ variable preuploaded_source {
 }
 
 locals {
-  default_runtime = "nodejs14.x"
-  runtime = var.runtime == "" ? local.default_runtime : var.runtime
+  runtime = var.runtime == "" ? "nodejs16.x" : var.runtime
+  architecture = var.architecture 
   deployment_package_local_path = "${path.root}/functions/zip/${local.scoped_lambda_name}/lambda.zip"
   deployment_package_key = "${local.scoped_lambda_name}/lambda.zip"
   scoped_lambda_name = "${var.lambda_details.action_name}${var.lambda_details.scope_name == "" ? "" : "-"}${var.lambda_details.scope_name}${var.unique_suffix == "" ? "" : "-"}${var.unique_suffix}"
@@ -77,7 +77,12 @@ variable invoking_roles {
 
 variable runtime {
   type = string
-  default = ""
+  default = "nodejs16.x"
+}
+
+variable architecture {
+  type = string
+  default = "arm64"
 }
 
 variable lambda_event_configs {

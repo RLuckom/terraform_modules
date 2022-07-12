@@ -110,6 +110,7 @@ resource "aws_lambda_function" "lambda" {
   function_name = local.scoped_lambda_name
   publish = var.publish
   runtime = local.runtime
+  architectures = [local.architecture]
   s3_bucket = var.preuploaded_source.supplied ? var.preuploaded_source.bucket : (local.s3_deployment ? var.source_bucket : null)
   s3_key = var.preuploaded_source.supplied ? var.preuploaded_source.path : (local.s3_deployment ? local.deployment_package_key : null)
   filename = (local.s3_deployment || var.preuploaded_source.supplied) ? null : local.deployment_package_local_path
