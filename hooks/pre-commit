@@ -45,5 +45,6 @@ EOF
 	exit 1
 fi
 
+echo "running snapshot"
 node ./snapshot.js
 git add snapshots
