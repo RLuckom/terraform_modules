@@ -97,7 +97,7 @@ resource "aws_lambda_function_event_invoke_config" "function_notifications" {
   }
 }
 
-resource "aws_s3_bucket_object" "deployment_package_zip" {
+resource "aws_s3_object" "deployment_package_zip" {
   count = local.s3_deployment ? 1 : 0
   bucket = var.source_bucket
   key    = local.deployment_package_key
@@ -127,7 +127,7 @@ resource "aws_lambda_function" "lambda" {
       variables = var.environment_var_map
     }
   }
-  depends_on = [aws_s3_bucket_object.deployment_package_zip, module.lambda_role]
+  depends_on = [aws_s3_object.deployment_package_zip, module.lambda_role]
 }
 
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
