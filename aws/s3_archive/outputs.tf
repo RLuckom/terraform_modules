@@ -1,3 +1,3 @@
 output "object" {
-  value = aws_s3_bucket_object.archive_zip
+  value = aws_s3_object.archive_zip
 }
