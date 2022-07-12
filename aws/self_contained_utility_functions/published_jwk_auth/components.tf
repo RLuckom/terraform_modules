@@ -25,6 +25,7 @@ module check_auth {
   account_id = var.account_id
   region = "us-east-1"
   publish = true
+  architecture = "x86_64"
   preuploaded_source = {
     supplied = true
     bucket = var.bucket_config.bucket

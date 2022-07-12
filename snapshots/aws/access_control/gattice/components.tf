@@ -35,6 +35,7 @@ module cognito_fn_template {
 module check_auth {
   source = "../../permissioned_lambda"
   publish = true
+  architecture = "x86_64"
   account_id = var.account_id
   unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
@@ -55,6 +56,7 @@ module move_cookie_to_auth_header {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
+  architecture = "x86_64"
   unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
@@ -74,6 +76,7 @@ module http_headers {
   source = "../../permissioned_lambda"
   publish = true
   account_id = var.account_id
+  architecture = "x86_64"
   unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
@@ -96,6 +99,7 @@ module sign_out {
   unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
+  architecture = "x86_64"
   preuploaded_source = module.cognito_fn_template.s3_objects.sign_out
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
@@ -113,6 +117,7 @@ module refresh_auth {
   publish = true
   account_id = var.account_id
   unique_suffix = var.unique_suffix
+  architecture = "x86_64"
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
   preuploaded_source = module.cognito_fn_template.s3_objects.refresh_auth
@@ -134,6 +139,7 @@ module parse_auth {
   unique_suffix = var.unique_suffix
   // because only us-east-1 lambdas can be used in cloudfront request hooks
   region = "us-east-1"
+  architecture = "x86_64"
   preuploaded_source = module.cognito_fn_template.s3_objects.parse_auth
   timeout_secs = module.cognito_fn_template.function_configs.function_defaults.timeout_secs
   mem_mb = module.cognito_fn_template.function_configs.function_defaults.mem_mb
