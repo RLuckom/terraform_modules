@@ -4,7 +4,7 @@ data "archive_file" "deployment_package" {
   output_path = var.output_path
 }
 
-resource "aws_s3_bucket_object" "archive_zip" {
+resource "aws_s3_object" "archive_zip" {
   bucket = var.bucket
   key    = var.key
   source = var.output_path

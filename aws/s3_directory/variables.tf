@@ -16,7 +16,7 @@ variable unique_suffix {
   default = ""
 }
 
-resource "aws_s3_bucket_object" "assets" {
+resource "aws_s3_object" "assets" {
   count = length(var.file_configs)
   bucket = var.bucket_name
   key    = var.file_configs[count.index].key
