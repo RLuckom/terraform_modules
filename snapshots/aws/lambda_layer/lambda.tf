@@ -9,7 +9,7 @@ data "archive_file" "deployment_package" {
   output_path = local.layer_zip_output_path
 }
 
-resource "aws_s3_bucket_object" "deployment_package_zip" {
+resource "aws_s3_object" "deployment_package_zip" {
   bucket = var.source_bucket
   key    = local.layer_key
   source = local.layer_zip_output_path
@@ -26,5 +26,5 @@ resource "aws_lambda_layer_version" "layer" {
   lifecycle {
     create_before_destroy = true
   }
-  depends_on = [aws_s3_bucket_object.deployment_package_zip]
+  depends_on = [aws_s3_object.deployment_package_zip]
 }

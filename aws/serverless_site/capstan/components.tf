@@ -12,7 +12,7 @@ module site_static_assets {
   depends_on = [module.website_bucket]
 }
 
-resource "aws_s3_bucket_object" "assets" {
+resource "aws_s3_object" "assets" {
   count = length(var.file_configs)
   bucket = module.website_bucket.bucket_name
   key    = var.file_configs[count.index].key
