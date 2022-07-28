@@ -20,7 +20,7 @@ module bucket {
   region = var.region
   need_policy_override = var.need_policy_override
   security_scope = var.security_scope
-  acl    = var.allow_direct_access ? "public-read" : "private"
+  acl    = var.allow_direct_access ? "public-read" : ""
   force_destroy = var.force_destroy
   prefix_list_permissions = var.prefix_list_permissions
   cors_rules = local.cors_rules

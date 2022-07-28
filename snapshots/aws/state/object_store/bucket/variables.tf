@@ -189,7 +189,23 @@ variable website_configs {
 
 variable acl {
   type = string
-  default = "private"
+  default = ""
+}
+
+variable grant_based_acl {
+  type = list(object({
+    owner_full_control = bool
+    id_grants = list(object({
+      grantee_id = string
+      grantee_type = string
+      permission = string
+    }))
+    group_grants = list(object({
+      grantee_uri = string
+      permission = string
+    }))
+  }))
+  default = []
 }
 
 variable request_payer {

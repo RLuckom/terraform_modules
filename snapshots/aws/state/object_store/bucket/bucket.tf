@@ -12,32 +12,124 @@ module splitter_lambda {
 
 resource "aws_s3_bucket" "bucket" {
   bucket = local.bucket_name
-  acl = var.acl
   request_payer = var.request_payer
   force_destroy = var.force_destroy
+}
 
-  dynamic "logging" {
-    for_each = var.bucket_logging_config.target_bucket == "" ? [] : [1]
+resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
+  count = length(var.lifecycle_rules) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
+
+  dynamic "rule" {
+    for_each = [for rule in var.lifecycle_rules : rule if rule.prefix != "" && length(rule.tags) > 0]
     content {
-      target_bucket = var.bucket_logging_config.target_bucket
-      target_prefix = var.bucket_logging_config.target_prefix
+      id = base64sha256(jsonencode(rule.value))
+      status = rule.value.enabled ? "Enabled" : "Disabled"
+      filter {
+        and {
+          prefix = rule.value.prefix
+          tags = rule.value.tags
+        }
+      }
+      expiration {
+        days = rule.value.expiration_days
+      }
     }
   }
 
-  dynamic "website" {
-    for_each = var.website_configs
+  dynamic "rule" {
+    for_each = [for rule in var.lifecycle_rules : rule if rule.prefix != "" && length(rule.tags) == 0]
     content {
-      index_document = website.value.index_document
-      error_document = website.value.error_document
+      id = base64sha256(jsonencode(rule.value))
+      status = rule.value.enabled ? "Enabled" : "Disabled"
+      filter {
+        prefix = rule.value.prefix
+      }
+      expiration {
+        days = rule.value.expiration_days
+      }
     }
   }
+}
 
-  dynamic "versioning" {
-    for_each = var.versioning
-    content {
-      enabled = versioning.value.enabled
+resource "aws_s3_bucket_versioning" "versioning_enable" {
+  count = length(var.versioning) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
+  versioning_configuration {
+    status = var.versioning[0].enabled ? "Enabled" : "Disabled"
+  }
+}
+
+resource "aws_s3_bucket_logging" "logging" {
+  count = var.bucket_logging_config.target_bucket == "" ? 0 : 1
+  bucket = aws_s3_bucket.bucket.id
+  target_bucket = var.bucket_logging_config.target_bucket
+  target_prefix = var.bucket_logging_config.target_prefix
+}
+
+resource "aws_s3_bucket_ownership_controls" "owner_enforced" {
+  count = (var.acl == "" && length(var.grant_based_acl) == 0) ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_acl" "acl" {
+  count = (var.acl == "" || length(var.grant_based_acl) > 0) ? 0 : 1
+  bucket = aws_s3_bucket.bucket.id
+  acl    = var.acl
+}
+
+data "aws_canonical_user_id" "current" {}
+
+resource "aws_s3_bucket_acl" "grant_based_acl" {
+  count = length(var.grant_based_acl) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
+  access_control_policy {
+    dynamic "grant" {
+      for_each = var.grant_based_acl[0].id_grants
+      content {
+        grantee {
+          id   = grant.value.grantee_id
+          type = grant.value.grantee_type
+        }
+        permission = grant.value.permission
+      }
+    }
+
+    dynamic "grant" {
+      for_each = var.grant_based_acl[0].group_grants
+      content {
+        grantee {
+          uri   = grant.value.grantee_uri
+          type = "Group"
+        }
+        permission = grant.value.permission
+      }
+    }
+
+    dynamic "grant" {
+      for_each = var.grant_based_acl[0].owner_full_control ? [1] : []
+      content {
+        grantee {
+          id   = data.aws_canonical_user_id.current.id
+          type = "CanonicalUser"
+        }
+        permission = "FULL_CONTROL"
+      }
+    }
+
+    owner {
+      id = data.aws_canonical_user_id.current.id
     }
   }
+}
+
+resource "aws_s3_bucket_cors_configuration" "cors" {
+  count = length(var.cors_rules) > 0 ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
 
   dynamic "cors_rule" {
     for_each = var.cors_rules
@@ -49,17 +141,18 @@ resource "aws_s3_bucket" "bucket" {
       max_age_seconds = cors_rule.value.max_age_seconds
     }
   }
+}
 
-  dynamic "lifecycle_rule" {
-    for_each = var.lifecycle_rules
-    content {
-      prefix = lifecycle_rule.value.prefix
-      tags = lifecycle_rule.value.tags
-      enabled = lifecycle_rule.value.enabled
-      expiration {
-        days = lifecycle_rule.value.expiration_days
-      }
-    }
+resource "aws_s3_bucket_website_configuration" "website" {
+  count = length(var.website_configs) == 1 ? 1 : 0
+  bucket = aws_s3_bucket.bucket.id
+
+  index_document {
+    suffix = var.website_configs[0].index_document
+  }
+
+  error_document {
+    key = var.website_configs[0].error_document
   }
 }
 
