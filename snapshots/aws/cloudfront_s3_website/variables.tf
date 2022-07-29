@@ -21,6 +21,11 @@ variable unique_suffix {
   default = ""
 }
 
+variable min_tls_version {
+  type = string
+  default = "TLSv1.2_2021"
+}
+
 variable access_control_function_qualified_arns {
   type = list(object({
     refresh_auth = string
