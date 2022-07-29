@@ -4,7 +4,6 @@ resource random_id bucket_suffix {
 
 resource aws_s3_bucket stage_login_functions {
   bucket = "stage-functions-${lower(replace(random_id.bucket_suffix.b64_url, "_", ""))}"
-  acl    = "private"
   force_destroy = true
 }
 

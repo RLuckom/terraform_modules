@@ -3,7 +3,6 @@ module "bucket" {
   unique_suffix = var.unique_suffix
   force_destroy = var.force_destroy
   name = var.name
-  acl    = "private"
   account_id = var.account_id
   region = var.region
   cors_rules = var.cors_rules

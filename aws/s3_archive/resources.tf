@@ -8,6 +8,5 @@ resource "aws_s3_object" "archive_zip" {
   bucket = var.bucket
   key    = var.key
   source = var.output_path
-  acl    = var.acl
   etag   = data.archive_file.deployment_package.output_md5
 }

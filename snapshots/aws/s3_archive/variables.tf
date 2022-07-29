@@ -10,10 +10,6 @@ variable key {
   type = string
 }
 
-variable acl {
-  default = "private"
-}
-
 variable output_path {
   default = ""
 }
