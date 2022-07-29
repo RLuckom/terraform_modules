@@ -209,6 +209,7 @@ variable grant_based_acl {
 }
 
 variable request_payer {
+  type = string
   default = "BucketOwner"
 }
 

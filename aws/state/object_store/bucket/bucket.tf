@@ -12,8 +12,12 @@ module splitter_lambda {
 
 resource "aws_s3_bucket" "bucket" {
   bucket = local.bucket_name
-  request_payer = var.request_payer
   force_destroy = var.force_destroy
+}
+
+resource "aws_s3_bucket_request_payment_configuration" "example" {
+  bucket = aws_s3_bucket.bucket.id
+  payer  = var.request_payer
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "lifecycle" {
