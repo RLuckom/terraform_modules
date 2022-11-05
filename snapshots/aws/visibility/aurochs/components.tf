@@ -263,8 +263,8 @@ module cost_report_function {
 module archive_function {
   source = "../../donut_days_function"
   unique_suffix = var.unique_suffix
-  timeout_secs = 15
-  mem_mb = 128
+  timeout_secs = 20
+  mem_mb = 256
   account_id = var.account_id
   region = var.region
   logging_config = local.lambda_logging_config
