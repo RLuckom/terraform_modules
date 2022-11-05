@@ -35,6 +35,29 @@ function createDatedS3Key(prefix, scope, action, requestId, date) {
   return `${_.trimEnd(prefix, '/')}${prefix !== "" ? "/" : ""}year=${year}/month=${month}/day=${day}/hour=${hour}/scope=${scope}/action=${action}/${requestId || 'undefined'}.gz`
 }
 
+function formatTaskErr(taskErr) {
+  let error = {
+    message: taskErr.toString(),
+  }
+  if (taskErr.stageName) {
+    error.stageName = taskErr.stageName
+  }
+  if (taskErr.dependencyName) {
+    error.dependencyName = taskErr.dependencyName
+  }
+  if (taskErr.sourceSchema) {
+    error.sourceSchema = taskErr.sourceSchema
+  }
+  if (taskErr.params) {
+    error.params = taskErr.params
+  }
+  if (taskErr.apiError) {
+    error.apiError = taskErr.apiError
+    error.apiErrorStack = _.get(taskErr, 'apiError.stack')
+  }
+  return JSON.stringify(error)
+}
+
 function buildLogger(event, context, callback) {
   const startTime = new Date().getTime()
   const logBucket = process.env.LOG_BUCKET
@@ -55,6 +78,10 @@ function buildLogger(event, context, callback) {
     logFunction = log
   }
   function newCallback(taskErr, taskRes, metrics) {
+    let formattedTaskErr = null
+    if (taskErr) {
+      formattedTaskErr = formatTaskErr(taskErr)
+    }
     const parallel = []
     // use the time as the range key. Yes, this means
     // that if things happen simultaneously
@@ -94,11 +121,11 @@ function buildLogger(event, context, callback) {
         if (e) {
           console.log(e)
         }
-        callback(taskErr, taskRes)
+        callback(formattedTaskErr, taskRes)
       })
       return
     } else {
-      callback(taskErr, taskRes)
+      callback(formattedTaskErr, taskRes)
     }
   }
   return {
