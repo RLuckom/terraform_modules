@@ -40,6 +40,21 @@ variable lambda_source_bucket {
   default = ""
 }
 
+variable slack_credentials_parameterstore_key {
+  type = string
+  default = ""
+}
+
+variable error_relay_slack_channel {
+  type = string
+  default = ""
+}
+
+variable error_table_name {
+  type = string
+  default = "function_error_metrics"
+}
+
 // If any of the supported systems use the same
 // security_scope as the visibility system, bad things will happen
 variable visibility_system_id {
@@ -256,20 +271,6 @@ variable expire_lambda_logs {
     enabled = true
     expiration_days = 31 * 3
   }
-}
-
-variable lambda_event_configs {
-  type = list(object({
-    maximum_event_age_in_seconds = number
-    maximum_retry_attempts = number
-    on_success = list(object({
-      function_arn = string
-    }))
-    on_failure = list(object({
-      function_arn = string
-    }))
-  }))
-  default = []
 }
 
 module column_schemas {

@@ -40,6 +40,16 @@ variable lambda_source_bucket {
   default = ""
 }
 
+variable slack_credentials_parameterstore_key {
+  type = string
+  default = ""
+}
+
+variable slack_channel {
+  type = string
+  default = ""
+}
+
 // If any of the supported systems use the same
 // security_scope as the visibility system, bad things will happen
 variable visibility_system_id {

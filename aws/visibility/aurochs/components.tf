@@ -94,6 +94,37 @@ resource random_id metric_table_suffixes {
   byte_length = 4
 }
 
+module error_table {
+  source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"
+  account_id = var.account_id
+  region = var.region
+  unique_suffix = var.unique_suffix
+  partition_key = {
+    name = "functionArn",
+    type = "S"
+  }
+  range_key = {
+    name = "time",
+    type = "N"
+  }
+  table_name = var.error_table_namedd
+  read_permission_role_names = []
+  put_item_permission_role_names = [module.error_relay_function.role.name]
+}
+
+module error_relay_function {
+  source = "github.com/RLuckom/terraform_modules//aws/utility_functions/error_relay"
+  unique_suffix = var.unique_suffix
+  account_id = var.account_id
+  region = var.region
+  logging_config = local.lambda_logging_config
+  security_scope = "visibility"
+  donut_days_layer = var.donut_days_layer
+  slack_credentials_parameterstore_key = var.slack_credentials_parameterstore_key
+  slack_channel = var.error_relay_slack_channel
+  dynamo_error_table = module.error_table.table.arn
+}
+
 module metric_tables {
   for_each = toset(keys(local.metric_table_configs))
   source = "github.com/RLuckom/terraform_modules//aws/state/permissioned_dynamo_table"

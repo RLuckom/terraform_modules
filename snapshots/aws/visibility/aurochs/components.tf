@@ -94,6 +94,36 @@ resource random_id metric_table_suffixes {
   byte_length = 4
 }
 
+module error_table {
+  source = "../../state/permissioned_dynamo_table"
+  account_id = var.account_id
+  region = var.region
+  unique_suffix = var.unique_suffix
+  partition_key = {
+    name = "functionArn",
+    type = "S"
+  }
+  range_key = {
+    name = "time",
+    type = "N"
+  }
+  table_name = var.error_table_name
+  read_permission_role_names = []
+  put_item_permission_role_names = [module.error_relay_function.role.name]
+}
+
+module error_relay_function {
+  source = "../../utility_functions/error_relay"
+  unique_suffix = var.unique_suffix
+  account_id = var.account_id
+  region = var.region
+  security_scope = "visibility"
+  donut_days_layer = var.donut_days_layer
+  slack_credentials_parameterstore_key = var.slack_credentials_parameterstore_key
+  slack_channel = var.error_relay_slack_channel
+  dynamo_error_table = module.error_table.table_name
+}
+
 module metric_tables {
   for_each = toset(keys(local.metric_table_configs))
   source = "../../state/permissioned_dynamo_table"
@@ -279,7 +309,7 @@ module archive_function {
     log_destinations_map = jsonencode(local.archive_function_destination_maps.log_destination_map)
     partition_bucket = module.visibility_bucket.bucket_name
   })
-  lambda_event_configs = var.lambda_event_configs
+  lambda_event_configs = module.error_relay_function.notification_configs.notify_failure_only
   additional_helpers = [
     {
       helper_name = "athenaHelpers.js",
