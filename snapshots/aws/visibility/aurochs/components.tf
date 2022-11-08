@@ -104,9 +104,13 @@ module error_table {
     type = "S"
   }
   range_key = {
-    name = "time",
-    type = "N"
+    name = "isoTime",
+    type = "S"
   }
+  ttl = [{
+    enabled = true
+    attribute_name = "ttl"
+  }]
   table_name = var.error_table_name
   read_permission_role_names = []
   put_item_permission_role_names = [module.error_relay_function.role.name]
@@ -119,6 +123,7 @@ module error_relay_function {
   region = var.region
   security_scope = "visibility"
   donut_days_layer = var.donut_days_layer
+  error_metric_ttl_days = var.error_metric_ttl_days
   slack_credentials_parameterstore_key = var.slack_credentials_parameterstore_key
   slack_channel = var.error_relay_slack_channel
   dynamo_error_table = module.error_table.table_name

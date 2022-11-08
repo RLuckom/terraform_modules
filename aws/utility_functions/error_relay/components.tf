@@ -1,6 +1,6 @@
 locals {
   need_donut_days_layer = var.donut_days_layer.present == false
-  donut_days_layer_config = local.need_donut_days_layer ? module.donut_days[0].layer_config : var.replication_configuration.donut_days_layer
+  donut_days_layer_config = local.need_donut_days_layer ? module.donut_days[0].layer_config : var.donut_days_layer
 }
 
 module "donut_days" {
@@ -16,27 +16,34 @@ module "error_relay" {
   mem_mb = var.function_memory_size
   unique_suffix = var.unique_suffix
   environment_var_map = {
+    TTL_DAYS = var.error_metric_ttl_days
     SLACK_CREDENTIAL_PARAM = var.slack_credentials_parameterstore_key
-    SLACK_CHANNEL = var.app_slack_channel
+    SLACK_CHANNEL = var.slack_channel
     ERROR_TABLE = var.dynamo_error_table
   }
   source_contents = [
     {
       file_name = "index.js"
-      file_contents = file("./src/index.js")
+      file_contents = file("${path.module}/src/index.js")
     },
   ]
   lambda_details = {
     action_name = var.action_name
     scope_name = var.security_scope
     policy_statements = concat(
-      local.permission_sets.read_slack_credentials
+      local.read_slack_credentials_permissions
     )
   }
   layers = [local.donut_days_layer_config]
 }
 
 locals {
+  read_slack_credentials_permissions = [{
+    actions = [ "ssm:GetParameter" ]
+    resources = [
+      "arn:aws:ssm:${var.region}:${var.account_id}:parameter${var.slack_credentials_parameterstore_key}"
+    ]
+  }]
   notify_failure_and_success = [
     {
       maximum_event_age_in_seconds = 60

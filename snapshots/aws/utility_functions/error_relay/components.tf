@@ -16,6 +16,7 @@ module "error_relay" {
   mem_mb = var.function_memory_size
   unique_suffix = var.unique_suffix
   environment_var_map = {
+    TTL_DAYS = var.error_metric_ttl_days
     SLACK_CREDENTIAL_PARAM = var.slack_credentials_parameterstore_key
     SLACK_CHANNEL = var.slack_channel
     ERROR_TABLE = var.dynamo_error_table

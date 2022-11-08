@@ -104,10 +104,14 @@ module error_table {
     type = "S"
   }
   range_key = {
-    name = "time",
-    type = "N"
+    name = "isoTime",
+    type = "S"
   }
-  table_name = var.error_table_namedd
+  ttl = [{
+    enabled = true
+    attribute_name = "ttl"
+  }]
+  table_name = var.error_table_name
   read_permission_role_names = []
   put_item_permission_role_names = [module.error_relay_function.role.name]
 }
@@ -117,12 +121,12 @@ module error_relay_function {
   unique_suffix = var.unique_suffix
   account_id = var.account_id
   region = var.region
-  logging_config = local.lambda_logging_config
   security_scope = "visibility"
   donut_days_layer = var.donut_days_layer
+  error_metric_ttl_days = var.error_metric_ttl_days
   slack_credentials_parameterstore_key = var.slack_credentials_parameterstore_key
   slack_channel = var.error_relay_slack_channel
-  dynamo_error_table = module.error_table.table.arn
+  dynamo_error_table = module.error_table.table_name
 }
 
 module metric_tables {
@@ -310,7 +314,7 @@ module archive_function {
     log_destinations_map = jsonencode(local.archive_function_destination_maps.log_destination_map)
     partition_bucket = module.visibility_bucket.bucket_name
   })
-  lambda_event_configs = var.lambda_event_configs
+  lambda_event_configs = module.error_relay_function.notification_configs.notify_failure_only
   additional_helpers = [
     {
       helper_name = "athenaHelpers.js",

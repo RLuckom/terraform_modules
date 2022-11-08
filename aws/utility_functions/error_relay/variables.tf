@@ -33,7 +33,12 @@ variable security_scope {
 
 variable error_table_name {
   type = string
-  default = "function_error_metrics"
+  default = ""
+}
+
+variable error_metric_ttl_days {
+  type = number
+  default = 90
 }
 
 variable donut_days_layer {

@@ -38,6 +38,10 @@ output cost_report_prefix {
   value = local.cost_report_prefix
 }
 
+output error_relay_notification_configs {
+  value = module.error_relay_function.notification_configs
+}
+
 output cost_report_summary_location {
   value = {
     bucket = module.visibility_bucket.bucket_name

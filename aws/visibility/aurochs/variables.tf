@@ -35,6 +35,11 @@ variable visibility_data_bucket {
   default = ""
 }
 
+variable error_metric_ttl_days {
+  type = number
+  default = 90
+}
+
 variable lambda_source_bucket {
   type = string
   default = ""
@@ -45,9 +50,14 @@ variable slack_credentials_parameterstore_key {
   default = ""
 }
 
-variable slack_channel {
+variable error_relay_slack_channel {
   type = string
   default = ""
+}
+
+variable error_table_name {
+  type = string
+  default = "function_error_metrics"
 }
 
 // If any of the supported systems use the same
@@ -266,20 +276,6 @@ variable expire_lambda_logs {
     enabled = true
     expiration_days = 31 * 3
   }
-}
-
-variable lambda_event_configs {
-  type = list(object({
-    maximum_event_age_in_seconds = number
-    maximum_retry_attempts = number
-    on_success = list(object({
-      function_arn = string
-    }))
-    on_failure = list(object({
-      function_arn = string
-    }))
-  }))
-  default = []
 }
 
 module column_schemas {

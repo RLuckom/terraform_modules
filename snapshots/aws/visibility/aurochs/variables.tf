@@ -35,6 +35,11 @@ variable visibility_data_bucket {
   default = ""
 }
 
+variable error_metric_ttl_days {
+  type = number
+  default = 90
+}
+
 variable lambda_source_bucket {
   type = string
   default = ""

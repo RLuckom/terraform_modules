@@ -1,21 +1,17 @@
+output role {
+  value = module.error_relay.role
+}
+
 output lambda {
-  value = module.error_relay
+  value = module.error_relay.lambda
 }
 
-output replication_function_permissions_needed {
-  value = local.replication_function_prefix_permissions
-}
-
-output notify_failure_and_success {
-  value = local.notify_failure_and_success
-}
-
-output notify_failure_only {
-  value = local.notify_failure_only
-}
-
-output notify_success_only {
-  value = local.notify_success_only
+output notification_configs {
+  value = {
+    notify_failure_only = local.notify_failure_only
+    notify_success_only = local.notify_success_only
+    notify_failure_and_success = local.notify_failure_and_success
+  }
 }
 
 output lambda_logging_roles {

@@ -5,16 +5,22 @@ const needle = require('needle')
 const slackCredentialsParameter = process.env.SLACK_CREDENTIAL_PARAM
 const slackChannel = process.env.SLACK_CHANNEL
 const dyn = new AWS.DynamoDB()
+const TTL_SECONDS = 24 * 60 * 60 * _.toNumber(process.env.TTL_DAYS || 90)
 
 function constructReadableError(evt) {
   const responseErrorMessage = _.get(evt, 'responsePayload.errorMessage')
-  let ddMetadata = null
+  let ddMetadata = {
+    functionArn: _.get(evt, 'requestContext.functionArn'),
+    event: evt,
+    ttl: _.round(new Date().getTime() / 1000 + TTL_SECONDS)
+  }
   try {
-    ddMetadata = JSON.parse(responseErrorMessage)
+    ddMetadata = {...JSON.parse(responseErrorMessage), ...ddMetadata}
   } catch(e) {
   }
+  ddMetadata.isoTime = _.get(ddMetadata, 'apiError.time') || _.get(evt, 'requestPayload.eventTime') || new Date().toISOString()
   let ddMetaString = ''
-  if (ddMetadata) {
+  if (ddMetadata.stageName) {
     ddMetaString += `stageName: ${ddMetadata.stageName}\ndependencyName:${ddMetadata.dependencyName}\nrequestId:${_.get(evt, 'requestContext.requestId')}\n\nstack: ${ddMetadata.apiErrorStack}}`
   }
   const errString = ddMetaString || `Error event sent to slack relay:\n${JSON.stringify(evt)}`
@@ -22,7 +28,6 @@ function constructReadableError(evt) {
   return {
     message,
     ddMetadata,
-    event: evt
   }
 }
 
@@ -52,7 +57,7 @@ function main(event, context, callback) {
       console.log(e)
     })
     dyn.putItem({
-      Item: AWS.DynamoDB.Converter.marshall({event: readableError.event, ddMetadata: readableError.ddMetadata}),
+      Item: AWS.DynamoDB.Converter.marshall(readableError.ddMetadata),
       TableName: errorTable
     }, (e, r) => {
       console.log(e)
