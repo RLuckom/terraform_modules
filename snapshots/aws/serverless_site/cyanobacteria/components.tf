@@ -30,6 +30,7 @@ locals {
       site_title = var.site_title
       payment_pointer = var.payment_pointer
       nav_links = local.nav_links
+      rel_me_link = var.rel_me_link
       aws_region = var.region
       table_name = module.trails_table.table_name
       post_template_key = "assets/templates/post.tmpl"

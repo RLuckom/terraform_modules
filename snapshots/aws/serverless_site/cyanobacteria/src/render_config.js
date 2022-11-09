@@ -34,6 +34,7 @@ module.exports = {
             postListUrl: "https://${domain_name}/index.html",
             title: "${site_title}",
             navLinks: ${nav_links},
+            relMeLink: ${rel_me_link.href == "" ? "null" : jsonencode(rel_me_link)}
           }
         }
       },

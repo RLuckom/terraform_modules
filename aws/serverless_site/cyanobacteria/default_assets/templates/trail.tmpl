@@ -16,6 +16,9 @@
 <% _.forEach(runningMaterial.navLinks, function({name, target}) { 
     %><div class="nav-link-ctr"><a class="nav-link" href="<%- target %>"><%- name  %></a></div><% 
 }); %>
+<% if (runningMaterial.relMeLink)
+    {%><div class="nav-link-ctr"><a rel="me" class="nav-link" href="<%- runningMaterial.relMeLink.href %>"><%- runningMaterial.relMeLink.link_text %></a></div><% 
+}; %>
 </div>
 </section>
   <h1><%= trailId === 'posts' ? '' : 'Posts tagged with ' + trailId%></h1>

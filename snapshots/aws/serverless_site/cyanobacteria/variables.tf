@@ -209,6 +209,17 @@ variable payment_pointer {
   default = ""
 }
 
+variable rel_me_link {
+  type = object({
+    href = string
+    link_text = string
+  })
+  default = {
+    href = ""
+    link_text = ""
+  }
+}
+
 variable website_bucket_prefix_object_permissions {
   type = list(object({
     permission_type = string

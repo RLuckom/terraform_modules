@@ -50,6 +50,17 @@ variable payment_pointer {
   default = ""
 }
 
+variable rel_me_link {
+  type = object({
+    href = string
+    link_text = string
+  })
+  default = {
+    href = ""
+    link_text = ""
+  }
+}
+
 variable plugin_config {
   type = object({
     domain = string
