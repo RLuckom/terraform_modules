@@ -92,5 +92,6 @@ variable "replica_regions" {
 }
 
 locals {
+  table_arn = "arn:aws:dynamodb:${var.region}:${var.account_id}:table/${local.table_name}"
   table_name = var.unique_suffix == "" ? var.table_name : "${var.table_name}-${var.unique_suffix}"
 }

@@ -3,9 +3,17 @@ output "table" {
 }
 
 output "table_arn" {
-  value = "arn:aws:dynamodb:${var.region}:${var.account_id}:table/${local.table_name}"
+  value = local.table_arn
 }
 
 output "table_name" {
   value = local.table_name
+}
+
+output "table_metadata" {
+  value = {
+    name = local.table_name
+    region = var.region
+    arn = local.table_arn
+  }
 }

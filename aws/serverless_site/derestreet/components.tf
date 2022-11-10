@@ -30,6 +30,7 @@ module access_control_functions {
   source = "github.com/RLuckom/terraform_modules//aws/access_control/gattice"
   unique_suffix = var.unique_suffix
   account_id = var.account_id
+  aws_credentials_file = var.aws_credentials_file
   region = var.region
   token_issuer = "https://${module.cognito_user_management.user_pool.endpoint}"
   client_id = module.cognito_user_management.user_pool_client.id

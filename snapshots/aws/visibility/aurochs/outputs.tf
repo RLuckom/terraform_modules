@@ -42,6 +42,10 @@ output error_relay_notification_configs {
   value = module.error_relay_function.notification_configs
 }
 
+output error_table_metadata {
+  value = module.error_table.table_metadata
+}
+
 output cost_report_summary_location {
   value = {
     bucket = module.visibility_bucket.bucket_name

@@ -60,6 +60,11 @@ variable error_table_name {
   default = "function_error_metrics"
 }
 
+variable error_table_read_permission_role_names {
+  type = list(string)
+  default = []
+}
+
 // If any of the supported systems use the same
 // security_scope as the visibility system, bad things will happen
 variable visibility_system_id {

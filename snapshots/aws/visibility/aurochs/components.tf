@@ -112,7 +112,7 @@ module error_table {
     attribute_name = "ttl"
   }]
   table_name = var.error_table_name
-  read_permission_role_names = []
+  read_permission_role_names = var.error_table_read_permission_role_names
   put_item_permission_role_names = [module.error_relay_function.role.name]
 }
 

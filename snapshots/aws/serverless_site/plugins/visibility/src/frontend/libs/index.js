@@ -3,8 +3,8 @@ function siteContainerId(name) {
 }
 
 window.RENDER_CONFIG = {
-  init: ({costReportSummary}, gopher) => {
-    console.log(costReportSummary)
+  init: ({costReportSummary, errors}, gopher) => {
+    console.log(errors)
     const mainSection = document.querySelector('main')
     _.each(domNode([
       {
@@ -52,6 +52,12 @@ window.RENDER_CONFIG = {
       source: 'costReportSummary',
       formatter: ({costReportSummary}) => {
         return costReportSummary
+      }
+    },
+    errors: {
+      source: 'errors',
+      formatter: ({errors}) => {
+        return errors
       }
     },
   },

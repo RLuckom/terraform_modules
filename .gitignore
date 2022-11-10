@@ -5,3 +5,4 @@
 **/node_modules/**
 **/.nyc*
 **.csv
+snapshots/protocols/boundary_oauth/workdir/

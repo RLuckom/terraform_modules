@@ -13,6 +13,8 @@ module ui {
     cost_report_summary_storage_key = var.cost_report_summary_location.key 
     data_warehouse_configs = var.data_warehouse_configs
     serverless_site_configs = var.serverless_site_configs
+    error_table_name = var.error_table_metadata.name
+    error_table_region = var.error_table_metadata.region
   }
   default_css_paths = [
     local.plugin_default_styles_path,

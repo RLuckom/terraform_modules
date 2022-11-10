@@ -17,6 +17,13 @@ variable cost_report_summary_location {
   })
 }
 
+variable error_table_metadata {
+  type = object({
+    name = string
+    region = string
+  })
+}
+
 variable unique_suffix {
   type = string
   default = ""

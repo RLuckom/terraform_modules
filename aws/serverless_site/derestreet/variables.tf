@@ -46,6 +46,11 @@ variable unique_suffix {
   default = ""
 }
 
+variable aws_credentials_file {
+  type = string
+  default = "/.aws/credentials"
+}
+
 variable allow_delete_buckets {
   type = bool
   default = false
