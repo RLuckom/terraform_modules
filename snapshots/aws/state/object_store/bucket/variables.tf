@@ -21,6 +21,11 @@ variable need_policy_override {
   default = false
 }
 
+variable enable_acls {
+  type = bool
+  default = false
+}
+
 variable security_scope {
   type = string
   default = ""

@@ -23,6 +23,11 @@ variable need_policy_override {
   default = false
 }
 
+variable enable_acls {
+  type = bool
+  default = false
+}
+
 variable security_scope {
   type = string
   default = ""
@@ -109,6 +114,41 @@ variable lifecycle_rules {
     tags = map(string)
     enabled = bool
     expiration_days = number
+  }))
+  default = []
+}
+
+variable principal_prefix_object_permissions {
+  type = list(object({
+    permission_type = string
+    prefix = string
+    principals = list(object({
+      type = string
+      identifiers = list(string)
+    }))
+  }))
+  default = []
+}
+
+variable principal_prefix_object_denials {
+  type = list(object({
+    permission_type = string
+    prefix = string
+    principals = list(object({
+      type = string
+      identifiers = list(string)
+    }))
+  }))
+  default = []
+}
+
+variable principal_bucket_permissions {
+  type = list(object({
+    permission_type = string
+    principals = list(object({
+      type = string
+      identifiers = list(string)
+    }))
   }))
   default = []
 }

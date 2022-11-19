@@ -17,6 +17,7 @@ module bucket {
   unique_suffix = var.unique_suffix
   name = var.name == "" ? "${var.domain_parts.controlled_domain_part}.${var.domain_parts.top_level_domain}" : var.name
   account_id = var.account_id
+  enable_acls = var.enable_acls
   region = var.region
   need_policy_override = var.need_policy_override
   security_scope = var.security_scope
@@ -30,21 +31,27 @@ module bucket {
   prefix_object_denials = var.prefix_object_denials
   suffix_object_denials = var.suffix_object_denials
   bucket_permissions = var.bucket_permissions
-  principal_prefix_object_permissions = length(local.website_access_principals) > 0 ? [{
+  principal_prefix_object_permissions = concat(
+    var.principal_prefix_object_permissions,
+    length(local.website_access_principals) > 0 ? [{
     prefix = ""
     permission_type = "read_known_objects"
     principals = local.website_access_principals
-  }] : []
-  principal_prefix_object_denials = [for prefix in var.forbidden_website_paths : {
+  }] : [])
+  principal_prefix_object_denials = concat(
+    var.principal_prefix_object_denials,
+    [for prefix in var.forbidden_website_paths : {
     prefix = prefix
     permission_type = "read_known_objects"
     principals = local.website_access_principals
-  }]
+  }])
 
-  principal_bucket_permissions = length(local.website_access_principals) > 0 ? [{
+  principal_bucket_permissions = concat(
+    var.principal_bucket_permissions,
+    length(local.website_access_principals) > 0 ? [{
     permission_type = "list_bucket"
     principals = local.website_access_principals
-  }] : []
+  }] : [])
 
   website_configs = [{
     index_document = "index.html"

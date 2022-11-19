@@ -72,7 +72,7 @@ resource "aws_s3_bucket_logging" "logging" {
 }
 
 resource "aws_s3_bucket_ownership_controls" "owner_enforced" {
-  count = (var.acl == "" && length(var.grant_based_acl) == 0) ? 1 : 0
+  count = (var.acl == "" && length(var.grant_based_acl)  == 0 && !var.enable_acls) ? 1 : 0
   bucket = aws_s3_bucket.bucket.id
 
   rule {
@@ -330,6 +330,11 @@ locals {
     "s3:GetObjectVersion",
   ]
 
+  read_write_object_acl_actions = [
+    "s3:PutObjectAcl",
+    "s3:GetObjectAcl",
+  ]
+
   tag_known_object_actions = [
     "s3:PutObjectTagging",
   ]
@@ -353,6 +358,7 @@ locals {
     local.put_object_actions
   )
 
+
   bucket_permission_set_actions = {
     list_bucket = local.list_bucket_actions
     allow_billing_report = local.allow_billing_report_bucket_actions
@@ -362,6 +368,7 @@ locals {
   }
 
   object_permission_set_actions = {
+    read_write_object_acls = local.read_write_object_acl_actions
     read_known_objects = local.read_known_object_actions
     athena_query_execution =  local.read_known_object_actions
     read_and_tag = local.read_and_tag_known_actions
