@@ -39,6 +39,7 @@ resource "aws_ecs_task_definition" "task" {
   memory = var.task_config.resources.mem
   requires_compatibilities = ["FARGATE"]
   network_mode = "awsvpc"
+  tags = var.tags
 }
 
 resource "aws_cloudwatch_log_group" "web" {

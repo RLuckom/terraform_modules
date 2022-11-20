@@ -7,6 +7,11 @@ variable account_id {
   type = string
 }
 
+variable tags {
+  type = map(string)
+  default = {}
+}
+
 variable cluster_id {
   type = string
 }
