@@ -3,7 +3,7 @@ resource "aws_apigatewayv2_route" "route" {
   authorization_type = var.lambda_routes[count.index].authorizer == "NONE" ? "NONE" : "JWT"
   authorizer_id = var.lambda_routes[count.index].authorizer == "NONE" ? null : aws_apigatewayv2_authorizer.jwt_auth[var.lambda_routes[count.index].authorizer].id
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = var.lambda_routes[count.index].route_key
+  route_key = var.lambda_routes[count.index].route_key == "*" ? "$default" : replace(var.lambda_routes[count.index].route_key, "*", "{path+}")
   target = "integrations/${aws_apigatewayv2_integration.integration[count.index].id}"
 }
 
