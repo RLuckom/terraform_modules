@@ -196,8 +196,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         dynamic "cookies" {
           for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) > 0 ? [1] : []
           content {
-            forward = "whitelist"
-            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names
+            forward = ordered_cache_behavior.value.forwarded_values.cookie_names[0] == "*" ? "all" : "whitelist"
+            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names[0] == "*" ? null : ordered_cache_behavior.value.forwarded_values.cookie_names
           }
         }
 
@@ -249,8 +249,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         dynamic "cookies" {
           for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) > 0 ? [1] : []
           content {
-            forward = "whitelist"
-            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names
+            forward = ordered_cache_behavior.value.forwarded_values.cookie_names[0] == "*" ? "all" : "whitelist"
+            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names[0] == "*" ? null : ordered_cache_behavior.value.forwarded_values.cookie_names
           }
         }
 
@@ -302,8 +302,8 @@ resource "aws_cloudfront_distribution" "website_distribution" {
         dynamic "cookies" {
           for_each = length(ordered_cache_behavior.value.forwarded_values.cookie_names) > 0 ? [1] : []
           content {
-            forward = "whitelist"
-            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names
+            forward = ordered_cache_behavior.value.forwarded_values.cookie_names[0] == "*" ? "all" : "whitelist"
+            whitelisted_names = ordered_cache_behavior.value.forwarded_values.cookie_names[0] == "*" ? null : ordered_cache_behavior.value.forwarded_values.cookie_names
           }
         }
 
