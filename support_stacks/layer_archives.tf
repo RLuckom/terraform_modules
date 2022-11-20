@@ -111,3 +111,11 @@ module "archive_utils" {
   bucket = module.layer_bucket.bucket.id
   output_path = "${path.root}/src/aws/layers/archive_utils/layer.zip"
 }
+
+module "activitypub_utils" {
+  source = "github.com/RLuckom/terraform_modules//aws/s3_archive"
+  key = "activitypub_utils"
+  path = "${path.root}/src/aws/layers/activitypub_utils/"
+  bucket = module.layer_bucket.bucket.id
+  output_path = "${path.root}/src/aws/layers/activitypub_utils/layer.zip"
+}
