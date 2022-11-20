@@ -6,8 +6,8 @@ module task {
   name = var.name
   unique_suffix = var.unique_suffix
   task_config = var.task_config
-  security_groups = var.security_groups
-  subnets = var.subnets
+  security_groups = var.network_configuration.security_groups
+  subnets = var.network_configuration.subnets
 }
 
 resource "aws_ecs_service" "service" {
@@ -25,9 +25,9 @@ resource "aws_ecs_service" "service" {
   }
   desired_count = var.num_tasks
   network_configuration {
-    assign_public_ip = false
-    security_groups = var.security_groups
-    subnets = var.subnets
+    assign_public_ip = var.network_configuration.assign_public_ip
+    security_groups = var.network_configuration.security_groups
+    subnets = var.network_configuration.subnets
   }
 }
 

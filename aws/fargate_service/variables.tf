@@ -74,14 +74,17 @@ variable num_tasks {
   default = 1
 }
 
-variable security_groups {
-  type = list(string)
-  default = []
-}
-
-variable subnets {
-  type = list(string)
-  default = []
+variable network_configuration {
+  type = object({
+    security_groups = list(string)
+    subnets = list(string)
+    assign_public_ip = bool
+  })
+  default = {
+    security_groups = []
+    subnets = []
+    assign_public_ip = false
+  }
 }
 
 variable load_balancer_configs {
