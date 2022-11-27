@@ -21,6 +21,18 @@ resource "aws_s3_object" "assets" {
   source = var.file_configs[count.index].file_contents != null ? null : var.file_configs[count.index].file_path
 }
 
+resource "aws_s3_object" "ignore_changes_assets" {
+  count = length(var.ignore_changes_file_configs)
+  bucket = module.website_bucket.bucket_name
+  key    = var.ignore_changes_file_configs[count.index].key
+  content_type = var.ignore_changes_file_configs[count.index].content_type
+  content = var.ignore_changes_file_configs[count.index].file_contents
+  source = var.ignore_changes_file_configs[count.index].file_contents != null ? null : var.ignore_changes_file_configs[count.index].file_path
+  lifecycle {
+    ignore_changes = [content, source, content_type]
+  }
+}
+
 locals {
   cloudfront_delivery_prefixes = [
     var.coordinator_data.cloudfront_log_delivery_prefix
@@ -47,6 +59,7 @@ module site {
   lambda_authorizers = var.lambda_authorizers
   lambda_origins = var.lambda_origins 
   no_cache_s3_path_patterns = var.no_cache_s3_path_patterns
+  preemptive_s3_path_patterns = var.preemptive_s3_path_patterns
   subject_alternative_names = local.subject_alternative_names
   default_cloudfront_ttls = var.default_cloudfront_ttls
 }

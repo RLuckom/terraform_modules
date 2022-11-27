@@ -94,6 +94,19 @@ variable "no_cache_s3_path_patterns" {
   default = []
 }
 
+variable "preemptive_s3_path_patterns" {
+  type = list(object({
+    path = string
+    access_controlled = bool
+    ttls = object({
+      min = number
+      default = number
+      max = number
+    })
+  }))
+  default = []
+}
+
 variable no_access_control_s3_path_patterns {
   type = list(object({
     path = string

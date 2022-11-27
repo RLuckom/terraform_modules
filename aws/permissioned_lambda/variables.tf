@@ -9,6 +9,14 @@ variable lambda_details {
   })
 }
 
+variable region {
+  type = string
+}
+
+variable account_id {
+  type = string
+}
+
 variable unique_suffix {
   type = string
   default = ""
@@ -26,14 +34,6 @@ variable source_bucket {
 
 variable publish {
   default = false
-}
-
-variable region {
-  type = string
-}
-
-variable account_id {
-  type = string
 }
 
 variable local_source_directory {

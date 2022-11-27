@@ -100,6 +100,19 @@ variable lambda_origins {
   default = []
 }
 
+variable "preemptive_s3_path_patterns" {
+  type = list(object({
+    path = string
+    access_controlled = bool
+    ttls = object({
+      min = number
+      default = number
+      max = number
+    })
+  }))
+  default = []
+}
+
 variable no_cache_s3_path_patterns {
   type = list(object({
     path = string
@@ -258,6 +271,16 @@ variable asset_paths {
 }
 
 variable file_configs {
+  type = list(object({
+    content_type = string
+    key = string
+    file_path = string
+    file_contents = string
+  }))
+  default = []
+}
+
+variable ignore_changes_file_configs {
   type = list(object({
     content_type = string
     key = string

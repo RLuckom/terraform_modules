@@ -178,6 +178,47 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 
   dynamic "ordered_cache_behavior" {
+    for_each = var.preemptive_s3_path_patterns
+    content {
+      path_pattern = ordered_cache_behavior.value.path
+      target_origin_id = local.s3_origin_id
+      allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+      cached_methods   = ["GET", "HEAD"]
+      compress = var.compress
+      default_ttl = ordered_cache_behavior.value.ttls.default
+      min_ttl = ordered_cache_behavior.value.ttls.min
+      max_ttl = ordered_cache_behavior.value.ttls.max
+      forwarded_values {
+        query_string = true
+        headers = ["Content-Type", "Access-Control-Request-Headers", "Access-Control-Request-Method", "Origin"]
+
+        cookies {
+          forward = "none"
+        }
+      }
+      viewer_protocol_policy = "redirect-to-https"
+
+      dynamic "lambda_function_association" {
+        for_each = ordered_cache_behavior.value.access_controlled && local.default_access_control_functions.check_auth != "" ? [1] : []
+        content {
+          event_type   = "viewer-request"
+          lambda_arn   = var.access_control_function_qualified_arns[0].check_auth
+          include_body = var.access_control_function_include_body.check_auth
+        }
+      }
+
+      dynamic "lambda_function_association" {
+        for_each = ordered_cache_behavior.value.access_controlled && local.default_access_control_functions.http_headers != "" ? [1] : []
+        content {
+          event_type   = "origin-response"
+          lambda_arn   = var.access_control_function_qualified_arns[0].http_headers
+          include_body = var.access_control_function_include_body.http_headers
+        }
+      }
+    }
+  }
+
+  dynamic "ordered_cache_behavior" {
     for_each = [for origin in var.lambda_origins : origin if origin.authorizer != "CLOUDFRONT_DISTRIBUTION" && origin.authorizer != "NONE" && length(values(var.lambda_authorizers)) > 0 ]
     content {
       path_pattern = ordered_cache_behavior.value.path
