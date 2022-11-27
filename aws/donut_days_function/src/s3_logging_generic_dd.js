@@ -112,7 +112,6 @@ function buildLogger(event, context, callback) {
           Body: zlib.gzipSync(logs.join("\n")),
           Bucket: logBucket,
           Key: logKey,
-        }, (e, r) => {
         }, parallelCallback)
       })
     }
