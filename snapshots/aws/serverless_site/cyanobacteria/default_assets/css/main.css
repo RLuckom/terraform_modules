@@ -44,6 +44,10 @@ blockquote {
   margin-bottom: 0px;
 }
 
+code {
+  font-size: 75%;
+}
+
 h4, h3 {
   margin-top: 30px;
   margin-bottom: 15px;
@@ -54,8 +58,7 @@ article pre {
 }
 
 article p, article li, article h4, article pre, .series-link {
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 1rem;
 }
 
 sup, sub {

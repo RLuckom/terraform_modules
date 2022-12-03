@@ -371,28 +371,18 @@ div.table-wrapper {
 
 code, pre > code {
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-    font-size: 1.0rem;
-    line-height: 1.42;
+    font-size: 75%;
     -webkit-text-size-adjust: 100%; /* Prevent adjustments of font size after orientation changes in iOS. See https://github.com/edwardtufte/tufte-css/issues/81#issuecomment-261953409 */
-}
-
-.sans > code {
-    font-size: 1.2rem;
 }
 
 h1 > code,
 h2 > code,
 h3 > code {
-    font-size: 0.80em;
-}
-
-.marginnote > code,
-.sidenote > code {
-    font-size: 1rem;
+    font-size: 75%;
 }
 
 pre > code {
-    font-size: 0.8rem;
+    font-size: 75%;
     width: 52.5%;
     margin-left: 2.5%;
     overflow-x: auto;
