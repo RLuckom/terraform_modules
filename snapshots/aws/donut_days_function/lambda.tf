@@ -16,13 +16,13 @@ locals {
 
   additional_helpers = [for helper in var.additional_helpers : 
   {
-    file_name = "helpers/${trimsuffix(helper.helper_name, ".js")}.js"
+    file_name = "helpers/${length(split(".", helper.helper_name)) > 1 ? helper.helper_name : "${helper.helper_name}.js"}"
     file_contents = helper.file_contents
   }]
 
   additional_dependency_helpers = [for helper in var.additional_dependency_helpers : 
   {
-    file_name = "dependencyHelpers/${trimsuffix(helper.helper_name, ".js")}.js"
+    file_name = "dependencyHelpers/${length(split(".", helper.helper_name)) > 1 ? helper.helper_name : "${helper.helper_name}.js"}"
     file_contents = helper.file_contents
   }]
 }
