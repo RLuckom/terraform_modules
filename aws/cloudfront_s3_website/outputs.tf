@@ -6,6 +6,13 @@ output origin_access_identity {
   value = aws_cloudfront_origin_access_identity.cloudfront_access_id
 }
 
+output apigateways {
+  value = [for gateway in module.lambda_api_gateway : {
+    name = gateway.name
+    stage_name = gateway.stage_name
+  }]
+}
+
 output cloudfront_log_delivery_identity {
   value = aws_cloudfront_origin_access_identity.cloudfront_access_id
 }

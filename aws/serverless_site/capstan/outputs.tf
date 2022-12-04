@@ -16,3 +16,7 @@ output routing {
 output system_id {
   value = local.system_id
 }
+
+output apigateways {
+  value = module.site.apigateways
+}
