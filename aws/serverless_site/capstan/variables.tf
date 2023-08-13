@@ -276,6 +276,7 @@ variable file_configs {
     key = string
     file_path = string
     file_contents = string
+    acl = optional(string, "private")
   }))
   default = []
 }
@@ -286,6 +287,7 @@ variable ignore_changes_file_configs {
     key = string
     file_path = string
     file_contents = string
+    acl = optional(string, "private")
   }))
   default = []
 }
