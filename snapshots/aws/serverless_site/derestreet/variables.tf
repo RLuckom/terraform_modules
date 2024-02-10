@@ -188,7 +188,6 @@ variable archive_system {
       filter_prefix = string
       filter_suffix = string
       lambda_arn = string
-      lambda_arn = string
       lambda_role_arn = string
       lambda_name = string
       events = list(string)
