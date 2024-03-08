@@ -44,8 +44,11 @@ locals {
   {
     file_contents = data.local_file.local_sources[n].content
     file_name = local.local_source_files[n]
-  }]
-)
+  }])
+  state_hash = sha1(jsonencode({
+    source_contents = local.source_contents
+    environmemt = var.environment_var_map
+  }))
 }
 
 data local_file local_sources {
